@@ -532,7 +532,7 @@
 
 .persona-nav-item {
   flex: 1;
-  height: 160px;
+  height: 180px;
   border-radius: 0.5rem;
   overflow: hidden;
   position: relative;
@@ -551,6 +551,11 @@
   inset: 0;
   background-size: cover;
   background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.persona-nav-item:hover .persona-nav-bg {
+  transform: scale(1.1);
 }
 
 .persona-nav-content {
@@ -558,8 +563,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 1.5rem;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  padding: 1.25rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2) 80%, rgba(0, 0, 0, 0));
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -583,6 +588,7 @@
   font-weight: 600;
   transition: all 0.2s ease;
   font-size: 0.875rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .persona-nav-button:hover {
@@ -639,4 +645,70 @@
   .persona-nav-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* Add header styling for better icon-text spacing */
+.text-2xl.font-bold.mb-6.flex.items-center {
+  background-color: #f8fafc;
+  padding: 0.5rem 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Specific styling for the personas headers */
+.text-2xl.font-bold.mb-6.flex.items-center svg {
+  flex-shrink: 0;
+  display: flex;
+}
+
+.text-2xl.font-bold.mb-6.flex.items-center span {
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+
+/* Specific styling for personas header */
+.personas-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #f8fafc;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 2rem;
+}
+
+.personas-header svg {
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.personas-header span {
+  font-weight: 600;
+  vertical-align: middle;
+  line-height: 24px;
+}
+
+/* Selected state for persona navigation cards */
+.persona-nav-item.selected {
+  box-shadow: 0 0 0 3px var(--kf-orange), 0 10px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px);
+}
+
+.persona-nav-item.selected .persona-nav-button {
+  background-color: #ff5500;
+}
+
+.persona-nav-item.selected::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--kf-orange);
+  border-radius: 50%;
+  z-index: 10;
+  border: 2px solid white;
 }

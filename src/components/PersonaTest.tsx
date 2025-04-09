@@ -48,34 +48,37 @@ const shouldHideRegionCode = (title: string, region: string): boolean => {
   );
 };
 
-// Function to get the right background image for each region
-const getRegionBackground = (region: Region): string => {
-  // Try to use background images first
-  try {
-    switch (region) {
-      case "uk":
-        return `url('/images/uk-bg.jpg'), linear-gradient(to bottom, #1a3a5f, #0a192f)`;
-      case "uae":
-        return `url('/images/uae-bg.jpg'), linear-gradient(to bottom, #a56729, #704214)`;
-      case "aus":
-        return `url('/images/aus-bg.jpg'), linear-gradient(to bottom, #194b53, #0d2c32)`;
-      case "global":
-      default:
-        return "linear-gradient(to bottom, #0A523E, #042b20)";
-    }
-  } catch (error) {
-    // Fallback to gradients if images fail to load
-    switch (region) {
-      case "uk":
-        return "linear-gradient(to bottom, #1a3a5f, #0a192f)";
-      case "uae":
-        return "linear-gradient(to bottom, #a56729, #704214)";
-      case "aus":
-        return "linear-gradient(to bottom, #194b53, #0d2c32)";
-      case "global":
-      default:
-        return "linear-gradient(to bottom, #0A523E, #042b20)";
-    }
+// Function to get the right background image based on role/department
+const getRoleImage = (department: Department): string => {
+  // Map department to executive roles
+  const roleMapping: { [key: string]: string } = {
+    ceo: "Chief Executive Officer",
+    chro: "Chief HR Officer",
+    sales: "Chief Marketing Officer", // using marketing for sales
+    talent: "Chief Operations Officer", // using operations for talent
+    rewards: "Chief Financial Officer",
+    leadership_dev: "Chief Technology Officer",
+  };
+
+  // Get the executive role title
+  const roleTitle = roleMapping[department] || "Chief Executive Officer";
+
+  // Map to the exact URLs provided
+  switch (roleTitle) {
+    case "Chief Executive Officer":
+      return "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80')";
+    case "Chief Technology Officer":
+      return "url('https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80')";
+    case "Chief Financial Officer":
+      return "url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80')";
+    case "Chief HR Officer":
+      return "url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80')";
+    case "Chief Marketing Officer":
+      return "url('https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80')";
+    case "Chief Operations Officer":
+      return "url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80')";
+    default:
+      return "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80')";
   }
 };
 
@@ -240,11 +243,25 @@ const DetailedPersonaCard = ({
   return (
     <div className="content-card">
       <div className="flex items-start mb-6 pb-4 border-b">
-        <Globe className="mr-3 shrink-0 text-[#0A523E]" size={24} />
+        <span className="mr-2 text-[#000000]">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+        </span>
         <div className="flex-1">
-          <h2 className="text-2xl font-semibold text-[#0A523E]">
-            {persona.title}
-          </h2>
+          <h2 className="text-xl font-bold text-[#000000]">{persona.title}</h2>
           {!shouldHideRegionCode(persona.title, persona.region) && (
             <span className="px-3 py-1 mt-2 inline-block bg-gray-100 rounded-full text-gray-600 font-medium">
               {persona.region.toUpperCase()}
@@ -290,6 +307,62 @@ export function PersonaTest() {
   // Add this new state for the selected persona in modal view
   const [selectedDetailPersona, setSelectedDetailPersona] =
     useState<Persona | null>(null);
+
+  // Function to get the right background image for each region
+  const getRegionBackground = (
+    region: Region,
+    department?: Department
+  ): string => {
+    // ROLE VIEW: For cards in the role grid, use region/country images
+    // to show the same role across different regions
+    if (viewType === "role" && department) {
+      // Country-specific images for Role view
+      switch (region) {
+        case "uk":
+          return `url('https://images.unsplash.com/photo-1486299267070-83823f5448dd?auto=format&fit=crop&q=80')`;
+        case "uae":
+          return `url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80')`;
+        case "aus":
+          return `url('https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&q=80')`;
+        default:
+          return `url('https://images.unsplash.com/photo-1486299267070-83823f5448dd?auto=format&fit=crop&q=80')`;
+      }
+    }
+
+    // REGION VIEW: For cards in the region grid, use role/department images
+    // to show different roles within the same region
+    if (viewType === "region" && department) {
+      return getRoleImage(department);
+    }
+
+    // Fallback to region-based backgrounds if no department is specified
+    try {
+      switch (region) {
+        case "uk":
+          return `url('https://images.unsplash.com/photo-1486299267070-83823f5448dd?auto=format&fit=crop&q=80'), linear-gradient(to bottom, #1a3a5f, #0a192f)`;
+        case "uae":
+          return `url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80'), linear-gradient(to bottom, #a56729, #704214)`;
+        case "aus":
+          return `url('https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&q=80'), linear-gradient(to bottom, #194b53, #0d2c32)`;
+        case "global":
+        default:
+          return "linear-gradient(to bottom, #0A523E, #042b20)";
+      }
+    } catch (error) {
+      // Fallback to gradients if images fail to load
+      switch (region) {
+        case "uk":
+          return "linear-gradient(to bottom, #1a3a5f, #0a192f)";
+        case "uae":
+          return "linear-gradient(to bottom, #a56729, #704214)";
+        case "aus":
+          return "linear-gradient(to bottom, #194b53, #0d2c32)";
+        case "global":
+        default:
+          return "linear-gradient(to bottom, #0A523E, #042b20)";
+      }
+    }
+  };
 
   // Use our custom hooks
   const {
@@ -350,7 +423,13 @@ export function PersonaTest() {
         );
 
         await Promise.all(fetchPromises);
-        setRolePersonas(personas.filter(Boolean));
+        const filteredPersonas = personas.filter(Boolean);
+        setRolePersonas(filteredPersonas);
+
+        // Set the first persona as selected by default if we have results
+        if (filteredPersonas.length > 0) {
+          setSelectedDetailPersona(filteredPersonas[0]);
+        }
       } catch (error) {
         console.error("Error fetching role personas:", error);
         setRolePersonasError("Failed to load role personas");
@@ -361,6 +440,22 @@ export function PersonaTest() {
 
     fetchRolePersonas();
   }, [viewType, selectedDepartment]);
+
+  // Add an effect to set the default selected persona when region view is loaded
+  useEffect(() => {
+    if (viewType === "region" && regionPersonas.length > 0) {
+      setSelectedDetailPersona(regionPersonas[0]);
+    } else if (viewType === "single" && persona) {
+      // Clear selection when switching to single view
+      setSelectedDetailPersona(null);
+    }
+  }, [viewType, regionPersonas, persona]);
+
+  // Add an effect to handle viewType changes directly
+  useEffect(() => {
+    // Clear selection when switching view types
+    setSelectedDetailPersona(null);
+  }, [viewType]);
 
   // Determine the overall loading and error states
   const loading =
@@ -473,29 +568,76 @@ export function PersonaTest() {
           !error &&
           viewType === "role" && (
             <>
-              <h2 className="text-2xl font-bold text-[#0A523E] mb-6 flex items-center">
-                <Globe className="mr-3 text-[#FF6B00]" size={24} />
-                {selectedDepartment.replace("_", " ").toUpperCase()} Role Across
-                Regions
+              <h2 className="personas-header text-2xl font-bold mb-6 flex items-center justify-start">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#FF6B00"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <div style={{ width: "12px" }}></div>
+                <span>Role Personas</span>
               </h2>
               <div className="persona-nav-row">
                 {rolePersonas.map((p) => (
                   <div
                     key={p.id}
-                    className="persona-nav-item"
+                    className={`persona-nav-item ${
+                      selectedDetailPersona && selectedDetailPersona.id === p.id
+                        ? "selected"
+                        : ""
+                    }`}
                     onClick={() => handlePersonaCardClick(p)}
                   >
                     <div
                       className="persona-nav-bg"
                       style={{
-                        backgroundImage: getRegionBackground(p.region),
+                        backgroundImage: getRegionBackground(
+                          p.region,
+                          p.department
+                        ),
                       }}
                     ></div>
                     <div className="persona-nav-content">
                       <h3 className="persona-nav-title">{p.title}</h3>
                       <button className="persona-nav-button">
-                        View Details
-                        <ArrowRight className="ml-2 h-4 w-4" />
+                        {selectedDetailPersona &&
+                        selectedDetailPersona.id === p.id
+                          ? "Selected"
+                          : "View Details"}
+                        <svg
+                          className="ml-1"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M5 12H19"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 5L19 12L12 19"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
                       </button>
                     </div>
                   </div>
@@ -510,28 +652,75 @@ export function PersonaTest() {
           !error &&
           viewType === "region" && (
             <>
-              <h2 className="text-2xl font-bold text-[#0A523E] mb-6 flex items-center">
-                <Globe className="mr-3 text-[#FF6B00]" size={24} />
-                {selectedRegion.toUpperCase()} Region Personas
+              <h2 className="personas-header text-2xl font-bold mb-6 flex items-center justify-start">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#FF6B00"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                <div style={{ width: "12px" }}></div>
+                <span>Regional Personas</span>
               </h2>
               <div className="persona-nav-grid">
                 {regionPersonas.map((p) => (
                   <div
                     key={p.id}
-                    className="persona-nav-item"
+                    className={`persona-nav-item ${
+                      selectedDetailPersona && selectedDetailPersona.id === p.id
+                        ? "selected"
+                        : ""
+                    }`}
                     onClick={() => handlePersonaCardClick(p)}
                   >
                     <div
                       className="persona-nav-bg"
                       style={{
-                        backgroundImage: getRegionBackground(p.region),
+                        backgroundImage: getRegionBackground(
+                          p.region,
+                          p.department
+                        ),
                       }}
                     ></div>
                     <div className="persona-nav-content">
                       <h3 className="persona-nav-title">{p.title}</h3>
                       <button className="persona-nav-button">
-                        View Details
-                        <ArrowRight className="ml-2 h-4 w-4" />
+                        {selectedDetailPersona &&
+                        selectedDetailPersona.id === p.id
+                          ? "Selected"
+                          : "View Details"}
+                        <svg
+                          className="ml-1"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M5 12H19"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 5L19 12L12 19"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
                       </button>
                     </div>
                   </div>

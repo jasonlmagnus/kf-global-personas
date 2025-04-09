@@ -1,14 +1,12 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import Sidebar from '@/components/Sidebar';
-import { personas } from '@/data/personas';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Persona Profiles',
-  description: 'Global Corporate Business Personas',
+  title: "KF Personas | Korn Ferry",
+  description: "A centralized library of global and regional personas",
 };
 
 export default function RootLayout({
@@ -18,14 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div className="flex h-screen bg-gray-100">
-          <Sidebar personas={personas} />
-          <main className="flex-1 overflow-auto p-6">
-            {children}
-          </main>
-        </div>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

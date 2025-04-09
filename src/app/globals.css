@@ -253,21 +253,21 @@
 
 /* Role cards - new style */
 .role-card {
-  background-color: white;
+  background-color: transparent;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  height: 200px;
+  border: none;
+  height: 160px;
   position: relative;
-  margin-bottom: 1rem;
+  min-width: 200px;
 }
 
 .role-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .role-card-image {
@@ -291,16 +291,19 @@
 
 .role-card-content {
   position: absolute;
-  bottom: 1.5rem;
-  left: 1.5rem;
-  right: 1.5rem;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .role-card-title {
   color: white;
   font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
@@ -309,13 +312,12 @@
   align-items: center;
   background-color: var(--kf-orange);
   color: white;
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 0.375rem;
   font-weight: 600;
   transition: all 0.2s ease;
   font-size: 0.9rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .role-card-button:hover {
@@ -328,6 +330,28 @@
   margin-left: 0.5rem;
   width: 1rem;
   height: 1rem;
+}
+
+/* Add responsive behavior for role cards in a row */
+@media (max-width: 768px) {
+  /* Removing the conflicting rule that forces rows to columns
+  .flex-row {
+    flex-direction: column;
+  }
+  */
+  
+  .role-card {
+    width: calc(100% - 1rem) !important; /* Override the inline style for mobile */
+    margin-bottom: 1rem;
+    min-width: 280px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .role-card {
+    width: calc(50% - 1rem) !important; /* 2 cards per row on tablet */
+    min-width: 240px !important;
+  }
 }
 
 /* Modal styles */
@@ -494,5 +518,125 @@
 @media (min-width: 1025px) {
   .grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Add new clean navigation styles */
+.persona-nav-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.persona-nav-item {
+  flex: 1;
+  height: 160px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.persona-nav-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.persona-nav-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.persona-nav-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.persona-nav-title {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.persona-nav-button {
+  display: flex;
+  align-items: center;
+  background-color: var(--kf-orange);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.persona-nav-button:hover {
+  background-color: #ff5500;
+}
+
+/* Responsive adjustment for very small screens */
+@media (max-width: 640px) {
+  .persona-nav-row {
+    flex-direction: column;
+  }
+  
+  .persona-nav-item {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Responsive grid for region personas */
+@media (max-width: 768px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Grid layout for region personas */
+.persona-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .persona-nav-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .persona-nav-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

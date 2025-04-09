@@ -79,6 +79,194 @@ const getRegionBackground = (region: Region): string => {
   }
 };
 
+// Add this component - extracts the detailed content from before
+const PersonaDetailsContent = ({ persona }: { persona: Persona }) => {
+  return (
+    <>
+      {isGlobalPersona(persona) ? (
+        <>
+          <div className="mb-8">
+            <h3 className="section-title mb-3">
+              <Target className="section-icon" />
+              Goal Statement
+            </h3>
+            <p className="section-content">{persona.goalStatement}</p>
+          </div>
+          {persona.keyResponsibilities && (
+            <div className="mb-8">
+              <h3 className="section-title mb-3">
+                <Activity className="section-icon" />
+                Key Responsibilities
+              </h3>
+              <ul className="list-disc pl-8 section-content space-y-2">
+                {persona.keyResponsibilities.map((resp, index) => (
+                  <li key={index}>{resp}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <div className="mb-8">
+            <h3 className="section-title mb-3">
+              <Target className="section-icon" />
+              User Goal Statement
+            </h3>
+            <p className="section-content">{persona.userGoalStatement}</p>
+          </div>
+
+          {persona.painPoints && persona.painPoints.length > 0 && (
+            <div className="mb-8">
+              <h3 className="section-title mb-3">
+                <AlertTriangle className="section-icon" />
+                Pain Points
+              </h3>
+              <ul className="list-disc pl-8 section-content space-y-2">
+                {persona.painPoints.map((point, index) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {persona.regionalNuances && persona.regionalNuances.length > 0 && (
+            <div className="mb-8">
+              <h3 className="section-title mb-3">
+                <Globe className="section-icon" />
+                Regional Nuances
+              </h3>
+              <ul className="list-disc pl-8 section-content space-y-2">
+                {persona.regionalNuances.map((nuance, index) => (
+                  <li key={index}>{nuance}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {persona.behaviors && persona.behaviors.length > 0 && (
+            <div className="mb-8">
+              <h3 className="section-title mb-3">
+                <Activity className="section-icon" />
+                Behaviors
+              </h3>
+              <ul className="list-disc pl-8 section-content space-y-2">
+                {persona.behaviors.map((behavior, index) => (
+                  <li key={index}>{behavior}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {persona.keyResponsibilities &&
+            persona.keyResponsibilities.length > 0 && (
+              <div className="mb-8">
+                <h3 className="section-title mb-3">
+                  <Activity className="section-icon" />
+                  Key Responsibilities
+                </h3>
+                <ul className="list-disc pl-8 section-content space-y-2">
+                  {persona.keyResponsibilities.map((resp, index) => (
+                    <li key={index}>{resp}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+          {persona.collaborationInsights &&
+            persona.collaborationInsights.length > 0 && (
+              <div className="mb-8">
+                <h3 className="section-title mb-3">
+                  <Users className="section-icon" />
+                  Collaboration Insights
+                </h3>
+                <ul className="list-disc pl-8 section-content space-y-2">
+                  {persona.collaborationInsights.map((insight, index) => (
+                    <li key={index}>{insight}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+        </>
+      )}
+
+      {/* Common fields */}
+      {persona.quote && (
+        <div className="mb-8">
+          <h3 className="section-title mb-3">Quote</h3>
+          <p className="section-content italic">
+            &ldquo;{persona.quote}&rdquo;
+          </p>
+        </div>
+      )}
+
+      <div className="mb-8">
+        <h3 className="section-title mb-3">
+          <Target className="section-icon" />
+          Needs
+        </h3>
+        <ul className="list-disc pl-8 section-content space-y-2">
+          {persona.needs.map((need, index) => (
+            <li key={index}>{need}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mb-8">
+        <h3 className="section-title mb-3">
+          <Activity className="section-icon" />
+          Motivations
+        </h3>
+        <ul className="list-disc pl-8 section-content space-y-2">
+          {persona.motivations.map((motivation, index) => (
+            <li key={index}>{motivation}</li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+};
+
+// Create a reusable component for displaying detailed persona information consistently
+const DetailedPersonaCard = ({
+  persona,
+  showCloseButton = false,
+  onClose = () => {},
+}: {
+  persona: Persona;
+  showCloseButton?: boolean;
+  onClose?: () => void;
+}) => {
+  return (
+    <div className="content-card">
+      <div className="flex items-start mb-6 pb-4 border-b">
+        <Globe className="mr-3 shrink-0 text-[#0A523E]" size={24} />
+        <div className="flex-1">
+          <h2 className="text-2xl font-semibold text-[#0A523E]">
+            {persona.title}
+          </h2>
+          {!shouldHideRegionCode(persona.title, persona.region) && (
+            <span className="px-3 py-1 mt-2 inline-block bg-gray-100 rounded-full text-gray-600 font-medium">
+              {persona.region.toUpperCase()}
+            </span>
+          )}
+        </div>
+        {showCloseButton && (
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-900 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition-colors ml-3"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+        )}
+      </div>
+
+      <PersonaDetailsContent persona={persona} />
+    </div>
+  );
+};
+
 /**
  * A component for testing and understanding the persona data structure
  */
@@ -276,242 +464,80 @@ export function PersonaTest() {
 
         {/* Display persona - Single view */}
         {!loading && persona && !error && viewType === "single" && (
-          <div className="content-card">
-            <div className="flex items-start mb-6 pb-4 border-b">
-              <Globe className="mr-3 shrink-0 text-[#0A523E]" size={24} />
-              <div className="flex-1">
-                <h2 className="text-2xl font-semibold text-[#0A523E]">
-                  {persona.title}
-                </h2>
-                {!shouldHideRegionCode(persona.title, persona.region) && (
-                  <span className="px-3 py-1 mt-2 inline-block bg-gray-100 rounded-full text-gray-600 font-medium">
-                    {persona.region.toUpperCase()}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {isGlobalPersona(persona) ? (
-              <>
-                <div className="mb-8">
-                  <h3 className="section-title mb-3">
-                    <Target className="section-icon" />
-                    Goal Statement
-                  </h3>
-                  <p className="section-content">{persona.goalStatement}</p>
-                </div>
-                {persona.keyResponsibilities && (
-                  <div className="mb-8">
-                    <h3 className="section-title mb-3">
-                      <Activity className="section-icon" />
-                      Key Responsibilities
-                    </h3>
-                    <ul className="list-disc pl-8 section-content space-y-2">
-                      {persona.keyResponsibilities.map((resp, index) => (
-                        <li key={index}>{resp}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                <div className="mb-8">
-                  <h3 className="section-title mb-3">
-                    <Target className="section-icon" />
-                    User Goal Statement
-                  </h3>
-                  <p className="section-content">{persona.userGoalStatement}</p>
-                </div>
-
-                {persona.painPoints && persona.painPoints.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="section-title mb-3">
-                      <AlertTriangle className="section-icon" />
-                      Pain Points
-                    </h3>
-                    <ul className="list-disc pl-8 section-content space-y-2">
-                      {persona.painPoints.map((point, index) => (
-                        <li key={index}>{point}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {persona.regionalNuances &&
-                  persona.regionalNuances.length > 0 && (
-                    <div className="mb-8">
-                      <h3 className="section-title mb-3">
-                        <Globe className="section-icon" />
-                        Regional Nuances
-                      </h3>
-                      <ul className="list-disc pl-8 section-content space-y-2">
-                        {persona.regionalNuances.map((nuance, index) => (
-                          <li key={index}>{nuance}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                {persona.behaviors && persona.behaviors.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="section-title mb-3">
-                      <Activity className="section-icon" />
-                      Behaviors
-                    </h3>
-                    <ul className="list-disc pl-8 section-content space-y-2">
-                      {persona.behaviors.map((behavior, index) => (
-                        <li key={index}>{behavior}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {persona.keyResponsibilities &&
-                  persona.keyResponsibilities.length > 0 && (
-                    <div className="mb-8">
-                      <h3 className="section-title mb-3">
-                        <Activity className="section-icon" />
-                        Key Responsibilities
-                      </h3>
-                      <ul className="list-disc pl-8 section-content space-y-2">
-                        {persona.keyResponsibilities.map((resp, index) => (
-                          <li key={index}>{resp}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                {persona.collaborationInsights &&
-                  persona.collaborationInsights.length > 0 && (
-                    <div className="mb-8">
-                      <h3 className="section-title mb-3">
-                        <Users className="section-icon" />
-                        Collaboration Insights
-                      </h3>
-                      <ul className="list-disc pl-8 section-content space-y-2">
-                        {persona.collaborationInsights.map((insight, index) => (
-                          <li key={index}>{insight}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-              </>
-            )}
-
-            {/* Common fields */}
-            {persona.quote && (
-              <div className="mb-8">
-                <h3 className="section-title mb-3">Quote</h3>
-                <p className="section-content italic">
-                  &ldquo;{persona.quote}&rdquo;
-                </p>
-              </div>
-            )}
-
-            <div className="mb-8">
-              <h3 className="section-title mb-3">
-                <Target className="section-icon" />
-                Needs
-              </h3>
-              <ul className="list-disc pl-8 section-content space-y-2">
-                {persona.needs.map((need, index) => (
-                  <li key={index}>{need}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mb-8">
-              <h3 className="section-title mb-3">
-                <Activity className="section-icon" />
-                Motivations
-              </h3>
-              <ul className="list-disc pl-8 section-content space-y-2">
-                {persona.motivations.map((motivation, index) => (
-                  <li key={index}>{motivation}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <DetailedPersonaCard persona={persona} />
         )}
-
-        {/* Region personas display */}
-        {!loading &&
-          regionPersonas.length > 0 &&
-          !error &&
-          viewType === "region" && (
-            <div className="content-card">
-              <h2 className="text-2xl font-bold text-[#0A523E] mb-6 flex items-center">
-                <Globe className="mr-3 text-[#FF6B00]" size={24} />
-                {selectedRegion.toUpperCase()} Region Personas
-              </h2>
-              <div className="grid grid-cols-3 gap-6 w-full">
-                {regionPersonas.map((p) => (
-                  <div
-                    key={p.id}
-                    className="role-card"
-                    onClick={() => handlePersonaCardClick(p)}
-                  >
-                    <div className="role-card-image">
-                      <div
-                        className="role-card-image-bg"
-                        style={{
-                          backgroundImage: getRegionBackground(p.region),
-                        }}
-                      ></div>
-                      <div className="role-card-gradient"></div>
-                      <div className="role-card-content">
-                        <h3 className="role-card-title">{p.title}</h3>
-                        <button className="role-card-button">
-                          View Details
-                          <ArrowRight className="role-card-button-icon" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
         {/* Role Personas view */}
         {!loading &&
           rolePersonas.length > 0 &&
           !error &&
           viewType === "role" && (
-            <div className="content-card">
+            <>
               <h2 className="text-2xl font-bold text-[#0A523E] mb-6 flex items-center">
                 <Globe className="mr-3 text-[#FF6B00]" size={24} />
                 {selectedDepartment.replace("_", " ").toUpperCase()} Role Across
                 Regions
               </h2>
-              <div className="grid grid-cols-3 gap-6 w-full">
+              <div className="persona-nav-row">
                 {rolePersonas.map((p) => (
                   <div
                     key={p.id}
-                    className="role-card"
+                    className="persona-nav-item"
                     onClick={() => handlePersonaCardClick(p)}
                   >
-                    <div className="role-card-image">
-                      <div
-                        className="role-card-image-bg"
-                        style={{
-                          backgroundImage: getRegionBackground(p.region),
-                        }}
-                      ></div>
-                      <div className="role-card-gradient"></div>
-                      <div className="role-card-content">
-                        <h3 className="role-card-title">{p.title}</h3>
-                        <button className="role-card-button">
-                          View Details
-                          <ArrowRight className="role-card-button-icon" />
-                        </button>
-                      </div>
+                    <div
+                      className="persona-nav-bg"
+                      style={{
+                        backgroundImage: getRegionBackground(p.region),
+                      }}
+                    ></div>
+                    <div className="persona-nav-content">
+                      <h3 className="persona-nav-title">{p.title}</h3>
+                      <button className="persona-nav-button">
+                        View Details
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </>
+          )}
+
+        {/* Region personas display */}
+        {!loading &&
+          regionPersonas.length > 0 &&
+          !error &&
+          viewType === "region" && (
+            <>
+              <h2 className="text-2xl font-bold text-[#0A523E] mb-6 flex items-center">
+                <Globe className="mr-3 text-[#FF6B00]" size={24} />
+                {selectedRegion.toUpperCase()} Region Personas
+              </h2>
+              <div className="persona-nav-grid">
+                {regionPersonas.map((p) => (
+                  <div
+                    key={p.id}
+                    className="persona-nav-item"
+                    onClick={() => handlePersonaCardClick(p)}
+                  >
+                    <div
+                      className="persona-nav-bg"
+                      style={{
+                        backgroundImage: getRegionBackground(p.region),
+                      }}
+                    ></div>
+                    <div className="persona-nav-content">
+                      <h3 className="persona-nav-title">{p.title}</h3>
+                      <button className="persona-nav-button">
+                        View Details
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
         {/* Detail Modal */}
@@ -519,191 +545,11 @@ export function PersonaTest() {
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl">
               <div className="p-8">
-                <div className="flex justify-between items-center mb-6 pb-4 border-b">
-                  <div>
-                    <h2 className="text-2xl font-semibold text-[#0A523E]">
-                      {selectedDetailPersona.title}
-                    </h2>
-                    {!shouldHideRegionCode(
-                      selectedDetailPersona.title,
-                      selectedDetailPersona.region
-                    ) && (
-                      <span className="px-3 py-1 mt-2 inline-block bg-gray-100 rounded-full text-gray-600 font-medium">
-                        {selectedDetailPersona.region.toUpperCase()}
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => setSelectedDetailPersona(null)}
-                    className="text-gray-600 hover:text-gray-900 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
-                    aria-label="Close"
-                  >
-                    &times;
-                  </button>
-                </div>
-
-                {isGlobalPersona(selectedDetailPersona) ? (
-                  <>
-                    <div className="mb-8">
-                      <h3 className="section-title mb-3">
-                        <Target className="section-icon" />
-                        Goal Statement
-                      </h3>
-                      <p className="section-content">
-                        {selectedDetailPersona.goalStatement}
-                      </p>
-                    </div>
-                    {selectedDetailPersona.keyResponsibilities && (
-                      <div className="mb-8">
-                        <h3 className="section-title mb-3">
-                          <Activity className="section-icon" />
-                          Key Responsibilities
-                        </h3>
-                        <ul className="list-disc pl-8 section-content space-y-2">
-                          {selectedDetailPersona.keyResponsibilities.map(
-                            (resp, index) => (
-                              <li key={index}>{resp}</li>
-                            )
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <div className="mb-8">
-                      <h3 className="section-title mb-3">
-                        <Target className="section-icon" />
-                        User Goal Statement
-                      </h3>
-                      <p className="section-content">
-                        {selectedDetailPersona.userGoalStatement}
-                      </p>
-                    </div>
-
-                    {selectedDetailPersona.painPoints &&
-                      selectedDetailPersona.painPoints.length > 0 && (
-                        <div className="mb-8">
-                          <h3 className="section-title mb-3">
-                            <AlertTriangle className="section-icon" />
-                            Pain Points
-                          </h3>
-                          <ul className="list-disc pl-8 section-content space-y-2">
-                            {selectedDetailPersona.painPoints.map(
-                              (point, index) => (
-                                <li key={index}>{point}</li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
-
-                    {selectedDetailPersona.regionalNuances &&
-                      selectedDetailPersona.regionalNuances.length > 0 && (
-                        <div className="mb-8">
-                          <h3 className="section-title mb-3">
-                            <Globe className="section-icon" />
-                            Regional Nuances
-                          </h3>
-                          <ul className="list-disc pl-8 section-content space-y-2">
-                            {selectedDetailPersona.regionalNuances.map(
-                              (nuance, index) => (
-                                <li key={index}>{nuance}</li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
-
-                    {selectedDetailPersona.behaviors &&
-                      selectedDetailPersona.behaviors.length > 0 && (
-                        <div className="mb-8">
-                          <h3 className="section-title mb-3">
-                            <Activity className="section-icon" />
-                            Behaviors
-                          </h3>
-                          <ul className="list-disc pl-8 section-content space-y-2">
-                            {selectedDetailPersona.behaviors.map(
-                              (behavior, index) => (
-                                <li key={index}>{behavior}</li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
-
-                    {selectedDetailPersona.keyResponsibilities &&
-                      selectedDetailPersona.keyResponsibilities.length > 0 && (
-                        <div className="mb-8">
-                          <h3 className="section-title mb-3">
-                            <Activity className="section-icon" />
-                            Key Responsibilities
-                          </h3>
-                          <ul className="list-disc pl-8 section-content space-y-2">
-                            {selectedDetailPersona.keyResponsibilities.map(
-                              (resp, index) => (
-                                <li key={index}>{resp}</li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
-
-                    {selectedDetailPersona.collaborationInsights &&
-                      selectedDetailPersona.collaborationInsights.length >
-                        0 && (
-                        <div className="mb-8">
-                          <h3 className="section-title mb-3">
-                            <Users className="section-icon" />
-                            Collaboration Insights
-                          </h3>
-                          <ul className="list-disc pl-8 section-content space-y-2">
-                            {selectedDetailPersona.collaborationInsights.map(
-                              (insight, index) => (
-                                <li key={index}>{insight}</li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                  </>
-                )}
-
-                {/* Common fields */}
-                {selectedDetailPersona.quote && (
-                  <div className="mb-8">
-                    <h3 className="section-title mb-3">Quote</h3>
-                    <p className="section-content italic">
-                      &ldquo;{selectedDetailPersona.quote}&rdquo;
-                    </p>
-                  </div>
-                )}
-
-                <div className="mb-8">
-                  <h3 className="section-title mb-3">
-                    <Target className="section-icon" />
-                    Needs
-                  </h3>
-                  <ul className="list-disc pl-8 section-content space-y-2">
-                    {selectedDetailPersona.needs.map((need, index) => (
-                      <li key={index}>{need}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mb-8">
-                  <h3 className="section-title mb-3">
-                    <Activity className="section-icon" />
-                    Motivations
-                  </h3>
-                  <ul className="list-disc pl-8 section-content space-y-2">
-                    {selectedDetailPersona.motivations.map(
-                      (motivation, index) => (
-                        <li key={index}>{motivation}</li>
-                      )
-                    )}
-                  </ul>
-                </div>
+                <DetailedPersonaCard
+                  persona={selectedDetailPersona}
+                  showCloseButton={true}
+                  onClose={() => setSelectedDetailPersona(null)}
+                />
               </div>
             </div>
           </div>

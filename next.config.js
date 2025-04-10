@@ -1,18 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
+    // Only ignore errors in production builds
+    ignoreBuildErrors: process.env.NODE_ENV === "production",
   },
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
+    // Only ignore errors in production builds
+    ignoreDuringBuilds: process.env.NODE_ENV === "production",
   },
   output: "standalone",
+  // Add support for public assets
+  images: {
+    domains: ["images.unsplash.com"],
+  },
 };
 
 module.exports = nextConfig;

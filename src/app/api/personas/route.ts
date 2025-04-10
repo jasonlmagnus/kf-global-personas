@@ -3,8 +3,30 @@ import fs from 'fs';
 import path from 'path';
 import { Persona, CountryPersona, Region, Department } from '@/types/personas';
 
+// Define interfaces for the JSON data structure
+interface PersonaJsonData {
+  'Profession/Role'?: string;
+  'User Goal Statement'?: string;
+  'User Quote'?: string;
+  'Needs'?: string[] | Record<string, string[]>;
+  'Motivations'?: string[] | Record<string, string[]>;
+  'Frustrations / Pain Points'?: string[] | Record<string, string[]>;
+  'Emotional Triggers'?: {
+    Positive?: string[];
+    Negative?: string[];
+  } | Array<Record<string, string>>;
+  'Regional Nuances'?: string[] | Record<string, string>;
+  'Cultural Context'?: string;
+  'Behaviors'?: string[] | Record<string, string[]>;
+  'Key Responsibilities'?: string[] | Record<string, string[]>;
+  'Collaboration Insights'?: string[] | Record<string, string[]>;
+  'Presentation Guidance'?: Record<string, unknown>;
+  'Comparison to Generic CEO'?: string[];
+  [key: string]: unknown; // Allow other properties
+}
+
 // Server-side function to read JSON files
-function readJsonFile(filePath: string): any {
+function readJsonFile(filePath: string): PersonaJsonData | null {
   try {
     // First check if the file exists
     if (!fs.existsSync(filePath)) {
@@ -21,7 +43,7 @@ function readJsonFile(filePath: string): any {
 }
 
 // Convert raw data into a normalized Country Persona
-function normalizeCountryPersona(data: any, region: Region, department: Department): CountryPersona {
+function normalizeCountryPersona(data: PersonaJsonData, region: Region, department: Department): CountryPersona {
   // Get all the direct string values
   const persona: CountryPersona = {
     id: `${region}-${department}`,
@@ -53,7 +75,7 @@ function normalizeCountryPersona(data: any, region: Region, department: Departme
       persona.needs = data['Needs'];
     } else if (typeof data['Needs'] === 'object') {
       // Extract all values from nested object and flatten them
-      const needsValues = Object.values(data['Needs']) as any[];
+      const needsValues = Object.values(data['Needs'] as Record<string, string[]>);
       persona.needs = needsValues.flat();
     }
   }
@@ -63,7 +85,7 @@ function normalizeCountryPersona(data: any, region: Region, department: Departme
     if (Array.isArray(data['Motivations'])) {
       persona.motivations = data['Motivations'];
     } else if (typeof data['Motivations'] === 'object') {
-      const motivationValues = Object.values(data['Motivations']) as any[];
+      const motivationValues = Object.values(data['Motivations'] as Record<string, string[]>);
       persona.motivations = motivationValues.flat();
     }
   }
@@ -73,7 +95,7 @@ function normalizeCountryPersona(data: any, region: Region, department: Departme
     if (Array.isArray(data['Frustrations / Pain Points'])) {
       persona.painPoints = data['Frustrations / Pain Points'];
     } else if (typeof data['Frustrations / Pain Points'] === 'object') {
-      const painValues = Object.values(data['Frustrations / Pain Points']) as any[];
+      const painValues = Object.values(data['Frustrations / Pain Points'] as Record<string, string[]>);
       persona.painPoints = painValues.flat();
     }
   }

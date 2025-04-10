@@ -5,10 +5,7 @@ import {
   Region,
   Department,
   Persona,
-  GlobalPersona,
-  CountryPersona,
   isGlobalPersona,
-  isCountryPersona,
 } from "../types/personas";
 import { usePersona, usePersonasByRegion } from "../hooks/usePersonas";
 import {
@@ -18,7 +15,6 @@ import {
   Activity,
   Users,
   ChevronDown,
-  ArrowRight,
   FileDown,
 } from "lucide-react";
 import { generatePersonaDocument } from "@/lib/docGenerator";
@@ -335,7 +331,13 @@ export function PersonaTest() {
       // When switching away from region view, restore saved department
       setSelectedDepartment(savedDepartment);
     }
-  }, [viewType]);
+  }, [
+    viewType,
+    savedRegion,
+    savedDepartment,
+    selectedRegion,
+    selectedDepartment,
+  ]);
 
   // Function to get the right background image for each region
   const getRegionBackground = (

@@ -1,0 +1,19 @@
+# Korn Ferry Personas Cursor Rules
+
+# Git commit rules
+
+- Never suggest git commits until the problem has been confirmed as fully solved
+- Do not ask to push changes when there are still issues to fix
+- Verify that all changes are working before suggesting to commit
+
+# Problem-solving approach
+
+- Diagnose issues thoroughly before implementing solutions
+- Explain the approach before implementing code changes
+- Always confirm that changes have fixed the issue before considering it done
+
+# UI Development
+
+- Ensure UI changes match provided screenshots exactly
+- Pay special attention to styling details and component alignment
+- Test functionality in different states before considering implementation complete

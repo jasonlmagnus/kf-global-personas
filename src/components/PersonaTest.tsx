@@ -618,7 +618,7 @@ export function PersonaTest() {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Error display */}
         {error && (
           <div className="bg-red-50 text-red-600 p-4 mb-6 rounded-lg border border-red-200">
@@ -635,7 +635,9 @@ export function PersonaTest() {
 
         {/* Display persona - Single view */}
         {!loading && persona && !error && viewType === "single" && (
-          <DetailedPersonaCard persona={persona} />
+          <div className="mx-24">
+            <DetailedPersonaCard persona={persona} showCloseButton={false} />
+          </div>
         )}
 
         {/* Role Personas view */}
@@ -643,7 +645,7 @@ export function PersonaTest() {
           rolePersonas.length > 0 &&
           !error &&
           viewType === "role" && (
-            <>
+            <div className="mx-24">
               <h2 className="personas-header text-2xl font-bold mb-6 flex items-center justify-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -719,7 +721,7 @@ export function PersonaTest() {
                   </div>
                 ))}
               </div>
-            </>
+            </div>
           )}
 
         {/* Region personas display */}
@@ -727,7 +729,7 @@ export function PersonaTest() {
           regionPersonas.length > 0 &&
           !error &&
           viewType === "region" && (
-            <>
+            <div className="mx-24">
               <h2 className="personas-header text-2xl font-bold mb-6 flex items-center justify-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -803,7 +805,7 @@ export function PersonaTest() {
                   </div>
                 ))}
               </div>
-            </>
+            </div>
           )}
 
         {/* Detail Modal */}

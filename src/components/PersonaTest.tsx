@@ -482,7 +482,14 @@ export function PersonaTest() {
     <div className="min-h-screen bg-[#f8f9fa]">
       {/* Header */}
       <header className="app-header">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 flex items-center">
+          <div className="logo-container">
+            <img
+              src="/kf-logo-white.svg"
+              alt="Korn Ferry Logo"
+              className="logo"
+            />
+          </div>
           <h1 className="text-2xl font-bold">Korn Ferry Global Personas</h1>
         </div>
       </header>

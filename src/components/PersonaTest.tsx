@@ -243,23 +243,6 @@ const DetailedPersonaCard = ({
   return (
     <div className="content-card">
       <div className="flex items-start mb-6 pb-4 border-b">
-        <span className="mr-2 text-[#000000]">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="2" y1="12" x2="22" y2="12"></line>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-          </svg>
-        </span>
         <div className="flex-1">
           <h2 className="text-xl font-bold text-[#000000]">{persona.title}</h2>
           {!shouldHideRegionCode(persona.title, persona.region) && (
@@ -268,15 +251,6 @@ const DetailedPersonaCard = ({
             </span>
           )}
         </div>
-        {showCloseButton && (
-          <button
-            onClick={onClose}
-            className="text-gray-600 hover:text-gray-900 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition-colors ml-3"
-            aria-label="Close"
-          >
-            &times;
-          </button>
-        )}
       </div>
 
       <PersonaDetailsContent persona={persona} />
@@ -723,7 +697,7 @@ export function PersonaTest() {
           !error &&
           viewType === "region" && (
             <>
-              <h2 className="personas-header text-2xl font-bold mb-6 flex items-center justify-start">
+              <h2 className="personas-header text-2xl font-bold mb-6 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -734,13 +708,14 @@ export function PersonaTest() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  className="mr-6"
                 >
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="2" y1="12" x2="22" y2="12"></line>
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                 </svg>
                 <div style={{ width: "12px" }}></div>
-                <span>Regional Personas</span>
+                <span>Region Personas</span>
               </h2>
               <div className="persona-nav-grid">
                 {regionPersonas.map((p) => (
@@ -807,9 +782,17 @@ export function PersonaTest() {
               <div className="p-8">
                 <DetailedPersonaCard
                   persona={selectedDetailPersona}
-                  showCloseButton={true}
+                  showCloseButton={false}
                   onClose={() => setSelectedDetailPersona(null)}
                 />
+              </div>
+              <div className="p-4 border-t bg-gray-50 flex justify-end">
+                <button
+                  onClick={() => setSelectedDetailPersona(null)}
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-gray-800 transition-colors"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>

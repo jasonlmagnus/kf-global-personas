@@ -19,7 +19,9 @@ import {
   Users,
   ChevronDown,
   ArrowRight,
+  FileDown,
 } from "lucide-react";
+import { generatePersonaDocument } from "@/lib/docGenerator";
 
 // Hardcoded for initial testing - would come from API in production
 // Remove global from available regions for now
@@ -240,15 +242,37 @@ const DetailedPersonaCard = ({
   showCloseButton?: boolean;
   onClose?: () => void;
 }) => {
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    generatePersonaDocument(persona);
+  };
+
   return (
     <div className="content-card">
-      <div className="flex items-start mb-6 pb-4 border-b">
+      <button
+        className="export-button"
+        onClick={handleDownload}
+        title="Download as Word document"
+      >
+        <FileDown className="h-4 w-4" />
+        <span>Export</span>
+      </button>
+
+      <div className="detailed-card-header">
         <div className="flex-1">
           <h2 className="text-xl font-bold text-[#000000]">{persona.title}</h2>
           {!shouldHideRegionCode(persona.title, persona.region) && (
             <span className="px-3 py-1 mt-2 inline-block bg-gray-100 rounded-full text-gray-600 font-medium">
               {persona.region.toUpperCase()}
             </span>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-2">
+          {showCloseButton && (
+            <button onClick={onClose} className="close-button-modal">
+              Close
+            </button>
           )}
         </div>
       </div>
@@ -704,7 +728,7 @@ export function PersonaTest() {
           !error &&
           viewType === "region" && (
             <>
-              <h2 className="personas-header text-2xl font-bold mb-6 flex items-center justify-center">
+              <h2 className="personas-header text-2xl font-bold mb-6 flex items-center justify-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -715,7 +739,6 @@ export function PersonaTest() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="mr-6"
                 >
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="2" y1="12" x2="22" y2="12"></line>
@@ -724,6 +747,7 @@ export function PersonaTest() {
                 <div style={{ width: "12px" }}></div>
                 <span>Region Personas</span>
               </h2>
+
               <div className="persona-nav-grid">
                 {regionPersonas.map((p) => (
                   <div

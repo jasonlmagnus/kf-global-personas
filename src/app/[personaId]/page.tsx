@@ -1,6 +1,6 @@
-import { personas } from '@/data/personas';
-import PersonaCard from '@/components/PersonaCard';
-import { notFound } from 'next/navigation';
+import { personas } from "@/data/personas";
+import PersonaCard from "@/components/PersonaCard";
+import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
   return personas.map((persona) => ({
@@ -8,9 +8,13 @@ export function generateStaticParams() {
   }));
 }
 
-export default function PersonaPage({ params }: { params: { personaId: string } }) {
+type Props = {
+  params: { personaId: string };
+};
+
+export default function PersonaPage({ params }: Props) {
   const persona = personas.find((p) => p.id === params.personaId);
-  
+
   if (!persona) {
     notFound();
   }

@@ -290,8 +290,14 @@ const DetailedPersonaCard = ({
 export function PersonaTest() {
   // Change default region to 'uk' instead of 'global'
   const [selectedRegion, setSelectedRegion] = useState<Region>("uk");
+  // Add state to store previous region when switching to role view
+  const [savedRegion, setSavedRegion] = useState<Region | null>(null);
   const [selectedDepartment, setSelectedDepartment] =
     useState<Department>("ceo");
+  // Add state to store previous department when switching to region view
+  const [savedDepartment, setSavedDepartment] = useState<Department | null>(
+    null
+  );
   const [comparedRegion, setComparedRegion] = useState<Region | null>(null);
   const [viewType, setViewType] = useState<"single" | "role" | "region">(
     "single"
@@ -307,6 +313,31 @@ export function PersonaTest() {
   // Add this new state for the selected persona in modal view
   const [selectedDetailPersona, setSelectedDetailPersona] =
     useState<Persona | null>(null);
+
+  // Add effect to handle viewType changes and region/department selection
+  useEffect(() => {
+    if (viewType === "role") {
+      // When switching to role view, save current region
+      setSavedRegion(selectedRegion);
+    } else if (
+      savedRegion &&
+      (viewType === "single" || viewType === "region")
+    ) {
+      // When switching away from role view, restore saved region
+      setSelectedRegion(savedRegion);
+    }
+
+    if (viewType === "region") {
+      // When switching to region view, save current department
+      setSavedDepartment(selectedDepartment);
+    } else if (
+      savedDepartment &&
+      (viewType === "single" || viewType === "role")
+    ) {
+      // When switching away from region view, restore saved department
+      setSelectedDepartment(savedDepartment);
+    }
+  }, [viewType]);
 
   // Function to get the right background image for each region
   const getRegionBackground = (
@@ -402,7 +433,7 @@ export function PersonaTest() {
       setRolePersonasError(null);
 
       try {
-        // Get role personas from each region
+        // Get role personas from each region, regardless of selected region
         const regions: Region[] = ["uk", "uae", "aus"];
         const personas: Persona[] = [];
 
@@ -441,7 +472,7 @@ export function PersonaTest() {
     fetchRolePersonas();
   }, [viewType, selectedDepartment]);
 
-  // Add an effect to set the default selected persona when region view is loaded
+  // Update effect for fetching region personas to ensure it's not affected by role selection
   useEffect(() => {
     if (viewType === "region" && regionPersonas.length > 0) {
       setSelectedDetailPersona(regionPersonas[0]);
@@ -505,37 +536,77 @@ export function PersonaTest() {
           <div className="filter-item">
             <label className="selector-label">Role</label>
             <div className="selector-wrapper">
-              <select
-                className="selector"
-                value={selectedDepartment}
-                onChange={(e) =>
-                  setSelectedDepartment(e.target.value as Department)
-                }
-              >
-                {availableDepartments.map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept.replace("_", " ").toUpperCase()}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="selector-icon" />
+              {viewType === "region" ? (
+                // For Region view, show a disabled N/A selector for Role
+                <div className="relative w-full">
+                  <select
+                    className="selector bg-gray-100 text-gray-400 cursor-not-allowed"
+                    disabled={true}
+                    tabIndex={-1}
+                  >
+                    <option value="n/a">N/A</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              ) : (
+                // For other views, show the normal role selector
+                <>
+                  <select
+                    className="selector"
+                    value={selectedDepartment}
+                    onChange={(e) =>
+                      setSelectedDepartment(e.target.value as Department)
+                    }
+                  >
+                    {availableDepartments.map((dept) => (
+                      <option key={dept} value={dept}>
+                        {dept.replace("_", " ").toUpperCase()}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="selector-icon" />
+                </>
+              )}
             </div>
           </div>
           <div className="filter-item">
             <label className="selector-label">Region</label>
             <div className="selector-wrapper">
-              <select
-                className="selector"
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value as Region)}
-              >
-                {availableRegions.map((region) => (
-                  <option key={region} value={region}>
-                    {region.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="selector-icon" />
+              {viewType === "role" ? (
+                // For Role view, show a disabled N/A selector
+                <div className="relative w-full">
+                  <select
+                    className="selector bg-gray-100 text-gray-400 cursor-not-allowed"
+                    disabled={true}
+                    tabIndex={-1}
+                  >
+                    <option value="n/a">N/A</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              ) : (
+                // For other views, show the normal region selector
+                <>
+                  <select
+                    className="selector"
+                    value={selectedRegion}
+                    onChange={(e) =>
+                      setSelectedRegion(e.target.value as Region)
+                    }
+                  >
+                    {availableRegions.map((region) => (
+                      <option key={region} value={region}>
+                        {region.toUpperCase()}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="selector-icon" />
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -8,11 +8,11 @@ export function generateStaticParams() {
   }));
 }
 
-type Props = {
-  params: { personaId: string };
-};
+interface PageParams {
+  personaId: string;
+}
 
-export default function PersonaPage({ params }: Props) {
+export default function PersonaPage({ params }: { params: PageParams }) {
   const persona = personas.find((p) => p.id === params.personaId);
 
   if (!persona) {

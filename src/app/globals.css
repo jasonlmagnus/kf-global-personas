@@ -562,7 +562,6 @@
 }
 
 .persona-nav-item {
-  flex: 1;
   height: 180px;
   border-radius: 0.5rem;
   overflow: hidden;
@@ -784,4 +783,18 @@
   border-radius: 50%;
   z-index: 10;
   border: 2px solid white;
+}
+
+/* Grid layout for role personas (2x2) */
+.persona-role-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+@media (max-width: 768px) {
+  .persona-role-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }

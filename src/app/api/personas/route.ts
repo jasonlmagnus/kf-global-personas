@@ -42,6 +42,31 @@ function readJsonFile(filePath: string): PersonaJsonData | null {
   }
 }
 
+// Helper function to process arrays that might contain strings or objects with Category/Description
+const processArrayField = (fieldData: any): string[] => {
+  if (Array.isArray(fieldData)) {
+    return fieldData.map(item => {
+      if (typeof item === 'string') return item;
+      // Handle objects, prioritizing a 'Description' field if available
+      if (typeof item === 'object' && item !== null) {
+        if (typeof item.Description === 'string') {
+          return typeof item.Category === 'string' && item.Category ? `${item.Category}: ${item.Description}` : item.Description;
+        }
+        // Fallback for other object structures if necessary, could be more specific
+        // For now, let's stringify if no Description, or consider it an error/skip.
+        // return JSON.stringify(item); // This might be too noisy or undesirable.
+        return undefined; // Or skip item if it's an object without Description
+      }
+      return String(item); // Catch-all for other simple types, convert to string
+    }).filter(item => typeof item === 'string') as string[]; // Ensure only strings and filter out undefined
+  } else if (typeof fieldData === 'object' && fieldData !== null) {
+    // Handle cases like Record<string, string[]> from PersonaJsonData by flattening
+    // This assumes values are string[] or string, then flattens.
+    return Object.values(fieldData as Record<string, string[] | string>).flat().filter(item => typeof item === 'string');
+  }
+  return []; // Default to empty array if fieldData is not an array or suitable object
+};
+
 // Convert raw data into a normalized Persona
 function normalizePersonaData(data: PersonaJsonData, region: Region, department: Department): Persona {
   if (region === 'global') {
@@ -58,21 +83,25 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
                      (typeof data['User Goal Statement'] === 'string' ? data['User Goal Statement'] : ''),
       quote: typeof data['Quote'] === 'string' ? data['Quote'] :
              (typeof data['User Quote'] === 'string' ? data['User Quote'] : undefined),
-      needs: Array.isArray(data['Needs']) ? data['Needs'] as string[] : (typeof data['Needs'] === 'object' ? Object.values(data['Needs'] as Record<string, string[]>).flat() : []),
-      motivations: Array.isArray(data['Motivations']) ? data['Motivations'] as string[] : (typeof data['Motivations'] === 'object' ? Object.values(data['Motivations'] as Record<string, string[]>).flat() : []),
-      keyResponsibilities: Array.isArray(data['Key Responsibilities']) ? data['Key Responsibilities'] as string[] : (typeof data['Key Responsibilities'] === 'object' ? Object.values(data['Key Responsibilities'] as Record<string, string[]>).flat() : []),
       
-      knowledgeOrExpertise: data['Knowledge_Areas'] as any || undefined,
-      typicalChallenges: data['Typical_Challenges'] as any || undefined,
-      currentProjects: data['Current_Projects'] as any || undefined,
-
-      painPoints: Array.isArray(data['Frustrations / Pain Points']) ? data['Frustrations / Pain Points'] as string[] : (typeof data['Frustrations / Pain Points'] === 'object' ? Object.values(data['Frustrations / Pain Points'] as Record<string, string[]>).flat() : undefined),
-      behaviors: Array.isArray(data['Behaviors']) ? data['Behaviors'] as string[] : (typeof data['Behaviors'] === 'object' ? Object.values(data['Behaviors'] as Record<string, string[]>).flat() : undefined),
-      collaborationInsights: Array.isArray(data['Collaboration Insights']) ? data['Collaboration Insights'] as string[] : (typeof data['Collaboration Insights'] === 'object' ? Object.values(data['Collaboration Insights'] as Record<string, string[]>).flat() : undefined),
+      // Use processArrayField for all list-based properties
+      needs: processArrayField(data['Needs']),
+      motivations: processArrayField(data['Motivations']),
+      keyResponsibilities: processArrayField(data['Key Responsibilities']),
+      knowledgeOrExpertise: processArrayField(data['Knowledge_Areas']),
+      typicalChallenges: processArrayField(data['Typical_Challenges']),
+      currentProjects: processArrayField(data['Current_Projects']),
+      painPoints: processArrayField(data['Frustrations_Pain_Points'] || data['Frustrations / Pain Points'] || data['Frustrations']),
+      behaviors: processArrayField(data['Behaviors']),
+      collaborationInsights: processArrayField(data['Collaboration Insights']),
     };
     return persona;
   } else {
     // Handle CountryPersona (existing logic, but ensure return type is CountryPersona)
+    // Ensure similar processing for its array fields if they can also contain objects
+    const countryPainPointsKey = data['Frustrations_Pain_Points'] ? 'Frustrations_Pain_Points' : 
+                                (data['Frustrations / Pain Points'] ? 'Frustrations / Pain Points' : 'Frustrations');
+
     const persona: CountryPersona = {
       id: `${region}-${department}`,
       title: data['Profession/Role'] || `${region.toUpperCase()} ${department.replace('_', ' ').toUpperCase()}`,
@@ -81,131 +110,80 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
       isGlobal: false,
       userGoalStatement: data['User Goal Statement'] || '',
       quote: data['User Quote'] || undefined,
-      needs: [],
-      motivations: [],
-      painPoints: [],
+      needs: processArrayField(data['Needs']),
+      motivations: processArrayField(data['Motivations']),
+      painPoints: processArrayField(data[countryPainPointsKey]),
       emotionalTriggers: {
         positive: [],
         negative: []
       },
-      regionalNuances: [],
+      regionalNuances: [], // This might need processArrayField if source can be objects
       culturalContext: data['Cultural Context'] || '',
-      behaviors: [],
-      keyResponsibilities: [],
-      collaborationInsights: [],
+      behaviors: processArrayField(data['Behaviors']),
+      keyResponsibilities: processArrayField(data['Key Responsibilities']),
+      collaborationInsights: processArrayField(data['Collaboration Insights']),
       presentation: data['Presentation Guidance'] || {},
-      comparison: data['Comparison to Generic CEO'] || []
+      comparison: data['Comparison to Generic CEO'] || [] // This is likely an array of complex objects, not strings
     };
     
-    // Extract nested objects - Needs
-    if (data['Needs']) {
-      if (Array.isArray(data['Needs'])) {
-        persona.needs = data['Needs'];
-      } else if (typeof data['Needs'] === 'object') {
-        const needsValues = Object.values(data['Needs'] as Record<string, string[]>);
-        persona.needs = needsValues.flat();
-      }
-    }
-    
-    // Extract nested objects - Motivations
-    if (data['Motivations']) {
-      if (Array.isArray(data['Motivations'])) {
-        persona.motivations = data['Motivations'];
-      } else if (typeof data['Motivations'] === 'object') {
-        const motivationValues = Object.values(data['Motivations'] as Record<string, string[]>);
-        persona.motivations = motivationValues.flat();
-      }
-    }
-    
-    // Extract nested objects - Pain Points
-    if (data['Frustrations / Pain Points']) {
-      if (Array.isArray(data['Frustrations / Pain Points'])) {
-        persona.painPoints = data['Frustrations / Pain Points'];
-      } else if (typeof data['Frustrations / Pain Points'] === 'object') {
-        const painValues = Object.values(data['Frustrations / Pain Points'] as Record<string, string[]>);
-        persona.painPoints = painValues.flat();
-      }
-    }
-    
+    // Original logic for emotionalTriggers and regionalNuances for CountryPersona might still be needed
+    // if processArrayField is too generic for them or their structure is more complex.
+
     // Extract emotional triggers (Simplified from original for brevity, ensure it matches full logic)
     if (data['Emotional Triggers']) {
       if (Array.isArray(data['Emotional Triggers'])) {
-        persona.emotionalTriggers.raw = data['Emotional Triggers'];
+        // If it's an array of {Trigger, Emotional_Response, Messaging_Implication} objects
+        // The type on CountryPersona is {positive: string[], negative: string[], raw?: any[]}
+        // This current 'raw' assignment does not match the intent for positive/negative strings.
+        // This needs careful review if we want to populate positive/negative based on complex objects.
+        persona.emotionalTriggers.raw = data['Emotional Triggers']; 
       } else if (typeof data['Emotional Triggers'] === 'object' && (data['Emotional Triggers'] as any).Positive) {
         persona.emotionalTriggers.positive = (data['Emotional Triggers'] as any).Positive || [];
         persona.emotionalTriggers.negative = (data['Emotional Triggers'] as any).Negative || [];
+      } else if (typeof data['Emotional Triggers'] === 'object') {
+        // If it's an object like { Performance_Pressure: "Anxiety...", ... }
+        // Convert to string array for 'raw' or decide how to map to positive/negative
+        const triggersAsStrings = Object.entries(data['Emotional Triggers']).map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`);
+        if (!persona.emotionalTriggers.raw) persona.emotionalTriggers.raw = [];
+        persona.emotionalTriggers.raw.push(...triggersAsStrings);
       }
     }
     
     // Extract regional nuances
-    if (data['Regional Nuances']) {
-      if (Array.isArray(data['Regional Nuances'])) {
-        persona.regionalNuances = data['Regional Nuances'];
-      } else if (typeof data['Regional Nuances'] === 'object') {
-        persona.regionalNuances = Object.entries(data['Regional Nuances']).map(
+    // The CountryPersona type has regionalNuances as string[]. Original logic was more specific.
+    const regionalNuancesData = data['Regional Nuances'] || data[`${region.toUpperCase()} Differentiation`];
+    if (regionalNuancesData) {
+      if (Array.isArray(regionalNuancesData)) {
+        persona.regionalNuances = regionalNuancesData.filter(item => typeof item === 'string');
+        // If items can be objects, need to map them like in processArrayField
+      } else if (typeof regionalNuancesData === 'object') {
+        persona.regionalNuances = Object.entries(regionalNuancesData).map(
           ([key, value]) => `${key}: ${value}`
         );
       }
-    } else if (data[`${region.toUpperCase()} Differentiation`]) {
-      const diffField = `${region.toUpperCase()} Differentiation`;
-      if (Array.isArray(data[diffField])) persona.regionalNuances = data[diffField] as string[];
-      // simplified
     }
-    
-    // Extract behaviors
-    if (data['Behaviors']) {
-      if (Array.isArray(data['Behaviors'])) {
-        persona.behaviors = data['Behaviors'];
-      } else if (typeof data['Behaviors'] === 'object') {
-        persona.behaviors = (Object.values(data['Behaviors'] as Record<string, string[]>)).flat();
-      }
-    }
-    
-    // Extract key responsibilities
-    if (data['Key Responsibilities']) {
-      if (Array.isArray(data['Key Responsibilities'])) {
-        persona.keyResponsibilities = data['Key Responsibilities'];
-      } else if (typeof data['Key Responsibilities'] === 'object') {
-        persona.keyResponsibilities = (Object.values(data['Key Responsibilities'] as Record<string, string[]>)).flat();
-      }
-    }
-    
-    // Extract collaboration insights
-    if (data['Collaboration Insights']) {
-      if (Array.isArray(data['Collaboration Insights'])) {
-        persona.collaborationInsights = data['Collaboration Insights'];
-      } else if (typeof data['Collaboration Insights'] === 'object') {
-        persona.collaborationInsights = (Object.values(data['Collaboration Insights'] as Record<string, string[]>)).flat();
-      }
-    }
+    // `comparison` field on CountryPersona is `any[]` - it will take whatever `data['Comparison to Generic CEO']` is.
     return persona;
   }
 }
 
-// Get a specific country persona
-function getCountryPersona(region: Region, department: Department): CountryPersona | null {
-  // Skip global region for now
-  if (region === 'global') {
-    console.log(`Skipping global region for now`);
-    return null;
-  }
-  
+// New function to get a specific persona by ID (region and department)
+function getPersonaById(region: Region, department: Department): Persona | null {
   const dataDir = path.join(process.cwd(), 'data');
-  const filePath = path.join(dataDir, region, department, `${department}.json`);
-  
-  // Check if file exists
+  const filePath = path.join(dataDir, region, department, `${department}.json`); // Standard path
+
   if (!fs.existsSync(filePath)) {
+    // REMOVED: Special handling for ceo_board and ceo_persona_card.json
+    // Now strictly expects {department}.json
     console.log(`File does not exist: ${filePath}`);
     return null;
   }
-  
-  // Read the data
-  const data = readJsonFile(filePath);
-  if (!data) return null;
-  
-  // Normalize the country-specific data
+
+  const jsonData = readJsonFile(filePath);
+  if (!jsonData) return null;
+
   try {
-    return normalizePersonaData(data, region, department) as CountryPersona; // Cast as CountryPersona if function returns Persona
+    return normalizePersonaData(jsonData, region, department);
   } catch (error) {
     console.error(`Error normalizing persona data from ${filePath}:`, error);
     return null;
@@ -305,12 +283,7 @@ export async function GET(request: NextRequest) {
   try {
     // If both region and department are specified, return a specific persona
     if (region && department) {
-      let persona = null;
-      
-      // Skip global region
-      if (region !== 'global') {
-        persona = getCountryPersona(region, department);
-      }
+      const persona = getPersonaById(region, department);
       
       if (!persona) {
         return NextResponse.json({ error: 'Persona not found' }, { status: 404 });

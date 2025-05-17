@@ -19,17 +19,22 @@ import {
 } from "lucide-react";
 import { generatePersonaDocument } from "@/lib/docGenerator";
 
-// Hardcoded for initial testing - would come from API in production
-// Remove global from available regions for now
-const availableRegions: Region[] = ["uk", "uae", "aus"];
-const availableDepartments: Department[] = [
-  "ceo",
-  "chro",
-  "sales",
-  "talent",
-  "rewards",
-  "leadership_dev",
-];
+// Define interface for API config items
+interface ConfigItem {
+  id: string;
+  name: string;
+}
+
+// Hardcoded for initial testing - REMOVE/COMMENT OUT
+// const availableRegions: Region[] = ["uk", "uae", "aus"];
+// const availableDepartments: Department[] = [
+//   "ceo",
+//   "chro",
+//   "sales",
+//   "talent",
+//   "rewards",
+//   "leadership_dev",
+// ];
 
 // Add a helper function to determine if region code should be hidden
 const shouldHideRegionCode = (title: string, region: string): boolean => {
@@ -93,19 +98,106 @@ const PersonaDetailsContent = ({ persona }: { persona: Persona }) => {
             </h3>
             <p className="section-content">{persona.goalStatement}</p>
           </div>
-          {persona.keyResponsibilities && (
+          {persona.keyResponsibilities &&
+            persona.keyResponsibilities.length > 0 && (
+              <div className="mb-8">
+                <h3 className="section-title mb-3">
+                  <Activity className="section-icon" />
+                  Key Responsibilities
+                </h3>
+                <ul className="list-disc pl-8 section-content space-y-2">
+                  {persona.keyResponsibilities.map((resp, index) => (
+                    <li key={index}>{resp}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          {persona.knowledgeOrExpertise &&
+            persona.knowledgeOrExpertise.length > 0 && (
+              <div className="mb-8">
+                <h3 className="section-title mb-3">
+                  <Users className="section-icon" />{" "}
+                  {/* Placeholder icon, choose appropriate */}
+                  Knowledge/Expertise
+                </h3>
+                <ul className="list-disc pl-8 section-content space-y-2">
+                  {persona.knowledgeOrExpertise.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          {persona.typicalChallenges &&
+            persona.typicalChallenges.length > 0 && (
+              <div className="mb-8">
+                <h3 className="section-title mb-3">
+                  <AlertTriangle className="section-icon" />{" "}
+                  {/* Placeholder icon */}
+                  Typical Challenges
+                </h3>
+                <ul className="list-disc pl-8 section-content space-y-2">
+                  {persona.typicalChallenges.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          {persona.currentProjects && persona.currentProjects.length > 0 && (
             <div className="mb-8">
               <h3 className="section-title mb-3">
-                <Activity className="section-icon" />
-                Key Responsibilities
+                <Activity className="section-icon" /> {/* Placeholder icon */}
+                Current Projects
               </h3>
               <ul className="list-disc pl-8 section-content space-y-2">
-                {persona.keyResponsibilities.map((resp, index) => (
-                  <li key={index}>{resp}</li>
+                {persona.currentProjects.map((item, index) => (
+                  <li key={index}>{item}</li>
                 ))}
               </ul>
             </div>
           )}
+          {/* Render painPoints for GlobalPersona if they exist */}
+          {persona.painPoints && persona.painPoints.length > 0 && (
+            <div className="mb-8">
+              <h3 className="section-title mb-3">
+                <AlertTriangle className="section-icon" />
+                Pain Points (Global)
+              </h3>
+              <ul className="list-disc pl-8 section-content space-y-2">
+                {persona.painPoints.map((point, index) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* Render behaviors for GlobalPersona if they exist */}
+          {persona.behaviors && persona.behaviors.length > 0 && (
+            <div className="mb-8">
+              <h3 className="section-title mb-3">
+                <Activity className="section-icon" />
+                Behaviors (Global)
+              </h3>
+              <ul className="list-disc pl-8 section-content space-y-2">
+                {persona.behaviors.map((behavior, index) => (
+                  <li key={index}>{behavior}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* Render collaborationInsights for GlobalPersona if they exist */}
+          {persona.collaborationInsights &&
+            persona.collaborationInsights.length > 0 && (
+              <div className="mb-8">
+                <h3 className="section-title mb-3">
+                  <Users className="section-icon" />
+                  Collaboration Insights (Global)
+                </h3>
+                <ul className="list-disc pl-8 section-content space-y-2">
+                  {persona.collaborationInsights.map((insight, index) => (
+                    <li key={index}>{insight}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
         </>
       ) : (
         <>
@@ -297,6 +389,14 @@ export function PersonaTest() {
     "single"
   );
 
+  // Add state for dynamic config data
+  const [dynamicRegions, setDynamicRegions] = useState<ConfigItem[]>([]);
+  const [dynamicDepartments, setDynamicDepartments] = useState<ConfigItem[]>(
+    []
+  );
+  const [isLoadingConfig, setIsLoadingConfig] = useState(true);
+  const [configError, setConfigError] = useState<string | null>(null);
+
   // Add state to hold role personas from all regions
   const [rolePersonas, setRolePersonas] = useState<Persona[]>([]);
   const [rolePersonasLoading, setRolePersonasLoading] = useState(false);
@@ -395,6 +495,14 @@ export function PersonaTest() {
     }
   };
 
+  // Helper: generate consistent title in Role view cards
+  const getRoleCardTitle = (p: Persona): string => {
+    if (viewType === "role" && p.region === "global") {
+      return `Global ${p.department.toUpperCase()}`;
+    }
+    return p.title;
+  };
+
   // Use our custom hooks
   const {
     persona,
@@ -433,12 +541,15 @@ export function PersonaTest() {
       setRolePersonasError(null);
 
       try {
-        // Get role personas from each region, regardless of selected region
-        const regions: Region[] = ["uk", "uae", "aus"];
+        // Get role personas from each region, INCLUDING global
+        const regionsToFetch = dynamicRegions
+          // .filter((r) => r.id !== "global") // REMOVED: filter to exclude global
+          .map((r) => r.id as Region);
+
         const personas: Persona[] = [];
 
         // Fetch persona for each region
-        const fetchPromises = regions.map((region) =>
+        const fetchPromises = regionsToFetch.map((region) =>
           fetch(
             `/api/personas?region=${region}&department=${selectedDepartment}`
           )
@@ -470,7 +581,7 @@ export function PersonaTest() {
     };
 
     fetchRolePersonas();
-  }, [viewType, selectedDepartment]);
+  }, [viewType, selectedDepartment, dynamicRegions]);
 
   // Update effect for fetching region personas to ensure it's not affected by role selection
   useEffect(() => {
@@ -503,6 +614,64 @@ export function PersonaTest() {
   const handlePersonaCardClick = (persona: Persona) => {
     setSelectedDetailPersona(persona);
   };
+
+  // Fetch config data
+  useEffect(() => {
+    const fetchConfig = async () => {
+      setIsLoadingConfig(true);
+      setConfigError(null);
+      try {
+        const response = await fetch("/api/config");
+        if (!response.ok) {
+          throw new Error(`Failed to fetch config: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        setDynamicRegions(configData.regions || []);
+        setDynamicDepartments(configData.departments || []);
+
+        // Initialize selectedRegion and selectedDepartment if lists are not empty
+        // and current selections are not part of the dynamic lists or if they are null/undefined.
+        // This part handles setting initial valid selections after config loads.
+        if (configData.regions && configData.regions.length > 0) {
+          const currentSelectedRegionIsValid = configData.regions.some(
+            (r: ConfigItem) => r.id === selectedRegion
+          );
+          if (!currentSelectedRegionIsValid) {
+            // Default to global if available, else first in list, or keep current if valid
+            const globalRegion = configData.regions.find(
+              (r: ConfigItem) => r.id === "global"
+            );
+            setSelectedRegion(
+              (globalRegion
+                ? globalRegion.id
+                : configData.regions[0].id) as Region
+            );
+          }
+        } else {
+          setSelectedRegion("uk"); // Fallback or clear
+        }
+
+        if (configData.departments && configData.departments.length > 0) {
+          const currentSelectedDeptIsValid = configData.departments.some(
+            (d: ConfigItem) => d.id === selectedDepartment
+          );
+          if (!currentSelectedDeptIsValid) {
+            setSelectedDepartment(configData.departments[0].id as Department);
+          }
+        } else {
+          setSelectedDepartment("ceo"); // Fallback or clear
+        }
+      } catch (error) {
+        console.error("Error fetching config:", error);
+        setConfigError(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
+      } finally {
+        setIsLoadingConfig(false);
+      }
+    };
+    fetchConfig();
+  }, []); // Empty dependency array to run once on mount
 
   return (
     <div className="min-h-screen bg-[#f8f9fa]">
@@ -566,12 +735,24 @@ export function PersonaTest() {
                     onChange={(e) =>
                       setSelectedDepartment(e.target.value as Department)
                     }
+                    disabled={
+                      isLoadingConfig || dynamicDepartments.length === 0
+                    }
                   >
-                    {availableDepartments.map((dept) => (
-                      <option key={dept} value={dept}>
-                        {dept.replace("_", " ").toUpperCase()}
-                      </option>
-                    ))}
+                    {isLoadingConfig ? (
+                      <option>Loading...</option>
+                    ) : dynamicDepartments.length === 0 ? (
+                      <option>N/A</option>
+                    ) : (
+                      <>
+                        <option value="">Select Role</option>
+                        {dynamicDepartments.map((dept) => (
+                          <option key={dept.id} value={dept.id}>
+                            {dept.name}
+                          </option>
+                        ))}
+                      </>
+                    )}
                   </select>
                   <ChevronDown className="selector-icon" />
                 </>
@@ -604,12 +785,22 @@ export function PersonaTest() {
                     onChange={(e) =>
                       setSelectedRegion(e.target.value as Region)
                     }
+                    disabled={isLoadingConfig || dynamicRegions.length === 0}
                   >
-                    {availableRegions.map((region) => (
-                      <option key={region} value={region}>
-                        {region.toUpperCase()}
-                      </option>
-                    ))}
+                    {isLoadingConfig ? (
+                      <option>Loading...</option>
+                    ) : dynamicRegions.length === 0 ? (
+                      <option>N/A</option>
+                    ) : (
+                      <>
+                        <option value="">Select Region</option>
+                        {dynamicRegions.map((region) => (
+                          <option key={region.id} value={region.id}>
+                            {region.name}
+                          </option>
+                        ))}
+                      </>
+                    )}
                   </select>
                   <ChevronDown className="selector-icon" />
                 </>
@@ -668,7 +859,7 @@ export function PersonaTest() {
                 <div style={{ width: "12px" }}></div>
                 <span>Role Personas</span>
               </h2>
-              <div className="persona-nav-row">
+              <div className="persona-role-grid">
                 {rolePersonas.map((p) => (
                   <div
                     key={p.id}
@@ -689,7 +880,9 @@ export function PersonaTest() {
                       }}
                     ></div>
                     <div className="persona-nav-content">
-                      <h3 className="persona-nav-title">{p.title}</h3>
+                      <h3 className="persona-nav-title">
+                        {getRoleCardTitle(p)}
+                      </h3>
                       <button className="persona-nav-button">
                         {selectedDetailPersona &&
                         selectedDetailPersona.id === p.id

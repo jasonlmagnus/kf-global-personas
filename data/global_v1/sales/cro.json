@@ -60,25 +60,27 @@
       "Interacts with product and operations teams to align revenue strategies with product development and supply chain considerations."
   ],
   "Tone and Formality": "Strategic, globally aware, and data-driven, with an emphasis on high-level insights that align with diverse market needs.",
-  "Needs": [
-      "A robust global CRM and data system to maintain consistent revenue insights across regions.",
-      "Access to reliable market intelligence for proactive adjustments to the global strategy.",
-      "A framework for measuring and incentivizing regional performance within a centralized strategy."
-  ],
-  "Motivations": [
-      "Driving unified, scalable revenue growth globally while enhancing market share and brand reputation.",
-      "Empowering regional leaders and aligning cross-functional teams to create a cohesive revenue engine.",
-      "Innovating revenue strategies that address diverse customer needs across geographies."
-  ],
-  "Pain Points": [
-      "Managing complex revenue data and inconsistent metrics across regions.",
-      "Ensuring regional teams remain aligned with the global strategy amid local market pressures.",
-      "Addressing regulatory challenges, economic fluctuations, and customer behavior differences by region."
-  ],
-  "Behavioral Insights": [
-      "Regularly assesses global revenue performance, examining both aggregate and regional data.",
-      "Engages in weekly or bi-weekly calls with regional leaders to discuss performance, challenges, and opportunities.",
-      "Uses CRM and analytics platforms to maintain visibility into the health of the revenue pipeline globally."
-  ],
-  "User Quote": "As a global CRO, my role is about more than just hitting targets; it’s about crafting a sustainable revenue strategy that respects local markets while delivering on our global vision. Each region is unique, but together they drive our success."
-}
+  "Needs, Motivations, Pain Points, and Behaviors": {
+      "Needs": [
+          "A robust global CRM and data system to maintain consistent revenue insights across regions.",
+          "Access to reliable market intelligence for proactive adjustments to the global strategy.",
+          "A framework for measuring and incentivizing regional performance within a centralized strategy."
+      ],
+      "Motivations": [
+          "Driving unified, scalable revenue growth globally while enhancing market share and brand reputation.",
+          "Empowering regional leaders and aligning cross-functional teams to create a cohesive revenue engine.",
+          "Innovating revenue strategies that address diverse customer needs across geographies."
+      ],
+      "Pain Points": [
+          "Managing complex revenue data and inconsistent metrics across regions.",
+          "Ensuring regional teams remain aligned with the global strategy amid local market pressures.",
+          "Addressing regulatory challenges, economic fluctuations, and customer behavior differences by region."
+      ],
+      "Behaviors": [
+          "Regularly assesses global revenue performance, examining both aggregate and regional data.",
+          "Engages in weekly or bi-weekly calls with regional leaders to discuss performance, challenges, and opportunities.",
+          "Uses CRM and analytics platforms to maintain visibility into the health of the revenue pipeline globally."
+      ]
+  },
+  "User Quote": "As a global CRO, my role is about more than just hitting targets; it's about crafting a sustainable revenue strategy that respects local markets while delivering on our global vision. Each region is unique, but together they drive our success."
+} 

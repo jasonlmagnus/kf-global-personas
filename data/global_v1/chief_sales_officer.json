@@ -52,25 +52,27 @@
       "Communicates with legal and compliance teams to navigate regional regulations."
   ],
   "Tone and Formality": "Results-driven, globally informed, and collaborative, with a focus on high-level strategy and regional adaptability.",
-  "Needs": [
-      "A centralized CRM and data analytics system to provide a comprehensive view of global sales performance.",
-      "Reliable market intelligence for each region to identify growth opportunities and anticipate risks.",
-      "Standardized processes and training to ensure consistency in customer interactions across regions."
-  ],
-  "Motivations": [
-      "Achieving global sales targets and building a strong, unified sales operation across regions.",
-      "Empowering regional sales leaders to succeed by providing the right tools, support, and resources.",
-      "Creating a customer-first sales approach that adapts to regional needs while driving consistent results."
-  ],
-  "Pain Points": [
-      "Balancing global sales targets with the nuances of regional market dynamics and customer preferences.",
-      "Addressing discrepancies in sales performance data due to regional differences in CRM adoption and reporting standards.",
-      "Ensuring legal and compliance requirements are met without disrupting sales processes."
-  ],
-  "Behavioral Insights": [
-      "Regularly reviews global and regional sales data to ensure alignment with targets.",
-      "Hosts bi-weekly or monthly strategy meetings with regional sales directors to discuss performance, goals, and challenges.",
-      "Uses CRM and analytics tools to maintain a real-time understanding of sales pipeline health across regions."
-  ],
+  "Needs, Motivations, Pain Points, and Behaviors": {
+      "Needs": [
+          "A centralized CRM and data analytics system to provide a comprehensive view of global sales performance.",
+          "Reliable market intelligence for each region to identify growth opportunities and anticipate risks.",
+          "Standardized processes and training to ensure consistency in customer interactions across regions."
+      ],
+      "Motivations": [
+          "Achieving global sales targets and building a strong, unified sales operation across regions.",
+          "Empowering regional sales leaders to succeed by providing the right tools, support, and resources.",
+          "Creating a customer-first sales approach that adapts to regional needs while driving consistent results."
+      ],
+      "Pain Points": [
+          "Balancing global sales targets with the nuances of regional market dynamics and customer preferences.",
+          "Addressing discrepancies in sales performance data due to regional differences in CRM adoption and reporting standards.",
+          "Ensuring legal and compliance requirements are met without disrupting sales processes."
+      ],
+      "Behaviors": [
+          "Regularly reviews global and regional sales data to ensure alignment with targets.",
+          "Hosts bi-weekly or monthly strategy meetings with regional sales directors to discuss performance, goals, and challenges.",
+          "Uses CRM and analytics tools to maintain a real-time understanding of sales pipeline health across regions."
+      ]
+  },
   "User Quote": "As CSO, I aim to build a high-performing global sales force that delivers exceptional results by respecting local markets and meeting the unique needs of each region. When sales teams are empowered, revenue growth follows."
-}
+} 

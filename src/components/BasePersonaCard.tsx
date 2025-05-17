@@ -1,7 +1,8 @@
 import React from "react";
 import { User, Quote } from "lucide-react";
+// import { PersonaSnippet } from "@/types/personas"; // Removed as PersonaSnippet is not exported
 import { SectionCard } from "./SectionCard";
-import { BulletList } from "./BulletList";
+import { BulletList } from "./ui/BulletList";
 
 interface BasePersonaCardProps {
   title: string;

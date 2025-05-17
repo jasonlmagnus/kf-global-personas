@@ -109,6 +109,16 @@ export function usePersona(region: Region, department: Department) {
     let isMounted = true;
     
     async function loadPersona() {
+      // If region is global, don't attempt to load, set error.
+      if (region === 'global') {
+        if (isMounted) {
+          setError(`Fetching individual global personas (${department}) is not currently supported.`);
+          setPersona(null);
+          setLoading(false);
+        }
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);

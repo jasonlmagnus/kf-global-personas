@@ -23,6 +23,9 @@ export interface GlobalPersona extends BasePersona {
   knowledgeOrExpertise?: string[];
   typicalChallenges?: string[];
   currentProjects?: string[];
+  painPoints?: string[];
+  behaviors?: string[];
+  collaborationInsights?: string[];
 }
 
 // Country-specific persona fields

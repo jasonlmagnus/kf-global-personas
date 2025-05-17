@@ -98,6 +98,17 @@ const PersonaDetailsContent = ({ persona }: { persona: Persona }) => {
             </h3>
             <p className="section-content">{persona.goalStatement}</p>
           </div>
+
+          {/* Core Belief section */}
+          {persona.coreBelief && (
+            <div className="mb-8">
+              <h3 className="section-title mb-3">
+                <Target className="section-icon" />
+                Core Belief
+              </h3>
+              <p className="section-content">{persona.coreBelief}</p>
+            </div>
+          )}
           {persona.keyResponsibilities &&
             persona.keyResponsibilities.length > 0 && (
               <div className="mb-8">
@@ -195,6 +206,32 @@ const PersonaDetailsContent = ({ persona }: { persona: Persona }) => {
                   {persona.collaborationInsights.map((insight, index) => (
                     <li key={index}>{insight}</li>
                   ))}
+                </ul>
+              </div>
+            )}
+          {/* Emotional Triggers section */}
+          {persona.emotionalTriggers &&
+            persona.emotionalTriggers.raw &&
+            persona.emotionalTriggers.raw.length > 0 && (
+              <div className="mb-8">
+                <h3 className="section-title mb-3">
+                  <AlertTriangle className="section-icon" />
+                  Emotional Triggers
+                </h3>
+                <ul className="list-disc pl-8 section-content space-y-2">
+                  {persona.emotionalTriggers.raw.map(
+                    (trigger: any, index: number) => (
+                      <li key={index}>
+                        <strong>{trigger.Trigger || "Trigger"}</strong>:{" "}
+                        {trigger.Emotional_Response || trigger.Response || ""}
+                        {trigger.Messaging_Implication && (
+                          <div className="text-sm ml-4 mt-1 text-gray-600">
+                            <em>Messaging: {trigger.Messaging_Implication}</em>
+                          </div>
+                        )}
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             )}

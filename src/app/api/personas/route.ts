@@ -7,11 +7,20 @@ import { Persona, GlobalPersona, CountryPersona, Region, Department } from '@/ty
 interface PersonaJsonData {
   'Profession/Role'?: string;
   'User Goal Statement'?: string;
+  'User_Goal_Statement'?: string;
   'User Quote'?: string;
   'Needs'?: string[] | Record<string, string[]>;
   'Motivations'?: string[] | Record<string, string[]>;
   'Frustrations / Pain Points'?: string[] | Record<string, string[]>;
+  'Frustrations_Pain_Points'?: string[] | Record<string, string[]>;
+  'Frustrations'?: string[] | Record<string, string[]>;
+  'Core_Belief'?: string;
+  'Core Belief'?: string;
   'Emotional Triggers'?: {
+    Positive?: string[];
+    Negative?: string[];
+  } | Array<Record<string, string>>;
+  'Emotional_Triggers'?: {
     Positive?: string[];
     Negative?: string[];
   } | Array<Record<string, string>>;
@@ -19,7 +28,9 @@ interface PersonaJsonData {
   'Cultural Context'?: string;
   'Behaviors'?: string[] | Record<string, string[]>;
   'Key Responsibilities'?: string[] | Record<string, string[]>;
+  'Key_Responsibilities'?: string[] | Record<string, string[]>;
   'Collaboration Insights'?: string[] | Record<string, string[]>;
+  'Collaboration_Insights'?: string[] | Record<string, string[]>;
   'Presentation Guidance'?: Record<string, unknown>;
   'Comparison to Generic CEO'?: string[];
   [key: string]: unknown; // Allow other properties
@@ -80,21 +91,51 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
       region,
       isGlobal: true,
       goalStatement: typeof data['Goal Statement'] === 'string' ? data['Goal Statement'] :
-                     (typeof data['User Goal Statement'] === 'string' ? data['User Goal Statement'] : ''),
+                     (typeof data['User Goal Statement'] === 'string' ? data['User Goal Statement'] :
+                     (typeof data['User_Goal_Statement'] === 'string' ? data['User_Goal_Statement'] : '')),
       quote: typeof data['Quote'] === 'string' ? data['Quote'] :
              (typeof data['User Quote'] === 'string' ? data['User Quote'] : undefined),
+      
+      // Extract Core Belief
+      coreBelief: typeof data['Core_Belief'] === 'string' ? data['Core_Belief'] :
+                 (typeof data['Core Belief'] === 'string' ? data['Core Belief'] : undefined),
       
       // Use processArrayField for all list-based properties
       needs: processArrayField(data['Needs']),
       motivations: processArrayField(data['Motivations']),
-      keyResponsibilities: processArrayField(data['Key Responsibilities']),
+      keyResponsibilities: processArrayField(data['Key Responsibilities'] || data['Key_Responsibilities']),
       knowledgeOrExpertise: processArrayField(data['Knowledge_Areas']),
       typicalChallenges: processArrayField(data['Typical_Challenges']),
       currentProjects: processArrayField(data['Current_Projects']),
       painPoints: processArrayField(data['Frustrations_Pain_Points'] || data['Frustrations / Pain Points'] || data['Frustrations']),
       behaviors: processArrayField(data['Behaviors']),
-      collaborationInsights: processArrayField(data['Collaboration Insights']),
+      collaborationInsights: processArrayField(data['Collaboration Insights'] || data['Collaboration_Insights']),
+      
+      // Initialize emotionalTriggers
+      emotionalTriggers: {
+        positive: [],
+        negative: []
+      }
     };
+
+    // Process emotional triggers for global persona
+    if (data['Emotional_Triggers'] || data['Emotional Triggers']) {
+      const triggerData = data['Emotional_Triggers'] || data['Emotional Triggers'];
+      
+      if (Array.isArray(triggerData)) {
+        // For arrays of {Trigger, Emotional_Response, Messaging_Implication} objects
+        persona.emotionalTriggers.raw = triggerData;
+      } else if (typeof triggerData === 'object' && triggerData !== null) {
+        // For objects with Positive/Negative keys
+        if ((triggerData as any).Positive) {
+          persona.emotionalTriggers.positive = (triggerData as any).Positive || [];
+        }
+        if ((triggerData as any).Negative) {
+          persona.emotionalTriggers.negative = (triggerData as any).Negative || [];
+        }
+      }
+    }
+    
     return persona;
   } else {
     // Handle CountryPersona (existing logic, but ensure return type is CountryPersona)
@@ -108,7 +149,8 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
       department,
       region,
       isGlobal: false,
-      userGoalStatement: data['User Goal Statement'] || '',
+      userGoalStatement: typeof data['User Goal Statement'] === 'string' ? data['User Goal Statement'] :
+                         (typeof data['User_Goal_Statement'] === 'string' ? data['User_Goal_Statement'] : ''),
       quote: data['User Quote'] || undefined,
       needs: processArrayField(data['Needs']),
       motivations: processArrayField(data['Motivations']),
@@ -120,8 +162,8 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
       regionalNuances: [], // This might need processArrayField if source can be objects
       culturalContext: data['Cultural Context'] || '',
       behaviors: processArrayField(data['Behaviors']),
-      keyResponsibilities: processArrayField(data['Key Responsibilities']),
-      collaborationInsights: processArrayField(data['Collaboration Insights']),
+      keyResponsibilities: processArrayField(data['Key Responsibilities'] || data['Key_Responsibilities']),
+      collaborationInsights: processArrayField(data['Collaboration Insights'] || data['Collaboration_Insights']),
       presentation: data['Presentation Guidance'] || {},
       comparison: data['Comparison to Generic CEO'] || [] // This is likely an array of complex objects, not strings
     };

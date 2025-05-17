@@ -17,6 +17,7 @@ export interface GlobalPersona extends BasePersona {
   isGlobal: true;
   goalStatement: string;
   quote?: string;
+  coreBelief?: string;
   needs: string[];
   motivations: string[];
   keyResponsibilities: string[];
@@ -26,6 +27,11 @@ export interface GlobalPersona extends BasePersona {
   painPoints?: string[];
   behaviors?: string[];
   collaborationInsights?: string[];
+  emotionalTriggers?: {
+    positive: string[];
+    negative: string[];
+    raw?: any[];
+  };
 }
 
 // Country-specific persona fields

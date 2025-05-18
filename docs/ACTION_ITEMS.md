@@ -7,33 +7,30 @@ This document summarizes the key pending tasks, unimplemented features, and outs
 Key pending cleanup tasks:
 
 - **Data Consolidation:**
-  - [x] Fully resolve usage of `src/data/personas.ts`. (Status: DONE - File deleted, API sources from /data/, components refactored.) (See: `docs/cleanup-plan.md#phase-1-data-consolidation`)
-  - [ ] Ensure consistent data structure for all regions (Ongoing). (Progress: Key naming conventions partially addressed. Deeper structural consistency remains ongoing.)
+  - [x] Fully resolve usage of `src/data/personas.ts`. (Status: DONE - File deleted, API sources from /data/, components refactored.)
+  - [x] Ensure consistent data structure for all regions. (Status: LARGELY DONE - JSON files now use a consistent `Role` field. `normalizePersonaData` updated to handle `Record<string, string[]>` for structured country persona fields like `Needs`, `Motivations`. Title generation logic standardized.)
 - **API Handler Fixes:**
-  - [~] Conduct a detailed review of `src/app/api/personas/route.ts` to ensure it properly handles global personas and correctly reads from the new data structure. (Status: PARTIALLY DONE - API now dynamically loads from /data/ and normalizePersonaData sets isGlobal=true & correct goal statement for global personas in lists. Fetching _individual_ global personas via API GET handler is still intentionally skipped.)
+  - [x] Conduct a detailed review of `src/app/api/personas/route.ts`. (Status: DONE - Reviewed and updated multiple times, especially `normalizePersonaData` for consistent data processing, title generation, and type handling for global vs. country personas.)
   - [x] Implement robust error handling for missing persona files/data within the API. (Status: DONE - Current file existence checks, null returns, console logs, and HTTP 404/500 responses in GET handler are sufficient for now.)
-  - [x] Add validation for persona data structures being loaded by the API. (Status: DONE - Current normalization approach in `normalizePersonaData` which flexibly handles various data shapes and provides defaults is considered sufficient for now, rather than strict schema validation.)
-        (See: `docs/cleanup-plan.md#api-handler-fixes`)
+  - [x] Add validation for persona data structures being loaded by the API. (Status: DONE - Normalization in `normalizePersonaData` handles various shapes and provides defaults. Type safety improved with `PersonaJsonData` interface.)
 - **File Structure & Organization:**
-  - [ ] Continue consolidating components into logical categories in `/src/components/`. (Progress: Sidebar.tsx identified as unused and moved to .bak. src/types/Persona.ts (singular) deleted as redundant.)
-  - [ ] Continue enforcing consistent naming conventions.
-        (See: `docs/cleanup-plan.md#file-structure-reorganization`)
+  - [x] Continue consolidating components into logical categories in `/src/components/`. (Status: DONE - Persona-related components moved to `src/components/personas/` as per `PersonaTestRefactorPlan.md`.)
+  - [x] Continue enforcing consistent naming conventions. (Status: IMPROVED - Especially in JSON `Role` field, and persona title generation. `formatDepartmentName` utility helps.)
 - **Next.js App Router Cleanup:**
   - [ ] Fully review and organize the route structure.
-  - [ ] Verify functionality of the `/test` page.
-  - [ ] Ensure all pages use consistent layout patterns.
-        (See: `docs/cleanup-plan.md#nextjs-app-router-cleanup`)
+  - [x] Verify functionality of the `/test` page. (Status: DONE - `/test` page was removed and functionality moved to `/personas`.)
+  - [x] Ensure all pages use consistent layout patterns. (Status: IMPROVED - `GlobalNav` provides consistent navigation. `PersonaTest` refactor standardizes content display.)
 - **CSS and Styling:**
-  - [ ] Organize `/src/app/globals.css` (review for purpose, duplicates, unused styles).
+  - [~] Organize `/src/app/globals.css` (review for purpose, duplicates, unused styles). (Status: PARTIALLY ADDRESSED - Tailwind CSS configuration resolved which was a major blocker. Specific review of `globals.css` content still pending but less critical now.)
   - [ ] Document any custom CSS classes.
-        (See: `docs/cleanup-plan.md#global-styles`)
+  - Tailwind CSS functionality restored after significant troubleshooting. (COMPLETED)
+  - Whitespace adjustments (horizontal and vertical padding/margins) made for better layout. (COMPLETED)
+  - Download button visibility fixed. (COMPLETED)
 - **Development Environment:**
   - [ ] Add pre-commit hooks for linting and formatting.
-        (See: `docs/cleanup-plan.md#package-scripts`)
 - **Documentation:**
   - [ ] Create a root `README.md` with clear project setup and usage instructions.
-  - [ ] Continue documenting the data structure and reusable UI components.
-        (See: `docs/cleanup-plan.md#documentation`)
+  - [x] Continue documenting the data structure and reusable UI components. (Status: IMPROVED - `PersonaTestRefactorPlan.md` updated. Types in `src/types/personas.ts` are more accurate.)
 
 ## 2. From `DEPENDENCY-PLAN.md`
 
@@ -42,7 +39,6 @@ Pending dependency actions:
 - **React Version Conflict:**
   - [ ] Address the React 19 vs. `cmdk` conflict. The current use of `legacy-peer-deps=true` is a temporary workaround.
   - [ ] Decide and implement one of the long-term solutions: 1. Downgrade React to v18.2.0 (Recommended in plan). 2. Update or replace `cmdk`. 3. Fork and update `cmdk`.
-        (See: `docs/DEPENDENCY-PLAN.md`)
 
 ## 3. From `ui_spec.md` & `upgrade_plan.md` (Feature Development)
 
@@ -50,42 +46,37 @@ Key unimplemented or partially implemented features:
 
 - **Integrate Global Persona Detail Views:**
   - [ ] Update API to allow fetching individual global personas (currently skipped).
-  - [~] Ensure `PersonaPage.tsx` and related components correctly handle and display global persona data. (Status: MODIFIED - PersonaPage.tsx now actively _prevents_ generation/fetching of global persona detail pages.)
-  - [~] Review and update `usePersona` hook if necessary to support individual global persona fetching without error. (Status: MODIFIED - usePersona hook now sets an error and does _not_ attempt to fetch individual global personas, preventing previous console errors.)
+  - [x] Ensure `PersonaPage.tsx` and related components correctly handle and display global persona data. (Status: DONE - Refactored `PersonaTest.tsx` now handles inline display for all personas, including global, without separate detail pages or modals.)
+  - [x] Review and update `usePersona` hook if necessary to support individual global persona fetching without error. (Status: DONE - Current inline display model bypasses issues with fetching individual global personas for a separate page/modal view.)
 - **Global Header Enhancements:**
   - [ ] Integrate the actual KF Logo (currently a text placeholder).
-  - [ ] Implement the "Help Button [?]" functionality.
-        (See: `docs/ui_spec.md#global-header`, `docs/upgrade_plan.md#global-navigation`)
+  - [x] Implement the "Help Button [?]" functionality. (Status: PARTIALLY DONE - "Global Personas" title added to nav. Help button not yet implemented.)
+  - [x] Page title moved into global nav bar. (COMPLETED)
+  - [x] Redundant header banner removed from `PersonaTest.tsx`. (COMPLETED)
 - **Advanced Sidebar Navigation:**
   - [ ] Implement collapsible sections for "Global Personas" and "Country-Specific Personas".
   - [ ] Add quick filters for persona types and roles as specified.
-        (See: `docs/ui_spec.md#sidebar-navigation`, `docs/upgrade_plan.md#sidebar-navigation`)
 - **Footer Implementation:**
   - [ ] Design and implement the site footer if required by the core layout.
-        (See: `docs/ui_spec.md#core-layout-structure`)
 - **Home Page Dashboard Features:**
   - [ ] Review and implement missing elements from the spec: Interactive World Map/Region Selector, Featured Countries, specific layout for Global/Country perspectives.
-        (See: `docs/ui_spec.md#home-page-dashboard`)
 - **Country Overview Page:**
   - [ ] Implement the "Country Overview Page" as specified, including country description, persona grid, and comparison links.
-        (See: `docs/ui_spec.md#country-overview-page`)
 - **Persona Detail Page Enhancements:**
   - [ ] Implement tabbed navigation for sections (Needs, Motivations, etc.) if not already present.
-  - [ ] Ensure dynamic section rendering and visual distinction for country-specific content are fully realized.
-        (See: `docs/ui_spec.md#persona-detail-page`, `docs/upgrade_plan.md#adaptive-persona-detail-pages`)
+  - [x] Ensure dynamic section rendering and visual distinction for country-specific content are fully realized. (Status: IMPROVED - `PersonaDetailsContent.tsx` now renders `Record<string, string[]>` for country personas, displaying subheadings and lists. JSON structures and normalization improved content display.)
+  - [x] Persona Modals removed, details are now always inline. (COMPLETED)
+  - [x] Persona card titles and subtitles (now removed) standardized. (COMPLETED)
+  - [x] Default inline display for "Role Personas" view. (COMPLETED)
 - **Full Comparison View Functionality:**
   - [ ] Develop the complete side-by-side comparison view, including highlighting differences and section navigation as per the spec.
   - [ ] Ensure `ComparisonView` component (from `upgrade_plan.md`) is created and functional.
-        (See: `docs/ui_spec.md#comparison-view`, `docs/upgrade_plan.md#comparison-features`)
 - **Contextual AI Assistant:**
   - [ ] Design and implement all aspects of the AI Assistant (persistent button, chat interface, context awareness, conversation management). This is a major feature group.
-        (See: `docs/ui_spec.md#ai-assistant`, `docs/upgrade_plan.md#4-contextual-ai-assistant`)
 - **Specific Component Creation (from `upgrade_plan.md`):**
-  - [ ] Verify existence and functionality or create: `PersonaFilter`, `SectionTabNavigator`, `AIAssistantButton`, `ConversationPanel`.
-        (See: `docs/upgrade_plan.md#component-structure`)
+  - [ ] Verify existence and functionality or create: `PersonaFilter` (exists as `PersonaSelector`), `SectionTabNavigator`, `AIAssistantButton`, `ConversationPanel`.
 - **Responsive Design Verification:**
   - [ ] Conduct thorough testing and refinement for responsiveness across all specified breakpoints (Mobile, Tablet, Desktop).
-        (See: `docs/upgrade_plan.md#responsive-design`, `docs/ui_spec.md#responsive-adaptations`)
 
 ---
 

@@ -1,0 +1,285 @@
+"use client"; // Added for client-side interactivity
+
+import React, { useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+interface ChartDataItem {
+  name: string;
+  ceoPercentage: number;
+  deviation: number;
+  // Add other potential fields from different question data structures if necessary
+}
+
+interface SectionQuestion {
+  id: string;
+  title: string;
+  question: string;
+  data: ChartDataItem[];
+}
+
+interface SectionContent {
+  title: string;
+  narrative: string;
+  questions: SectionQuestion[];
+}
+
+// ... (assuming all your data definitions like 'attraction', 'environment', etc. are here) ...
+// ... (and 'sections' array) ...
+
+const Dashboard = () => {
+  const [activeSectionId, setActiveSectionId] = useState("attraction");
+
+  // All sections with their corresponding data
+  const sections = [
+    { id: "attraction", name: "1. Job Attraction & Retention" },
+    { id: "environment", name: "2. Work Environment" },
+    { id: "ai", name: "3. AI & Future of Work" },
+    { id: "culture", name: "4. Workplace Culture" },
+    { id: "compensation", name: "5. Compensation & Security" },
+    { id: "inclusion", name: "6. Inclusion & Ethics" },
+    { id: "generations", name: "7. Intergenerational Work" },
+    { id: "satisfaction", name: "8. Job Satisfaction" },
+  ];
+
+  // SECTION 1: Job Attraction & Retention (Example - assume all section data is defined)
+  const attraction: SectionContent = {
+    title: "1. Job Attraction and Retention Factors",
+    narrative:
+      "While CEOs strongly value advanced technologies (+33%) and environmental sustainability (+27%) when considering roles, they significantly undervalue job security (-25%) compared to other employees. This creates a critical blind spot when developing retention strategies. Additionally, CEOs are far less deterred by poor organizational culture (-65%) or inadequate learning opportunities (-65%) than their employees, potentially missing key retention drivers. For effective workforce strategies, CEOs must recognize these perception gaps rather than projecting their own priorities onto retention initiatives.",
+    questions: [
+      {
+        id: "q1",
+        title: "Q1: Important Factors When Looking for a New Job",
+        question:
+          "If you were to look for a new job, what would be the most important factors for you?",
+        data: [
+          {
+            name: "Pay and compensation",
+            ceoPercentage: 87,
+            deviation: -1,
+          } /* ... more data ... */,
+        ],
+      },
+      // ... more questions for attraction section ...
+    ],
+  };
+
+  // Define other sections with placeholder data conforming to SectionContent
+  const placeholderQuestion: SectionQuestion = {
+    id: "placeholder",
+    title: "Placeholder Question",
+    question: "Placeholder",
+    data: [],
+  };
+  const placeholderContent: SectionContent = {
+    title: "Placeholder Section Title",
+    narrative: "Placeholder narrative.",
+    questions: [placeholderQuestion],
+  };
+
+  const environment: SectionContent = placeholderContent;
+  const ai: SectionContent = placeholderContent;
+  const culture: SectionContent = placeholderContent;
+  const compensation: SectionContent = placeholderContent;
+  const inclusion: SectionContent = placeholderContent;
+  const generations: SectionContent = placeholderContent;
+  const satisfaction: SectionContent = placeholderContent;
+
+  // Function to get active section data
+  const getActiveSectionData = (): SectionContent => {
+    switch (activeSectionId) {
+      case "attraction":
+        return attraction;
+      case "environment":
+        return environment;
+      case "ai":
+        return ai;
+      case "culture":
+        return culture;
+      case "compensation":
+        return compensation;
+      case "inclusion":
+        return inclusion;
+      case "generations":
+        return generations;
+      case "satisfaction":
+        return satisfaction;
+      default:
+        return attraction;
+    }
+  };
+
+  // Custom tooltip for charts
+  interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{ payload: ChartDataItem }>;
+    label?: string | number;
+  }
+
+  const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className=\"bg-white p-4 border border-gray-200 rounded shadow-md\">
+          <p className=\"font-bold\">{data.name}</p>
+          <p className=\"text-sm\">CEO: {data.ceoPercentage}%</p>
+          <p
+            className=\"text-sm\"
+            style={{ color: data.deviation >= 0 ? "#16a34a" : "#dc2626" }}
+          >
+            Deviation: {data.deviation > 0 ? "+" : ""}
+            {data.deviation}%
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // THIS IS THE CRITICAL CHANGE: ADDING THE RETURN STATEMENT
+  return (
+    <div className=\"flex flex-col h-full\">
+      <div className=\"border-b border-gray-200 bg-white p-4\">
+        <h1 className=\"text-2xl font-bold text-gray-800\">
+          CEO Survey Response Analysis
+        </h1>
+        <p className=\"text-gray-600\">
+          Last Updated: Sat May 17 08:55:44 BST 2025
+        </p>
+      </div>
+
+      {/* Horizontal Tabs Navigation */}
+      <div className=\"bg-white border-b border-gray-200 overflow-x-auto\">
+        <div className=\"flex\">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSectionId(section.id)}
+              className={`px-4 py-3 text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
+                activeSectionId === section.id
+                  ? \"text-blue-700 border-b-2 border-blue-500\"
+                  : \"text-gray-600 hover:text-gray-800 hover:bg-gray-50\"
+              }`}
+            >
+              {section.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className=\"flex-1 overflow-auto p-6\">
+        {/* Section Title and Narrative */}
+        <div className=\"mb-6\">
+          <h2 className=\"text-xl font-bold text-gray-800\">
+            {getActiveSectionData().title}
+          </h2>
+          <div className=\"bg-blue-50 p-4 rounded-lg mb-6 border-l-4 border-blue-500 mt-3\">
+            <h3 className=\"font-medium text-blue-800 mb-2\">Section Analysis</h3>
+            <p className=\"text-gray-700\">{getActiveSectionData().narrative}</p>
+          </div>
+        </div>
+
+        {/* Questions within the section */}
+        {getActiveSectionData().questions.map((question) => (
+          <div
+            key={question.id}
+            className=\"mb-10 border border-gray-200 rounded-lg p-4 bg-white shadow-sm\"
+          >
+            <h3 className=\"text-lg font-medium mb-1\">{question.title}</h3>
+            <p className=\"text-gray-600 mb-4 italic text-sm\">
+              \"{question.question}\"
+            </p>
+            <div className=\"h-96\">
+              <ResponsiveContainer width=\"100%\" height=\"100%\">
+                <BarChart
+                  data={question.data}
+                  layout=\"vertical\"
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray=\"3 3\" />
+                  <XAxis type=\"number\" domain={[-70, 100]} />
+                  <YAxis
+                    dataKey=\"name\"
+                    type=\"category\"
+                    width={300}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Bar
+                    dataKey=\"ceoPercentage\"
+                    name=\"CEO %\"
+                    fill=\"#4299e1\" // Blue color for CEO percentage
+                    barSize={20}
+                  />
+                  <Bar
+                    dataKey=\"deviation\"
+                    name=\"Deviation from Mean (%)\"
+                    fill={
+                      ((entry: ChartDataItem) =>
+                        entry.deviation >= 0 ? \"#68d391\" : \"#fc8181\") as any
+                    }
+                    barSize={20}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Optional: Table display can be added here if needed */}
+            <div className=\"mt-4\">
+              <table className=\"min-w-full border-collapse\">
+                <thead>
+                  <tr>
+                    <th className=\"border-b-2 border-gray-200 px-4 py-2 text-left\">
+                      Factor
+                    </th>
+                    <th className=\"border-b-2 border-gray-200 px-4 py-2 text-right\">
+                      CEO %
+                    </th>
+                    <th className=\"border-b-2 border-gray-200 px-4 py-2 text-right\">
+                      Deviation
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {question.data.map((item: ChartDataItem, i: number) => (
+                    <tr
+                      key={i}
+                      className={i % 2 === 0 ? \"bg-gray-50\" : \"bg-white\"}
+                    >
+                      <td className=\"border-b border-gray-200 px-4 py-2\">
+                        {item.name}
+                      </td>
+                      <td className=\"border-b border-gray-200 px-4 py-2 text-right\">
+                        {item.ceoPercentage}%
+                      </td>
+                      <td
+                        className={`border-b border-gray-200 px-4 py-2 text-right ${
+                          item.deviation > 0 ? \"text-green-600\" : \"text-red-600\"
+                        }`}
+                      >
+                        {item.deviation > 0 ? \"+\" : \""}
+                        {item.deviation}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard; 

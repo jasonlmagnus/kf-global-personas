@@ -38,27 +38,23 @@
   "Needs": [
     {
       "Category": "Growth Enablement",
-      "Description": "Strategies to achieve consistent revenue growth and market expansion while addressing perception gaps about organizational readiness for change (-9%)."
+      "Description": "Strategies to achieve consistent revenue growth and market expansion."
     },
     {
       "Category": "Technology-Driven Innovation",
-      "Description": "Clear pathways to integrate cutting-edge technologies, such as AI and IoT, supported by learning ecosystems that employees perceive as genuinely encouraging development (-8%)."
+      "Description": "Clear pathways to integrate cutting-edge technologies, such as AI and IoT, for efficiency and differentiation."
     },
     {
       "Category": "Operational Excellence",
-      "Description": "Solutions for optimizing supply chain resilience, cost control, and risk management that account for the differing economic concerns of the workforce."
+      "Description": "Solutions for optimizing supply chain resilience, cost control, and risk management."
     },
     {
       "Category": "Talent Strategies",
-      "Description": "Tools to attract and retain top-tier talent that recognize the significant gaps in how CEOs and employees value job security (-25%), organizational culture (-65%), and colleague connections (-20%)."
+      "Description": "Tools to attract and retain top-tier talent while fostering an engaged, high-performing culture."
     },
     {
       "Category": "Balanced ESG Integration",
-      "Description": "Practical approaches to embed ESG where it aligns with growth and stakeholder value, moving beyond perception of 'right commitment' (+11%) to measurable impact metrics."
-    },
-    {
-      "Category": "Psychological Safety",
-      "Description": "Frameworks for building environments where authenticity and connection are recognized as strategic assets, addressing CEOs' own challenges with bringing their full selves to work (-18%)."
+      "Description": "Practical approaches to embed ESG where it aligns with growth and stakeholder value."
     }
   ],
   
@@ -67,18 +63,15 @@
     "Building an adaptable, efficient organization to navigate economic and operational challenges.",
     "Maintaining a competitive edge through technology, talent, and market insights.",
     "Enhancing the company's reputation for delivering value to stakeholders while aligning with societal expectations.",
-    "Strengthening resilience to mitigate risks and ensure long-term stability.",
-    "Creating environments where advanced technologies (+33%) and sustainability initiatives (+27%) drive strategic advantage."
+    "Strengthening resilience to mitigate risks and ensure long-term stability."
   ],
   
   "Frustrations_Pain_Points": [
     "Struggling to balance immediate financial performance with long-term growth investments.",
     "Managing volatility in supply chains, inflation, and geopolitical factors.",
-    "Addressing talent churn and changing workforce dynamics, while facing significant perception gaps about what drives employee retention.",
-    "Bridging the gap between ambitious digital transformation goals and organizational readiness, particularly when learning investment is perceived as inadequate.",
-    "Juggling competing priorities, including shareholder demands and internal innovation requirements.",
-    "Creating work environments that balance hybrid flexibility with appropriate boundaries for availability and disconnection.",
-    "Reconciling personal comfort with compensation and job security with the higher economic anxiety experienced by many employees."
+    "Addressing talent churn and changing workforce dynamics, such as remote work preferences and new generation expectations.",
+    "Bridging the gap between ambitious digital transformation goals and organizational readiness.",
+    "Juggling competing priorities, including shareholder demands and internal innovation requirements."
   ],
   
   "Behaviors": [
@@ -86,8 +79,7 @@
     "Collaborates closely with the leadership team to align priorities and address challenges proactively.",
     "Regularly engages in peer forums and industry networks to gather insights and refine strategies.",
     "Leverages concise, data-driven resources to stay informed amidst a high-demand schedule.",
-    "Continuously evaluates and refines strategies for operational excellence and growth.",
-    "Strongly values hybrid work arrangements (+18%) while maintaining high expectations for availability."
+    "Continuously evaluates and refines strategies for operational excellence and growth."
   ],
   
   "Emotional_Triggers": [
@@ -120,45 +112,17 @@
       "Trigger": "Need to make high-stakes decisions with incomplete information.",
       "Emotional_Response": "Stress from uncertainty in rapidly changing business environments.",
       "Messaging_Implication": "Present decision-making tools that work effectively with limited data and high uncertainty."
-    },
-    {
-      "Trigger": "Perception gaps around job security and culture",
-      "Emotional_Response": "Uncertainty about why talent strategies aren't working as expected",
-      "Messaging_Implication": "Highlight blind spots in talent strategy and practical ways to close perception gaps"
-    },
-    {
-      "Trigger": "Tension between flexibility preferences and work-life boundaries",
-      "Emotional_Response": "Frustration with conflicting expectations around availability",
-      "Messaging_Implication": "Offer frameworks for clear work-life policies that balance flexibility with boundaries"
-    },
-    {
-      "Trigger": "Psychological safety challenges even at CEO level",
-      "Emotional_Response": "Recognition of personal vulnerability despite leadership position",
-      "Messaging_Implication": "Present psychological safety as a strategic advantage, not a soft benefit"
-    },
-    {
-      "Trigger": "Divergent views on ESG commitment levels",
-      "Emotional_Response": "Defensiveness about initiatives already perceived as sufficient",
-      "Messaging_Implication": "Focus on measuring impact rather than judging commitment levels"
-    },
-    {
-      "Trigger": "Alignment in concerns about organizational adaptability",
-      "Emotional_Response": "Validation that strategic adaptation concerns are shared across levels",
-      "Messaging_Implication": "Position organizational adaptability as a shared priority and connection point"
     }
   ],
   
   "Collaboration_Insights": [
     "CEOs value clarity and conciseness in solutions, avoiding overly complex or untested ideas.",
     "They prioritize insights that balance operational feasibility with strategic impact.",
-    "Tools that enable adaptability and resilience are key, especially for technology integration and market shifts.",
-    "CEOs may need guidance to recognize perception gaps, particularly around job security, culture, and work-life boundaries.",
-    "Approaches that address psychological safety challenges faced even at leadership levels will resonate deeply."
+    "Tools that enable adaptability and resilience are key, especially for technology integration and market shifts."
   ],
   
   "Analogies": [
-    "Leading like a pilot navigating turbulent skies—balancing immediate risks with a clear destination in mind",
-    "Building organizational culture like tending a garden—what CEOs value as important may not be what employees need to thrive"
+    "Leading like a pilot navigating turbulent skies—balancing immediate risks with a clear destination in mind"
   ],
   
   "Reference_Sources": [
@@ -180,17 +144,12 @@
     {
       "Category": "Regulatory Guidance",
       "Sources": ["ESG and risk management frameworks"]
-    },
-    {
-      "Category": "Perception Gap Research",
-      "Sources": ["Korn Ferry CEO Survey Results 2025", "Workforce Expectations Studies"]
     }
   ],
   
   "Problem_Solving_Method": [
     "Uses structured, data-driven analysis to prioritize actions",
     "Mitigates risks while maximizing business impact",
-    "Balances quick decisions with thorough evaluation of long-term implications",
-    "Needs to intentionally probe beyond personal preferences when addressing workforce dynamics"
+    "Balances quick decisions with thorough evaluation of long-term implications"
   ]
 } 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Persona, Region, Department } from '../types/personas';
+import { Persona, Region, Department, ConfigItem } from '../types/personas';
 import { getPersona, getPersonasByRegion, getAllPersonas } from '../lib/personaAdapter';
 
 // API paths for fetching persona data (for future implementation)
@@ -57,19 +57,27 @@ export function useAllPersonas() {
 /**
  * Hook for loading personas by region
  */
-export function usePersonasByRegion(region: Region) {
+export function usePersonasByRegion(region: Region | null) {
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
-    
+
     async function loadPersonas() {
+      if (!region) {
+        if (isMounted) {
+          setPersonas([]);
+          setLoading(false);
+          setError(null);
+        }
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
       try {
-        setLoading(true);
-        setError(null);
-        
         // Use the adapter to fetch personas for a region
         const regionPersonas = await getPersonasByRegion(region);
         
@@ -100,7 +108,7 @@ export function usePersonasByRegion(region: Region) {
 /**
  * Hook for loading a specific persona
  */
-export function usePersona(region: Region, department: Department) {
+export function usePersona(region: Region | null, department: Department | null) {
   const [persona, setPersona] = useState<Persona | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,17 +120,16 @@ export function usePersona(region: Region, department: Department) {
       // Ensure region and department are provided before fetching
       if (!region || !department) {
         if (isMounted) {
-          // setError('Region and Department must be selected to fetch a persona.'); // Or handle silently
           setPersona(null);
           setLoading(false); // Don't show loading if selection is incomplete
+          setError(null); // Clear any previous error
         }
         return;
       }
 
+      setLoading(true); // Set loading to true only when we are actually fetching
+      setError(null);
       try {
-        setLoading(true);
-        setError(null);
-        
         // Use the adapter to fetch a specific persona
         const personaData = await getPersona(region, department);
         
@@ -152,4 +159,90 @@ export function usePersona(region: Region, department: Department) {
   }, [region, department]);
 
   return { persona, loading, error };
+}
+
+/**
+ * Hook for loading personas for a specific role across all available regions.
+ */
+export function useRolePersonas(selectedDepartment: Department | null, dynamicRegions: ConfigItem[]) {
+  const [rolePersonas, setRolePersonas] = useState<Persona[]>([]);
+  const [loading, setLoading] = useState(false); // Initially not loading until department and regions are present
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!selectedDepartment || !dynamicRegions || dynamicRegions.length === 0) {
+      setRolePersonas([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    let isMounted = true;
+    const fetchRolePersonasData = async () => {
+      if (!isMounted) return;
+      setLoading(true);
+      setError(null);
+
+      try {
+        const regionsToFetch = dynamicRegions.map((r) => r.id as Region);
+        const personas: Persona[] = [];
+
+        const fetchPromises = regionsToFetch.map((region) =>
+          fetch(
+            // Construct API path carefully. Assuming API_PATHS.SPECIFIC or similar logic
+            // For now, using the literal path as it was in PersonaTest.tsx
+            `/api/personas?region=${region}&department=${selectedDepartment}`
+          )
+            .then((res) => {
+              if (!res.ok) {
+                // If response is not OK, but parsable JSON error, use it
+                return res.json().then(errData => {
+                  throw new Error(errData.error || `Failed to fetch ${region}/${selectedDepartment} persona (${res.status})`);
+                }).catch(() => {
+                  // If not parsable JSON, throw generic error
+                  throw new Error(`Failed to fetch ${region}/${selectedDepartment} persona (${res.status})`);
+                });
+              }
+              return res.json();
+            })
+            .then((data) => {
+              if (data && !data.error) { // Ensure data is valid and not an error object from API
+                personas.push(data);
+              } else if (data && data.error) {
+                console.warn(`API error for ${region}/${selectedDepartment}: ${data.error}`);
+                // Optionally, collect these errors to show to the user
+              }
+            })
+            .catch((err) =>
+              console.error(
+                `Error fetching or processing ${region}/${selectedDepartment} persona:`, err
+              )
+            )
+        );
+
+        await Promise.all(fetchPromises);
+        if (isMounted) {
+          const filteredPersonas = personas.filter(Boolean);
+          setRolePersonas(filteredPersonas);
+        }
+      } catch (error) {
+        console.error("Error fetching role personas:", error);
+        if (isMounted) {
+          setError(error instanceof Error ? error.message : "Failed to load role personas");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchRolePersonasData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedDepartment, dynamicRegions]); // Dependency on dynamicRegions stringified might be better if it's complex
+
+  return { rolePersonas, loading, error };
 } 

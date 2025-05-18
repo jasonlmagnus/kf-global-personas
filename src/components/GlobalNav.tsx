@@ -27,8 +27,11 @@ export default function GlobalNav() {
             priority
           />
         </Link>
+        <span className="text-xl font-bold text-white ml-4">
+          Global Personas
+        </span>
 
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-6 ml-auto">
           {pathname === "/personas" ? (
             <span className={activeItemClasses}>Personas</span>
           ) : (

@@ -15,6 +15,7 @@ export interface BasePersona {
 // Global persona specific fields
 export interface GlobalPersona extends BasePersona {
   isGlobal: true;
+  type: "global";
   goalStatement: string;
   quote?: string;
   coreBelief?: string;
@@ -39,21 +40,22 @@ export interface CountryPersona extends BasePersona {
   isGlobal: false;
   userGoalStatement: string;
   quote?: string;
-  needs: string[];
-  motivations: string[];
-  painPoints: string[];
+  needs: Record<string, string[]>;
+  motivations: Record<string, string[]>;
+  painPoints: Record<string, string[]>;
   emotionalTriggers?: {
     positive: string[];
     negative: string[];
-    raw?: any[]; // For array of emotional trigger objects
+    raw?: any[];
   };
   regionalNuances?: string[];
   culturalContext?: string;
-  behaviors?: string[];
-  keyResponsibilities?: string[];
-  collaborationInsights?: string[];
-  presentation?: any; // Presentation guidance
-  comparison?: any[]; // Comparison data
+  behaviors?: Record<string, string[]>;
+  keyResponsibilities?: Record<string, string[]>;
+  collaborationInsights?: Record<string, string[]>;
+  presentation?: any;
+  comparison?: any[];
+  type: "country";
 }
 
 // Union type for all persona types
@@ -61,10 +63,16 @@ export type Persona = GlobalPersona | CountryPersona;
 
 // Type guard to check if a persona is global
 export function isGlobalPersona(persona: Persona): persona is GlobalPersona {
-  return persona.isGlobal === true;
+  return persona.type === "global";
 }
 
 // Type guard to check if a persona is country-specific
 export function isCountryPersona(persona: Persona): persona is CountryPersona {
-  return persona.isGlobal === false;
+  return persona.type === "country";
+}
+
+// Added ConfigItem interface
+export interface ConfigItem {
+  id: string;
+  name: string;
 } 

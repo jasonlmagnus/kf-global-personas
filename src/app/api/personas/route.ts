@@ -70,6 +70,50 @@ const processArrayField = (fieldData: any): string[] => {
   return [];
 };
 
+// Helper function to ensure a value is a string, providing a fallback if not.
+const ensureString = (value: any, fallback = ''): string => {
+  return typeof value === 'string' ? value : fallback;
+};
+
+// Helper function to ensure a value is an array of strings.
+const ensureStringArray = (value: any): string[] => {
+  if (Array.isArray(value) && value.every(item => typeof item === 'string')) {
+    return value;
+  }
+  if (Array.isArray(value)) { // If it's an array but not all strings, convert items to string
+    return value.map(item => String(item));
+  }
+  return [];
+};
+
+// Helper to transform emotional triggers raw data (Array of objects) into string[]
+const transformEmotionalTriggersRawToStringArray = (triggerDataInput: any): string[] => {
+    if (!Array.isArray(triggerDataInput)) return [];
+    return triggerDataInput.map(item => {
+        if (typeof item === 'string') return item;
+        if (typeof item === 'object' && item !== null && item.Trigger && item.Emotional_Response) {
+            let base = `${item.Trigger}: ${item.Emotional_Response}`;
+            if (item.Messaging_Implication) {
+                base += ` - Messaging: ${item.Messaging_Implication}`;
+            }
+            return base;
+        }
+        return "Invalid trigger data"; // Or some other placeholder/error string
+    }).filter(item => item !== "Invalid trigger data");
+};
+
+// Helper to transform reference sources (Array of objects) into string[]
+const transformReferenceSourcesToStringArray = (sourcesData: any): string[] => {
+    if (!Array.isArray(sourcesData)) return [];
+    return sourcesData.map(item => {
+        if (typeof item === 'string') return item;
+        if (typeof item === 'object' && item !== null && item.Category && Array.isArray(item.Sources)) {
+            return `${item.Category}: ${item.Sources.join(', ')}`;
+        }
+        return "Invalid reference source";
+    }).filter(item => item !== "Invalid reference source");
+};
+
 // Convert raw data into a normalized Persona
 function normalizePersonaData(data: PersonaJsonData, region: Region, department: Department): Persona {
   const baseRole = (typeof data['Role'] === 'string' && data['Role'].trim() !== '') 
@@ -86,6 +130,16 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
   if (region === 'global') {
     const globalTitle = `Global ${baseRole}`;
 
+    const ensureCategoryDescriptionArray = (fieldData: any): Array<{ Category: string; Description: string }> => {
+      if (Array.isArray(fieldData) && fieldData.every(item => 
+          typeof item === 'object' && item !== null && 
+          typeof item.Category === 'string' && typeof item.Description === 'string')) {
+        return fieldData as Array<{ Category: string; Description: string }>;
+      }
+      console.warn(`WARN: Global persona field (e.g. Needs/KeyResponsibilities) expected Array<Category/Description objects>, received: ${JSON.stringify(fieldData)}. Returning empty array.`);
+      return [];
+    };
+    
     const persona: GlobalPersona = {
       id: `${region}-${department}`,
       title: globalTitle,
@@ -93,42 +147,36 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
       region,
       isGlobal: true,
       type: "global",
-      goalStatement: typeof data['Goal Statement'] === 'string' ? data['Goal Statement'] :
-                     (typeof data['User Goal Statement'] === 'string' ? data['User Goal Statement'] :
-                     (typeof data['User_Goal_Statement'] === 'string' ? data['User_Goal_Statement'] : '')),
-      quote: typeof data['Quote'] === 'string' ? data['Quote'] :
-             (typeof data['User Quote'] === 'string' ? data['User Quote'] : undefined),
-      coreBelief: typeof data['Core_Belief'] === 'string' ? data['Core_Belief'] :
-                 (typeof data['Core Belief'] === 'string' ? data['Core Belief'] : undefined),
-      needs: processArrayField(data.Needs),
+      roleOverview: ensureString(data.Core_Belief || data.Role_Overview), // Using Core_Belief as placeholder, or Role_Overview if exists
+      goalStatement: ensureString(data['Goal Statement'] || data['User Goal Statement'] || data['User_Goal_Statement']),
+      quote: ensureString(data['Quote'] || data['User Quote'], undefined), // ensureString can take undefined as fallback
+      coreBelief: ensureString(data['Core_Belief'] || data['Core Belief'], undefined),
+      keyRelationships: ensureStringArray(data.Key_Relationships), // New field
+      uniquePerspective: ensureString(data.Unique_Perspective), // New field
+      kpis: ensureStringArray(data.KPIs), // New field
+      
+      needs: ensureCategoryDescriptionArray(data.Needs),
+      keyResponsibilities: ensureCategoryDescriptionArray(data['Key Responsibilities'] || data.Key_Responsibilities),
+      
       motivations: processArrayField(data.Motivations),
-      keyResponsibilities: processArrayField(data['Key Responsibilities'] || data.Key_Responsibilities),
       knowledgeOrExpertise: processArrayField(data.Knowledge_Areas),
       typicalChallenges: processArrayField(data.Typical_Challenges),
       currentProjects: processArrayField(data.Current_Projects),
       painPoints: processArrayField(data.Frustrations_Pain_Points || data['Frustrations / Pain Points'] || data.Frustrations),
       behaviors: processArrayField(data.Behaviors),
       collaborationInsights: processArrayField(data['Collaboration Insights'] || data.Collaboration_Insights),
+      
       emotionalTriggers: {
-        positive: [],
-        negative: []
-        // raw will be populated if present
+        positive: ensureStringArray((data.Emotional_Triggers as any)?.Positive || (data['Emotional Triggers'] as any)?.Positive),
+        negative: ensureStringArray((data.Emotional_Triggers as any)?.Negative || (data['Emotional Triggers'] as any)?.Negative),
+        raw: transformEmotionalTriggersRawToStringArray((data.Emotional_Triggers as any)?.Raw || data.Emotional_Triggers || data['Emotional Triggers'])
       },
+      perceptionGaps: Array.isArray(data.Perception_Gaps) && data.Perception_Gaps.every(item => typeof item === 'object' && item !==null) ? data.Perception_Gaps as any : [],
+      connectionOpportunities: Array.isArray(data.Connection_Opportunities) && data.Connection_Opportunities.every(item => typeof item === 'object' && item !==null) ? data.Connection_Opportunities as any : [],
+      analogies: processArrayField(data.Analogies), 
+      referenceSources: transformReferenceSourcesToStringArray(data.Reference_Sources),
+      problemSolvingMethod: ensureString(data.Problem_Solving_Method, undefined) // Changed to ensureString for single string
     };
-
-    if (data.Emotional_Triggers || data['Emotional Triggers']) {
-      const triggerData = data.Emotional_Triggers || data['Emotional Triggers'];
-      if (Array.isArray(triggerData)) {
-        persona.emotionalTriggers.raw = triggerData;
-      } else if (typeof triggerData === 'object' && triggerData !== null) {
-        if ((triggerData as any).Positive) {
-          persona.emotionalTriggers.positive = (triggerData as any).Positive || [];
-        }
-        if ((triggerData as any).Negative) {
-          persona.emotionalTriggers.negative = (triggerData as any).Negative || [];
-        }
-      }
-    }
     return persona;
 
   } else { // Country Persona
@@ -147,7 +195,7 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
                              ? rawMotivations as Record<string, string[]> 
                              : {};
 
-    const rawPainPoints = data[countryPainPointsKey!]; // Added non-null assertion as key is chosen from existing data
+    const rawPainPoints = data[countryPainPointsKey!]; 
     const countryPainPoints = (typeof rawPainPoints === 'object' && !Array.isArray(rawPainPoints) && rawPainPoints !== null) 
                             ? rawPainPoints as Record<string, string[]> 
                             : {};
@@ -166,6 +214,48 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
     const countryCollaborationInsights = (typeof rawCollaborationInsightsSource === 'object' && !Array.isArray(rawCollaborationInsightsSource) && rawCollaborationInsightsSource !== null)
                                        ? rawCollaborationInsightsSource as Record<string, string[]>
                                        : {};
+    
+    // For regionalNuances (e.g., Australian_Differentiation from JSON)
+    const regionalNuancesData = data['Regional Nuances'] || data[`${region.toUpperCase()} Differentiation`] || data['Australian_Differentiation'];
+    const countryRegionalNuances: Record<string, string> = {};
+    if (typeof regionalNuancesData === 'object' && regionalNuancesData !== null && !Array.isArray(regionalNuancesData)) {
+        for (const [key, value] of Object.entries(regionalNuancesData)) {
+            if (typeof value === 'string') {
+                countryRegionalNuances[key] = value;
+            }
+        }
+    }
+
+    // For presentation guidance
+    const presentationData = data['Presentation Guidance'] || data.Presentation_Guidance;
+    const countryPresentation: Record<string, string> = {};
+    if (typeof presentationData === 'object' && presentationData !== null && !Array.isArray(presentationData)) {
+        for (const [key, value] of Object.entries(presentationData)) {
+            if (typeof value === 'string') {
+                countryPresentation[key] = value;
+            }
+        }
+    }
+    
+    // For comparison data
+    const comparisonData = data['Comparison to Generic CEO'] || data.Comparison_to_Generic_CEO;
+    // Define the expected type for a comparison item
+    type ComparisonItem = {
+        "Key Dimension": string;
+        "Generic CEO Persona": string;
+        "Australian CEO Persona": string; 
+        "Value-Add for Australian Context": string; 
+    };
+    let countryComparison: Array<ComparisonItem> = [];
+    if (Array.isArray(comparisonData)) {
+        countryComparison = comparisonData.filter(item => 
+            typeof item === 'object' && item !== null &&
+            typeof item["Key Dimension"] === 'string' &&
+            typeof item["Generic CEO Persona"] === 'string' &&
+            typeof item["Australian CEO Persona"] === 'string' && // Adjust this key if it varies per country, e.g., item[`${formatRegionNameForTitle(region)} CEO Persona`]
+            typeof item["Value-Add for Australian Context"] === 'string' // Adjust this key if it varies per country
+        ) as Array<ComparisonItem>;
+    }
 
     const persona: CountryPersona = {
       id: `${region}-${department}`,
@@ -174,9 +264,8 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
       region,
       isGlobal: false,
       type: "country",
-      userGoalStatement: typeof data['User Goal Statement'] === 'string' ? data['User Goal Statement'] :
-                         (typeof data.User_Goal_Statement === 'string' ? data.User_Goal_Statement : ''),
-      quote: data['User Quote'] || undefined,
+      userGoalStatement: ensureString(data['User Goal Statement'] || data.User_Goal_Statement),
+      quote: ensureString(data['User Quote'], undefined),
       needs: countryNeeds,
       motivations: countryMotivations,
       painPoints: countryPainPoints,
@@ -184,47 +273,15 @@ function normalizePersonaData(data: PersonaJsonData, region: Region, department:
       behaviors: countryBehaviors,
       collaborationInsights: countryCollaborationInsights,
       emotionalTriggers: {
-        positive: [],
-        negative: []
-        // raw will be populated below
+        positive: ensureStringArray((data.Emotional_Triggers as any)?.Positive || (data['Emotional Triggers'] as any)?.Positive),
+        negative: ensureStringArray((data.Emotional_Triggers as any)?.Negative || (data['Emotional Triggers'] as any)?.Negative),
+        raw: transformEmotionalTriggersRawToStringArray((data.Emotional_Triggers as any)?.Raw || data.Emotional_Triggers || data['Emotional Triggers'])
       },
-      regionalNuances: [], 
-      culturalContext: data['Cultural Context'] || '',
-      presentation: data['Presentation Guidance'] || {},
-      comparison: data['Comparison to Generic CEO'] || [] 
+      regionalNuances: countryRegionalNuances,
+      culturalContext: ensureString(data['Cultural Context'], undefined),
+      presentation: countryPresentation,
+      comparison: countryComparison
     };
-
-    if (data['Emotional Triggers']) {
-      const triggerData = data['Emotional Triggers'];
-      if (Array.isArray(triggerData)) {
-        persona.emotionalTriggers.raw = triggerData;
-      } else if (typeof triggerData === 'object' && triggerData !== null) {
-        if ((triggerData as any).Positive) {
-          persona.emotionalTriggers.positive = (triggerData as any).Positive || [];
-        }
-        if ((triggerData as any).Negative) {
-          persona.emotionalTriggers.negative = (triggerData as any).Negative || [];
-        } else {
-            // Handle cases where triggers are an object of strings like { Performance_Pressure: "Anxiety...", ... }
-            const triggersAsStrings = Object.entries(triggerData).map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`);
-            if (!persona.emotionalTriggers.raw) persona.emotionalTriggers.raw = [];
-            (persona.emotionalTriggers.raw as string[]).push(...triggersAsStrings.filter(s => typeof s === 'string'));
-        }
-      }
-    }
-    
-    const regionalNuancesData = data['Regional Nuances'] || data[`${region.toUpperCase()} Differentiation`];
-    if (regionalNuancesData) {
-      if (Array.isArray(regionalNuancesData)) {
-        persona.regionalNuances = regionalNuancesData.filter(item => typeof item === 'string');
-      } else if (typeof regionalNuancesData === 'object' && regionalNuancesData !== null) {
-        persona.regionalNuances = Object.entries(regionalNuancesData).map(
-          ([key, value]) => `${key}: ${value}`
-        ).filter(item => typeof item === 'string');
-      } else if (typeof regionalNuancesData === 'string') {
-        persona.regionalNuances = [regionalNuancesData];
-      }
-    }
 
     return persona;
   }

@@ -1,19 +1,54 @@
 "use client";
 
-import React from "react";
-import CEOSurveyDashboard from "../../components/data/dashboards/CEOSurveyDashboard";
+import React, { useState } from "react";
+import CEOSurveyDashboard from "@/components/data/dashboards/CEOSurveyDashboard";
+import CHROSurveyDashboard from "@/components/data/dashboards/CHROSurveyDashboard";
+import StrategicPrioritiesDashboard from "@/components/data/dashboards/StrategicPrioritiesDashboard";
+import { ChevronDown } from "lucide-react";
 
 export default function DataPage() {
+  const [selectedDashboard, setSelectedDashboard] = useState<
+    "ceo" | "chro" | "strategic"
+  >("ceo");
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">Data Page</h1>
-      <p className="mb-4">
-        Future content related to data will be displayed here. Currently
-        displaying the CEO Survey Dashboard:
-      </p>
+    <div className="p-6">
+      <div className="nav-filters mb-6">
+        <div className="filter-container">
+          <div className="filter-item">
+            <label className="selector-label">Select Dashboard</label>
+            <div className="selector-wrapper">
+              <select
+                className="selector"
+                value={selectedDashboard}
+                onChange={(e) =>
+                  setSelectedDashboard(
+                    e.target.value as "ceo" | "chro" | "strategic"
+                  )
+                }
+              >
+                <option value="ceo">CEO Survey Dashboard</option>
+                <option value="chro">
+                  Senior Executive (CHRO Proxy) Dashboard
+                </option>
+                <option value="strategic">
+                  Strategic Priorities Dashboard
+                </option>
+              </select>
+              <ChevronDown className="selector-icon" />
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="mt-4">
-        <CEOSurveyDashboard />
+        {selectedDashboard === "ceo" ? (
+          <CEOSurveyDashboard />
+        ) : selectedDashboard === "chro" ? (
+          <CHROSurveyDashboard />
+        ) : selectedDashboard === "strategic" ? (
+          <StrategicPrioritiesDashboard />
+        ) : null}
       </div>
     </div>
   );

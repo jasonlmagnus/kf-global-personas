@@ -1,6 +1,6 @@
-import PersonaCard from "@/components/PersonaCard";
 import { notFound } from "next/navigation";
 import { Persona } from "@/types/personas"; // Assuming Persona type is defined here
+import DetailedPersonaCard from "@/components/personas/DetailedPersonaCard"; // Import DetailedPersonaCard
 
 // Helper function to fetch all personas for static generation
 async function getAllPersonaIds() {
@@ -35,14 +35,6 @@ export async function generateStaticParams() {
 
 // Helper function to fetch a single persona by its composite ID
 async function getPersonaById(id: string): Promise<Persona | null> {
-  // Prevent fetching detail for global personas for now
-  if (id.startsWith("global-")) {
-    console.log(
-      `Detail page for global persona ${id} is not currently supported.`
-    );
-    return null;
-  }
-
   const parts = id.split("-");
   if (parts.length < 2) {
     // Simple validation, global might be just 'global-ceo'
@@ -88,11 +80,26 @@ interface PageParams {
 }
 
 export default async function PersonaPage({ params }: { params: PageParams }) {
+  console.log(
+    `DEBUG: PersonaPage - Fetching persona for ID: ${params.personaId}`
+  ); // Log input to getPersonaById
   const persona = await getPersonaById(params.personaId);
 
+  console.log(
+    "DEBUG: PersonaPage - Persona object received:",
+    JSON.stringify(persona, null, 2)
+  ); // Log the fetched persona object
+
   if (!persona) {
+    console.log(
+      `DEBUG: PersonaPage - Persona not found for ID: ${params.personaId}, calling notFound()`
+    );
     notFound();
   }
 
-  return <PersonaCard persona={persona} />;
+  // return <PersonaCard persona={persona} />; // OLD LINE
+  // Render DetailedPersonaCard directly for the page content
+  // onClose is not strictly necessary if this is a standalone page view unless DetailedPersonaCard requires it.
+  // showCloseButton can also be true or false depending on whether you want a close button on this page view.
+  return <DetailedPersonaCard persona={persona} showCloseButton={false} />;
 }

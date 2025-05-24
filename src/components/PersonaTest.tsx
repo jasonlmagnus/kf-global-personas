@@ -29,6 +29,10 @@ import {
 import PersonaSelector from "./personas/PersonaSelector";
 import PersonaList from "./personas/PersonaList";
 // import PersonaDetailView from "./personas/PersonaDetailView"; // REMOVE MODAL IMPORT
+import ExperimentalGlobalPersonaTemplate from "./personas/ExperimentalGlobalPersonaTemplate";
+import CEOSurveyDashboard from "./data/dashboards/CEOSurveyDashboard";
+import CHROSurveyDashboard from "./data/dashboards/CHROSurveyDashboard";
+import { useSearchParams } from "next/navigation";
 
 // Hardcoded for initial testing - REMOVE/COMMENT OUT
 // const availableRegions: Region[] = ["uk", "uae", "aus"];
@@ -47,6 +51,9 @@ import PersonaList from "./personas/PersonaList";
  * A component for testing and understanding the persona data structure
  */
 export function PersonaTest() {
+  const searchParams = useSearchParams();
+  const isExperimental = searchParams.get("view") === "experimental";
+
   // Change default region to 'global' instead of 'uk'
   const [selectedRegion, setSelectedRegion] = useState<Region | null>("global");
   // Add state to store previous region when switching to role view
@@ -283,6 +290,20 @@ export function PersonaTest() {
     fetchConfig();
   }, []); // Empty dependency array to run once on mount
 
+  // New state for selected dashboard
+  const [selectedDashboard, setSelectedDashboard] = useState<
+    "ceo" | "chro" | null
+  >("ceo");
+
+  // If in experimental mode and we have a global persona selected, show the experimental template
+  if (
+    isExperimental &&
+    selectedDetailPersona &&
+    isGlobalPersona(selectedDetailPersona)
+  ) {
+    return <ExperimentalGlobalPersonaTemplate />;
+  }
+
   return (
     <div className="kf-personas-container bg-gray-100 min-h-screen">
       {/* Header - REMOVED */}
@@ -444,6 +465,135 @@ export function PersonaTest() {
         {/*     onClose={() => setSelectedDetailPersona(null)} */}
         {/*   /> */}
         {/* )} */}
+
+        {/* For Experimental Template View */}
+        {isExperimental && selectedDepartment === "ceo" && (
+          <div className="container mx-auto">
+            <ExperimentalGlobalPersonaTemplate />
+          </div>
+        )}
+
+        {/* For Survey Dashboard View */}
+        {isExperimental &&
+          (selectedDepartment === "ceo" || selectedDepartment === "chro") && (
+            <div className="w-full">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Survey Dashboard</h2>
+                <div className="flex">
+                  <button
+                    onClick={() => setSelectedDashboard("ceo")}
+                    className={`px-4 py-2 rounded-l ${
+                      selectedDashboard === "ceo"
+                        ? "bg-green-700 text-white"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    CEO Dashboard
+                  </button>
+                  <button
+                    onClick={() => setSelectedDashboard("chro")}
+                    className={`px-4 py-2 rounded-r ${
+                      selectedDashboard === "chro"
+                        ? "bg-green-700 text-white"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    CHRO Dashboard
+                  </button>
+                </div>
+              </div>
+
+              {selectedDashboard === "ceo" && <CEOSurveyDashboard />}
+              {selectedDashboard === "chro" && <CHROSurveyDashboard />}
+            </div>
+          )}
+
+        {/* For Normal View - Non-Experimental */}
+        {!isExperimental && (
+          <>
+            {/* Persona selector */}
+            <div className="flex px-4 pb-6 relative z-10">
+              <PersonaSelector
+                viewType={viewType}
+                setViewType={setViewType}
+                selectedDepartment={selectedDepartment}
+                setSelectedDepartment={setSelectedDepartment}
+                selectedRegion={selectedRegion}
+                setSelectedRegion={setSelectedRegion}
+                dynamicDepartments={dynamicDepartments}
+                dynamicRegions={dynamicRegions}
+                isLoadingConfig={isLoadingConfig}
+              />
+            </div>
+
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-pulse flex space-x-4">
+                  <div className="rounded-full bg-slate-200 h-10 w-10"></div>
+                  <div className="flex-1 space-y-6 py-1">
+                    <div className="h-2 bg-slate-200 rounded"></div>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="h-2 bg-slate-200 rounded col-span-2"></div>
+                        <div className="h-2 bg-slate-200 rounded col-span-1"></div>
+                      </div>
+                      <div className="h-2 bg-slate-200 rounded"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="text-red-600 text-center p-4 border border-red-200 rounded shadow bg-red-50 mx-4">
+                {error}
+              </div>
+            ) : (
+              <>
+                {viewType === "single" && persona && (
+                  <div className="px-4">
+                    <DetailedPersonaCard persona={persona} />
+                  </div>
+                )}
+
+                {viewType === "region" && regionPersonas && (
+                  <div className="px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+                      <PersonaList
+                        personas={regionPersonas}
+                        viewType="region"
+                        onPersonaClick={handlePersonaCardClick}
+                        selectedDetailPersonaId={
+                          selectedDetailPersona?.id || null
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {viewType === "role" && sortedRolePersonas && (
+                  <div className="px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+                      <PersonaList
+                        personas={sortedRolePersonas}
+                        viewType="role"
+                        onPersonaClick={handlePersonaCardClick}
+                        selectedDetailPersonaId={
+                          selectedDetailPersona?.id || null
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* If there's a selected persona, show the detail view */}
+            {selectedDetailPersona && (
+              <div className="mt-6 px-4">
+                <DetailedPersonaCard persona={selectedDetailPersona} />
+              </div>
+            )}
+          </>
+        )}
       </main>
     </div>
   );

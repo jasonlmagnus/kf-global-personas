@@ -61,6 +61,44 @@ This report analyzes survey data through the lens of a Chief Human Resources Off
 - **Direction Gap**: 37% feel lack of managers leaves them directionless
 - **Leadership Trust**: 67% trust senior leadership, but this varies dramatically by level (34-point spread)
 
+## Updated Insights from Workforce25 Data
+
+### Talent Attraction, Retention, and Exit
+
+- Understanding what drives employees to join, stay, and leave is fundamental. Key factors include salary, flexible work hours, and career advancement. 62% feel confident in finding a new role quickly.
+
+### Diversity, Equity, and Inclusion (DEI)
+
+- CHROs need to understand perceived biases in promotions, pay equity, and recruitment. 34.3% feel overlooked for promotions due to race, and 35.4% due to gender.
+
+### Workplace Flexibility and Design
+
+- Flexible work arrangements and the ability to disconnect after work are significant, with 48% reporting they can fully disconnect.
+
+### AI and Workforce Readiness
+
+- Employee attitudes towards AI include excitement and fears of job displacement. 58% are optimistic about AI enhancing their value.
+
+### Generational Dynamics and Collaboration
+
+- Challenges in intergenerational collaboration exist, with only 56% feeling their organization bridges generational divides effectively.
+
+### Leadership Effectiveness, Trust, and Culture
+
+- Trust in senior leadership and cultural alignment are vital, with 70% trusting senior leadership.
+
+### Employee Well-being
+
+- Mental well-being support is crucial, with only 59% feeling comfortable discussing health needs.
+
+### Resources and Support Systems
+
+- 74% feel they have the resources needed to do their job effectively.
+
+### Employee Voice and Feedback
+
+- Open communication channels are important, with 60% comfortable discussing personal life at work.
+
 ## Actionable Recommendations
 
 1. **Address Hierarchical Perception Gaps**: Implement structured cross-level communication programs to reduce the 20-30% perception gaps on culture and leadership effectiveness.

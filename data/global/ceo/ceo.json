@@ -42,7 +42,7 @@
     },
     {
       "Category": "Technology-Driven Innovation",
-      "Description": "Clear pathways to integrate cutting-edge technologies, such as AI and IoT, supported by learning ecosystems that employees perceive as genuinely encouraging development (-8%)."
+      "Description": "Clear pathways to integrate cutting-edge technologies, such as AI and IoT, supported by learning ecosystems that employees perceive as genuinely encouraging development (-34%)."
     },
     {
       "Category": "Operational Excellence",
@@ -50,15 +50,48 @@
     },
     {
       "Category": "Talent Strategies",
-      "Description": "Tools to attract and retain top-tier talent that recognize the significant gaps in how CEOs and employees value job security (-25%), organizational culture (-65%), and colleague connections (-20%)."
+      "Description": "Tools to attract and retain top-tier talent that recognize the significant gaps in how CEOs and employees perceive job security (+2%), organizational culture (+6%), and colleague connections (+14%)."
     },
     {
       "Category": "Balanced ESG Integration",
-      "Description": "Practical approaches to embed ESG where it aligns with growth and stakeholder value, moving beyond perception of 'right commitment' (+11%) to measurable impact metrics."
+      "Description": "Practical approaches to embed ESG where it aligns with growth and stakeholder value, moving beyond perception of 'right commitment' (-12%) to measurable impact metrics."
     },
     {
       "Category": "Psychological Safety",
-      "Description": "Frameworks for building environments where authenticity and connection are recognized as strategic assets, addressing CEOs' own challenges with bringing their full selves to work (-18%)."
+      "Description": "Frameworks for building environments where authenticity and connection are recognized as strategic assets, addressing CEOs' own challenges with bringing their full selves to work (+11%)."
+    }
+  ],
+  
+  "Perception_Gaps": [
+    {
+      "Area": "Job Security and Retention",
+      "Gap": "Slightly overvalues job security (+2%) and views poor organizational culture (+6%) as more important than employees perceive",
+      "Business_Impact": "May create talent strategies that don't address actual employee concerns",
+      "Opportunity": "Intentionally probe for factors beyond personal preferences when designing retention strategies"
+    },
+    {
+      "Area": "Work-Life Boundaries",
+      "Gap": "Prefers hybrid work (+6%) and is more likely to feel employees should fully 'switch off' (+7%)",
+      "Business_Impact": "Creates potential disconnect between leadership's communication and employee expectations",
+      "Opportunity": "Establish clear availability expectations that balance business needs with employee boundaries"
+    },
+    {
+      "Area": "Psychological Safety",
+      "Gap": "Values collegiate connections (+14%) and shows greater comfort bringing full self to work (+11%)",
+      "Business_Impact": "May overestimate how psychological safety is experienced across organization",
+      "Opportunity": "Build cultures where authenticity and connection are recognized as strategic assets"
+    },
+    {
+      "Area": "Financial Security",
+      "Gap": "More likely to feel fairly compensated (+12%) and less concerned about cost of living (-5%)",
+      "Business_Impact": "May create compensation strategies that don't address actual employee concerns",
+      "Opportunity": "Bridge gap by acknowledging financial concerns CEOs may not personally experience"
+    },
+    {
+      "Area": "ESG Initiatives",
+      "Gap": "Less likely to believe organization has 'just the right commitment' to CSR (-12%) and DEI (-8%)",
+      "Business_Impact": "Potential overestimation of initiatives employees view differently",
+      "Opportunity": "Focus on measurable ESG impact rather than perception to reconcile divergent views"
     }
   ],
   
@@ -68,7 +101,7 @@
     "Maintaining a competitive edge through technology, talent, and market insights.",
     "Enhancing the company's reputation for delivering value to stakeholders while aligning with societal expectations.",
     "Strengthening resilience to mitigate risks and ensure long-term stability.",
-    "Creating environments where advanced technologies (+33%) and sustainability initiatives (+27%) drive strategic advantage."
+    "Creating environments where advanced technologies (+23%) and sustainability initiatives (+15%) drive strategic advantage."
   ],
   
   "Frustrations_Pain_Points": [
@@ -87,7 +120,7 @@
     "Regularly engages in peer forums and industry networks to gather insights and refine strategies.",
     "Leverages concise, data-driven resources to stay informed amidst a high-demand schedule.",
     "Continuously evaluates and refines strategies for operational excellence and growth.",
-    "Strongly values hybrid work arrangements (+18%) while maintaining high expectations for availability."
+    "Values hybrid work arrangements (+6%) while maintaining clear expectations for availability."
   ],
   
   "Emotional_Triggers": [
@@ -127,18 +160,18 @@
       "Messaging_Implication": "Highlight blind spots in talent strategy and practical ways to close perception gaps"
     },
     {
-      "Trigger": "Tension between flexibility preferences and work-life boundaries",
+      "Trigger": "Divergent views on work-life boundaries",
       "Emotional_Response": "Frustration with conflicting expectations around availability",
       "Messaging_Implication": "Offer frameworks for clear work-life policies that balance flexibility with boundaries"
     },
     {
-      "Trigger": "Psychological safety challenges even at CEO level",
-      "Emotional_Response": "Recognition of personal vulnerability despite leadership position",
+      "Trigger": "Psychological safety variations across organizational levels",
+      "Emotional_Response": "Recognition of vulnerability disparities despite leadership position",
       "Messaging_Implication": "Present psychological safety as a strategic advantage, not a soft benefit"
     },
     {
       "Trigger": "Divergent views on ESG commitment levels",
-      "Emotional_Response": "Defensiveness about initiatives already perceived as sufficient",
+      "Emotional_Response": "Concerns about initiatives perceived as insufficient",
       "Messaging_Implication": "Focus on measuring impact rather than judging commitment levels"
     },
     {
@@ -148,12 +181,35 @@
     }
   ],
   
+  "Connection_Opportunities": [
+    {
+      "Area": "Environmental Sustainability",
+      "Finding": "CEOs place high value on environmental sustainability (+15%) when considering roles",
+      "Leverage_Point": "Position sustainability as a strategic advantage rather than compliance burden"
+    },
+    {
+      "Area": "Technology Innovation",
+      "Finding": "CEOs highly value advanced technologies (+23%) in employment decisions",
+      "Leverage_Point": "Frame technology adoption as competitive edge rather than operational issue"
+    },
+    {
+      "Area": "Organizational Adaptability",
+      "Finding": "CEOs and employees share concerns about organizational adaptation to change (-9%)",
+      "Leverage_Point": "Create dialogue around shared concerns as authentic connection points"
+    },
+    {
+      "Area": "Work Flexibility",
+      "Finding": "CEOs value workplace flexibility (+5% for flexible hours as retention factor)",
+      "Leverage_Point": "Build flexibility strategies that maintain appropriate boundaries for all levels"
+    }
+  ],
+  
   "Collaboration_Insights": [
     "CEOs value clarity and conciseness in solutions, avoiding overly complex or untested ideas.",
     "They prioritize insights that balance operational feasibility with strategic impact.",
     "Tools that enable adaptability and resilience are key, especially for technology integration and market shifts.",
-    "CEOs may need guidance to recognize perception gaps, particularly around job security, culture, and work-life boundaries.",
-    "Approaches that address psychological safety challenges faced even at leadership levels will resonate deeply."
+    "CEOs may need guidance to recognize perception gaps, particularly around workplace culture, technology readiness, and work-life boundaries.",
+    "Approaches that address psychological safety challenges faced at all organizational levels will resonate deeply."
   ],
   
   "Analogies": [
@@ -185,12 +241,5 @@
       "Category": "Perception Gap Research",
       "Sources": ["Korn Ferry CEO Survey Results 2025", "Workforce Expectations Studies"]
     }
-  ],
-  
-  "Problem_Solving_Method": [
-    "Uses structured, data-driven analysis to prioritize actions",
-    "Mitigates risks while maximizing business impact",
-    "Balances quick decisions with thorough evaluation of long-term implications",
-    "Needs to intentionally probe beyond personal preferences when addressing workforce dynamics"
   ]
-} 
+}

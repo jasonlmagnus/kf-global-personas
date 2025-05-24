@@ -16,12 +16,16 @@ export interface BasePersona {
 export interface GlobalPersona extends BasePersona {
   isGlobal: true;
   type: "global";
+  roleOverview?: string;
   goalStatement: string;
   quote?: string;
   coreBelief?: string;
-  needs: string[];
+  keyRelationships?: string[];
+  uniquePerspective?: string;
+  kpis?: string[];
+  needs: Array<{ Category: string; Description: string }>;
   motivations: string[];
-  keyResponsibilities: string[];
+  keyResponsibilities: Array<{ Category: string; Description: string }>;
   knowledgeOrExpertise?: string[];
   typicalChallenges?: string[];
   currentProjects?: string[];
@@ -31,8 +35,22 @@ export interface GlobalPersona extends BasePersona {
   emotionalTriggers?: {
     positive: string[];
     negative: string[];
-    raw?: any[];
+    raw?: string[];
   };
+  perceptionGaps?: Array<{
+    Area: string;
+    Gap: string;
+    Business_Impact: string;
+    Opportunity: string;
+  }>;
+  connectionOpportunities?: Array<{
+    Area: string;
+    Finding: string;
+    Leverage_Point: string;
+  }>;
+  analogies?: string[];
+  referenceSources?: string[];
+  problemSolvingMethod?: string;
 }
 
 // Country-specific persona fields
@@ -46,15 +64,20 @@ export interface CountryPersona extends BasePersona {
   emotionalTriggers?: {
     positive: string[];
     negative: string[];
-    raw?: any[];
+    raw?: string[];
   };
-  regionalNuances?: string[];
+  regionalNuances?: Record<string, string>;
   culturalContext?: string;
+  presentation?: Record<string, string>;
+  comparison?: Array<{
+    "Key Dimension": string;
+    "Generic CEO Persona": string;
+    "Australian CEO Persona": string;
+    "Value-Add for Australian Context": string;
+  }>;
   behaviors?: Record<string, string[]>;
   keyResponsibilities?: Record<string, string[]>;
   collaborationInsights?: Record<string, string[]>;
-  presentation?: any;
-  comparison?: any[];
   type: "country";
 }
 

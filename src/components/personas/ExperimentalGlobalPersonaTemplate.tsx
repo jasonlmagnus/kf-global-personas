@@ -144,37 +144,37 @@ const AVAILABLE_PERSONAS: PersonaOption[] = [
   {
     id: "ceo",
     name: "CEO",
-    path: "/data/global/ceo/ceo_v2.json",
+    path: "/data/global/ceo/ceo_v3.json",
     description: "Chief Executive Officer",
   },
   {
     id: "chro",
     name: "CHRO",
-    path: "/data/global/chro/chro_v2.json",
+    path: "/data/global/chro/chro_v3.json",
     description: "Chief Human Resources Officer",
   },
   {
     id: "leadership_dev",
     name: "Leadership Development",
-    path: "/data/global/leadership_dev/leadership_dev_v2.json",
+    path: "/data/global/leadership_dev/leadership_dev_v3.json",
     description: "Leadership Development Leader",
   },
   {
     id: "rewards",
     name: "Rewards Leader",
-    path: "/data/global/rewards/rewards_v2.json",
+    path: "/data/global/rewards/rewards_v3.json",
     description: "Rewards & Compensation Leader",
   },
   {
     id: "sales",
     name: "Sales Leader",
-    path: "/data/global/sales/sales_v2.json",
+    path: "/data/global/sales/sales_v3.json",
     description: "Sales Leadership",
   },
   {
     id: "talent",
     name: "Talent Acquisition",
-    path: "/data/global/talent/talent_v2.json",
+    path: "/data/global/talent/talent_v3.json",
     description: "Talent Acquisition Leader",
   },
 ];
@@ -401,13 +401,13 @@ const ExperimentalGlobalPersonaTemplate = () => {
             <div className="flex-1">
               <h1 className="text-4xl font-bold text-[#003C2D] flex items-center gap-3">
                 <Globe size={36} className="text-[#003C2D]" />
-                {currentPersona?.name} Persona Template
+                {currentPersona?.name} Persona Template (v3)
               </h1>
               <div className="mt-2 flex items-center gap-2 text-gray-600">
                 <FileText size={16} />
                 <span>
                   Interactive Experimental Version{" "}
-                  {personaData?.metadata.version}
+                  {personaData?.metadata.version} - v3 Global Personas
                 </span>
                 <span className="mx-2">•</span>
                 <span>For Global Content Marketing Team</span>

@@ -401,6 +401,21 @@ export async function GET(request: NextRequest) {
   const department = searchParams.get('department') as Department | null;
   
   try {
+    // Special handling for __src region (CSV data source)
+    if (region === '__src') {
+      return NextResponse.json({
+        message: 'CSV data source region',
+        note: 'This region contains source CSV files, not persona JSON files',
+        availableFiles: [
+          'global_ceo.csv',
+          '2025_global_data.csv',
+          'Korn Ferry open ends Senior Leader Survey April 2025(Textual Data).csv'
+        ],
+        csvEndpoint: '/api/data?file=<filename>',
+        listEndpoint: 'POST /api/data'
+      }, { status: 200 });
+    }
+
     // If both region and department are specified, return a specific persona
     if (region && department) {
       const persona = getPersonaById(region, department);

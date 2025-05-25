@@ -8,16 +8,14 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
 } from "recharts";
 
-// Types for the actual CSV data
+// Survey Response Interface
 interface SurveyResponse {
-  // Demographics
   companySize: string;
   country: string;
   industry: string;
@@ -25,8 +23,6 @@ interface SurveyResponse {
   jobFunction: string;
   decisionMaking: string;
   boardStatus: string;
-
-  // Strategic Priorities (Q2) - binary 0/1 responses
   q2_growth: number;
   q2_innovation: number;
   q2_transformation: number;
@@ -36,8 +32,6 @@ interface SurveyResponse {
   q2_culture_change: number;
   q2_risk_reputation: number;
   q2_sustainability_esg: number;
-
-  // External Trends (Q3) - binary 0/1 responses
   q3_economic_uncertainty: number;
   q3_political_uncertainty: number;
   q3_sustainability_transition: number;
@@ -50,8 +44,6 @@ interface SurveyResponse {
   q3_activist_behaviors: number;
   q3_ma_restructuring: number;
   q3_competitive_innovation: number;
-
-  // Organizational Problems (Q4) - binary 0/1 responses
   q4_lack_productivity: number;
   q4_lack_engagement: number;
   q4_return_office_resistance: number;
@@ -60,56 +52,111 @@ interface SurveyResponse {
   q4_ai_resistance: number;
   q4_generational_challenges: number;
   q4_change_fatigue: number;
-
-  // Open-ended responses
   challenges?: string;
   capability_gaps?: string;
   consulting_preferences?: string;
 }
 
+// Dashboard Data Interface
 interface DashboardData {
   totalResponses: number;
+  allResponses: SurveyResponse[];
   strategicPriorities: { [key: string]: number };
   externalTrends: { [key: string]: number };
   organizationalProblems: { [key: string]: number };
-  byPersona: {
-    [personaRole: string]: {
-      strategicPriorities: { [key: string]: number };
-      externalTrends: { [key: string]: number };
-      organizationalProblems: { [key: string]: number };
-    };
-  };
-  byIndustry: {
-    [industry: string]: {
-      strategicPriorities: { [key: string]: number };
-      externalTrends: { [key: string]: number };
-      organizationalProblems: { [key: string]: number };
-    };
-  };
-  byCountry: {
-    [country: string]: {
-      strategicPriorities: { [key: string]: number };
-      externalTrends: { [key: string]: number };
-      organizationalProblems: { [key: string]: number };
-    };
-  };
+  availablePersonas: string[];
+  availableIndustries: string[];
+  availableCountries: string[];
 }
+
+// Filtered Results Interface
+interface FilteredResults {
+  responses: SurveyResponse[];
+  sampleSize: number;
+  strategicPriorities: { [key: string]: number };
+  externalTrends: { [key: string]: number };
+  organizationalProblems: { [key: string]: number };
+}
+
+// Data cleaning functions
+const cleanJobTitle = (title: string): string => {
+  if (!title || typeof title !== "string") return "Unknown";
+
+  const cleaned = title
+    .replace(/^[^a-zA-Z]*/, "")
+    .replace(/[?:]/g, "")
+    .replace(/\b(what|which|how|when|where|why|who)\b/gi, "")
+    .trim();
+
+  if (cleaned.length < 2 || cleaned.toLowerCase().includes("question")) {
+    return "Unknown";
+  }
+
+  // Map to standard roles
+  const lowerTitle = cleaned.toLowerCase();
+  if (lowerTitle.includes("ceo") || lowerTitle.includes("chief executive"))
+    return "CEO";
+  if (lowerTitle.includes("cto") || lowerTitle.includes("chief technology"))
+    return "CTO";
+  if (lowerTitle.includes("cfo") || lowerTitle.includes("chief financial"))
+    return "CFO";
+  if (lowerTitle.includes("cmo") || lowerTitle.includes("chief marketing"))
+    return "CMO";
+  if (lowerTitle.includes("chro") || lowerTitle.includes("chief human"))
+    return "CHRO";
+  if (lowerTitle.includes("cio") || lowerTitle.includes("chief information"))
+    return "CIO";
+  if (lowerTitle.includes("head")) return "Head";
+  if (lowerTitle.includes("senior vp") || lowerTitle.includes("senior vice"))
+    return "Senior VP";
+  if (lowerTitle.includes("vp") || lowerTitle.includes("vice president"))
+    return "VP";
+  if (lowerTitle.includes("director")) return "Director";
+
+  return cleaned;
+};
+
+const cleanIndustry = (industry: string): string => {
+  if (!industry || typeof industry !== "string") return "Unknown";
+
+  const cleaned = industry
+    .replace(/[?:]/g, "")
+    .replace(/\b(what|which|how|when|where|why|who)\b/gi, "")
+    .trim();
+
+  if (cleaned.length < 2 || cleaned.toLowerCase().includes("question")) {
+    return "Unknown";
+  }
+
+  return cleaned;
+};
+
+const cleanCountry = (country: string): string => {
+  if (!country || typeof country !== "string") return "Unknown";
+
+  const cleaned = country
+    .replace(/[?:]/g, "")
+    .replace(/\b(what|which|how|when|where|why|who)\b/gi, "")
+    .trim();
+
+  if (cleaned.length < 2 || cleaned.toLowerCase().includes("question")) {
+    return "Unknown";
+  }
+
+  return cleaned;
+};
 
 // CSV parsing function
 const parseCSV = (csvText: string): SurveyResponse[] => {
-  const lines = csvText.trim().split("\n");
-  const headers = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""));
-
+  const lines = csvText.split("\n");
   const responses: SurveyResponse[] = [];
 
-  for (let i = 2; i < lines.length; i++) {
-    // Skip header and description row
-    const line = lines[i];
-    if (!line.trim()) continue;
+  for (let i = 7; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || !line.startsWith("I agree")) continue;
 
-    // Parse CSV line handling quoted values
     const values: string[] = [];
-    let currentValue = "";
+    let current = "";
     let inQuotes = false;
 
     for (let j = 0; j < line.length; j++) {
@@ -117,687 +164,365 @@ const parseCSV = (csvText: string): SurveyResponse[] => {
       if (char === '"') {
         inQuotes = !inQuotes;
       } else if (char === "," && !inQuotes) {
-        values.push(currentValue.trim());
-        currentValue = "";
+        values.push(current.trim());
+        current = "";
       } else {
-        currentValue += char;
+        current += char;
       }
     }
-    values.push(currentValue.trim()); // Add the last value
+    values.push(current.trim());
 
-    if (values.length < headers.length) continue;
+    if (values.length >= 42) {
+      const response: SurveyResponse = {
+        companySize: values[1] || "",
+        country: cleanCountry(values[2]),
+        industry: cleanIndustry(values[3]),
+        jobTitle: cleanJobTitle(values[5]),
+        jobFunction: values[6] || "",
+        decisionMaking: values[7] || "",
+        boardStatus: values[8] || "",
+        q2_growth: parseInt(values[10]) || 0,
+        q2_innovation: parseInt(values[11]) || 0,
+        q2_transformation: parseInt(values[12]) || 0,
+        q2_ai_technology: parseInt(values[13]) || 0,
+        q2_cost_efficiency: parseInt(values[14]) || 0,
+        q2_skills_future: parseInt(values[15]) || 0,
+        q2_culture_change: parseInt(values[16]) || 0,
+        q2_risk_reputation: parseInt(values[17]) || 0,
+        q2_sustainability_esg: parseInt(values[18]) || 0,
+        q3_economic_uncertainty: parseInt(values[20]) || 0,
+        q3_political_uncertainty: parseInt(values[21]) || 0,
+        q3_sustainability_transition: parseInt(values[22]) || 0,
+        q3_regulatory_changes: parseInt(values[23]) || 0,
+        q3_supply_chain: parseInt(values[24]) || 0,
+        q3_labor_skills_shortage: parseInt(values[25]) || 0,
+        q3_technological_changes: parseInt(values[26]) || 0,
+        q3_industry_convergence: parseInt(values[27]) || 0,
+        q3_consumer_behaviors: parseInt(values[28]) || 0,
+        q3_activist_behaviors: parseInt(values[29]) || 0,
+        q3_ma_restructuring: parseInt(values[30]) || 0,
+        q3_competitive_innovation: parseInt(values[31]) || 0,
+        q4_lack_productivity: parseInt(values[33]) || 0,
+        q4_lack_engagement: parseInt(values[34]) || 0,
+        q4_return_office_resistance: parseInt(values[35]) || 0,
+        q4_flexibility_requests: parseInt(values[36]) || 0,
+        q4_alignment_goals: parseInt(values[37]) || 0,
+        q4_ai_resistance: parseInt(values[38]) || 0,
+        q4_generational_challenges: parseInt(values[39]) || 0,
+        q4_change_fatigue: parseInt(values[40]) || 0,
+        challenges: values[41] || "",
+        capability_gaps: values[42] || "",
+        consulting_preferences: values[43] || "",
+      };
 
-    // Map CSV columns to our data structure
-    const response: SurveyResponse = {
-      companySize:
-        values[headers.indexOf("S1 - Tell us your company size.")] || "",
-      country:
-        values[
-          headers.indexOf(
-            "S2 - In which of the following countries are you currently based for work?"
-          )
-        ] || "",
-      industry:
-        values[
-          headers.indexOf(
-            "S3 - Which of the following industries do you work in?"
-          )
-        ] || "",
-      jobTitle:
-        values[
-          headers.indexOf(
-            "S4 - Which of these best describes your job title at the company?"
-          )
-        ] || "",
-      jobFunction:
-        values[
-          headers.indexOf(
-            "S5 - Which of these best describes your job function?"
-          )
-        ] || "",
-      decisionMaking:
-        values[
-          headers.indexOf(
-            "S6 - To what extent are you involved in the decision-making process of your line of business?"
-          )
-        ] || "",
-      boardStatus:
-        values[headers.indexOf("S7 - Are you on the board of a company?")] ||
-        "",
-
-      // Strategic Priorities (Q2)
-      q2_growth: parseInt(
-        values[headers.indexOf("Q2 - Growth & market expansion")] || "0"
-      ),
-      q2_innovation: parseInt(
-        values[headers.indexOf("Q2 - Innovation")] || "0"
-      ),
-      q2_transformation: parseInt(
-        values[headers.indexOf("Q2 - Transformation")] || "0"
-      ),
-      q2_ai_technology: parseInt(
-        values[headers.indexOf("Q2 - AI & technology")] || "0"
-      ),
-      q2_cost_efficiency: parseInt(
-        values[headers.indexOf("Q2 - Cost efficiency & productivity")] || "0"
-      ),
-      q2_skills_future: parseInt(
-        values[headers.indexOf("Q2 - Skills for the future")] || "0"
-      ),
-      q2_culture_change: parseInt(
-        values[headers.indexOf("Q2 - Culture change")] || "0"
-      ),
-      q2_risk_reputation: parseInt(
-        values[headers.indexOf("Q2 - Risk & reputation management")] || "0"
-      ),
-      q2_sustainability_esg: parseInt(
-        values[headers.indexOf("Q2 - Sustainability & ESG")] || "0"
-      ),
-
-      // External Trends (Q3)
-      q3_economic_uncertainty: parseInt(
-        values[headers.indexOf("Q3 - Economic uncertainty")] || "0"
-      ),
-      q3_political_uncertainty: parseInt(
-        values[headers.indexOf("Q3 - Political uncertainty")] || "0"
-      ),
-      q3_sustainability_transition: parseInt(
-        values[
-          headers.indexOf("Q3 - Sustainability and the energy transition")
-        ] || "0"
-      ),
-      q3_regulatory_changes: parseInt(
-        values[headers.indexOf("Q3 - Regulatory changes")] || "0"
-      ),
-      q3_supply_chain: parseInt(
-        values[headers.indexOf("Q3 - Supply chain shortage")] || "0"
-      ),
-      q3_labor_skills_shortage: parseInt(
-        values[headers.indexOf("Q3 - Labor and skills shortages")] || "0"
-      ),
-      q3_technological_changes: parseInt(
-        values[
-          headers.indexOf("Q3 - Technological changes, including generative AI")
-        ] || "0"
-      ),
-      q3_industry_convergence: parseInt(
-        values[headers.indexOf("Q3 - Convergence of industries")] || "0"
-      ),
-      q3_consumer_behaviors: parseInt(
-        values[headers.indexOf("Q3 - Changing consumer behaviors")] || "0"
-      ),
-      q3_activist_behaviors: parseInt(
-        values[headers.indexOf("Q3 - Activist behaviors")] || "0"
-      ),
-      q3_ma_restructuring: parseInt(
-        values[headers.indexOf("Q3 - M&A (consolidation and restructuring)")] ||
-          "0"
-      ),
-      q3_competitive_innovation: parseInt(
-        values[headers.indexOf("Q3 - Competitive innovation")] || "0"
-      ),
-
-      // Organizational Problems (Q4)
-      q4_lack_productivity: parseInt(
-        values[headers.indexOf("Q4 - Lack of productivity")] || "0"
-      ),
-      q4_lack_engagement: parseInt(
-        values[headers.indexOf("Q4 - Lack of engagement")] || "0"
-      ),
-      q4_return_office_resistance: parseInt(
-        values[headers.indexOf("Q4 - Resistance to return to office")] || "0"
-      ),
-      q4_flexibility_requests: parseInt(
-        values[headers.indexOf("Q4 - Requests for more flexibility")] || "0"
-      ),
-      q4_alignment_goals: parseInt(
-        values[
-          headers.indexOf("Q4 - Lack of alignment with organizational goals")
-        ] || "0"
-      ),
-      q4_ai_resistance: parseInt(
-        values[headers.indexOf("Q4 - Resistance to AI and new technologies")] ||
-          "0"
-      ),
-      q4_generational_challenges: parseInt(
-        values[headers.indexOf("Q4 - Inter-generational challenges")] || "0"
-      ),
-      q4_change_fatigue: parseInt(
-        values[headers.indexOf("Q4 - Change fatigue")] || "0"
-      ),
-
-      // Open-ended responses
-      challenges:
-        values[
-          headers.indexOf(
-            "Q5 - Where are you feeling the most pressure to perform and where do you feel stuck?"
-          )
-        ] || "",
-      capability_gaps:
-        values[
-          headers.indexOf(
-            "Q6 - Are there any critical capability gaps you're working to close either at a team or organizational level?"
-          )
-        ] || "",
-    };
-
-    responses.push(response);
+      responses.push(response);
+    }
   }
 
   return responses;
 };
 
-// Calculate percentages from binary responses
+// Calculate percentages for a field
 const calculatePercentages = (
   responses: SurveyResponse[],
   field: keyof SurveyResponse
 ): number => {
   if (responses.length === 0) return 0;
-  const sum = responses.reduce(
-    (acc, response) => acc + ((response[field] as number) || 0),
-    0
-  );
-  return Math.round((sum / responses.length) * 100);
+  const count = responses.filter((r) => r[field] === 1).length;
+  return Math.round((count / responses.length) * 100);
 };
 
-// Process data into dashboard format
+// Process data function
 const processData = (responses: SurveyResponse[]): DashboardData => {
-  const totalResponses = responses.length;
+  // Filter out invalid responses
+  const validResponses = responses.filter(
+    (r) =>
+      r.country !== "Unknown" &&
+      r.industry !== "Unknown" &&
+      r.jobTitle !== "Unknown"
+  );
 
-  // Overall percentages
+  // Calculate overall percentages
   const strategicPriorities = {
-    "Growth & Market Expansion": calculatePercentages(responses, "q2_growth"),
-    Innovation: calculatePercentages(responses, "q2_innovation"),
-    Transformation: calculatePercentages(responses, "q2_transformation"),
-    "AI & Technology": calculatePercentages(responses, "q2_ai_technology"),
-    "Cost Efficiency": calculatePercentages(responses, "q2_cost_efficiency"),
-    "Skills for Future": calculatePercentages(responses, "q2_skills_future"),
-    "Culture Change": calculatePercentages(responses, "q2_culture_change"),
-    "Risk Management": calculatePercentages(responses, "q2_risk_reputation"),
+    "Growth & Market Expansion": calculatePercentages(
+      validResponses,
+      "q2_growth"
+    ),
+    Innovation: calculatePercentages(validResponses, "q2_innovation"),
+    Transformation: calculatePercentages(validResponses, "q2_transformation"),
+    "AI & Technology": calculatePercentages(validResponses, "q2_ai_technology"),
+    "Cost Efficiency": calculatePercentages(
+      validResponses,
+      "q2_cost_efficiency"
+    ),
+    "Skills for Future": calculatePercentages(
+      validResponses,
+      "q2_skills_future"
+    ),
+    "Culture Change": calculatePercentages(validResponses, "q2_culture_change"),
+    "Risk Management": calculatePercentages(
+      validResponses,
+      "q2_risk_reputation"
+    ),
     "Sustainability & ESG": calculatePercentages(
-      responses,
+      validResponses,
       "q2_sustainability_esg"
     ),
   };
 
   const externalTrends = {
     "Economic Uncertainty": calculatePercentages(
-      responses,
+      validResponses,
       "q3_economic_uncertainty"
     ),
     "Political Uncertainty": calculatePercentages(
-      responses,
+      validResponses,
       "q3_political_uncertainty"
     ),
     "Sustainability Transition": calculatePercentages(
-      responses,
+      validResponses,
       "q3_sustainability_transition"
     ),
     "Regulatory Changes": calculatePercentages(
-      responses,
+      validResponses,
       "q3_regulatory_changes"
     ),
-    "Supply Chain Issues": calculatePercentages(responses, "q3_supply_chain"),
-    "Labor/Skills Shortages": calculatePercentages(
-      responses,
+    "Supply Chain Issues": calculatePercentages(
+      validResponses,
+      "q3_supply_chain"
+    ),
+    "Labor Shortages": calculatePercentages(
+      validResponses,
       "q3_labor_skills_shortage"
     ),
-    "Tech Changes/AI": calculatePercentages(
-      responses,
+    "Technology Changes": calculatePercentages(
+      validResponses,
       "q3_technological_changes"
     ),
     "Industry Convergence": calculatePercentages(
-      responses,
+      validResponses,
       "q3_industry_convergence"
     ),
     "Consumer Behavior": calculatePercentages(
-      responses,
+      validResponses,
       "q3_consumer_behaviors"
     ),
     "Activist Behaviors": calculatePercentages(
-      responses,
+      validResponses,
       "q3_activist_behaviors"
     ),
-    "M&A/Restructuring": calculatePercentages(responses, "q3_ma_restructuring"),
+    "M&A Activity": calculatePercentages(validResponses, "q3_ma_restructuring"),
     "Competitive Innovation": calculatePercentages(
-      responses,
+      validResponses,
       "q3_competitive_innovation"
     ),
   };
 
   const organizationalProblems = {
     "Lack of Productivity": calculatePercentages(
-      responses,
+      validResponses,
       "q4_lack_productivity"
     ),
-    "Lack of Engagement": calculatePercentages(responses, "q4_lack_engagement"),
+    "Lack of Engagement": calculatePercentages(
+      validResponses,
+      "q4_lack_engagement"
+    ),
     "Return to Office Resistance": calculatePercentages(
-      responses,
+      validResponses,
       "q4_return_office_resistance"
     ),
     "Flexibility Requests": calculatePercentages(
-      responses,
+      validResponses,
       "q4_flexibility_requests"
     ),
-    "Goal Misalignment": calculatePercentages(responses, "q4_alignment_goals"),
-    "AI Resistance": calculatePercentages(responses, "q4_ai_resistance"),
+    "Goal Alignment Issues": calculatePercentages(
+      validResponses,
+      "q4_alignment_goals"
+    ),
+    "AI Resistance": calculatePercentages(validResponses, "q4_ai_resistance"),
     "Generational Challenges": calculatePercentages(
-      responses,
+      validResponses,
       "q4_generational_challenges"
     ),
-    "Change Fatigue": calculatePercentages(responses, "q4_change_fatigue"),
+    "Change Fatigue": calculatePercentages(validResponses, "q4_change_fatigue"),
   };
 
-  // Group by persona (job title)
-  const byPersona: DashboardData["byPersona"] = {};
-  const personaGroups = responses.reduce((acc, response) => {
-    const persona = response.jobTitle || "Unknown";
-    if (!acc[persona]) acc[persona] = [];
-    acc[persona].push(response);
-    return acc;
-  }, {} as Record<string, SurveyResponse[]>);
-
-  Object.entries(personaGroups).forEach(([persona, personaResponses]) => {
-    byPersona[persona] = {
-      strategicPriorities: {
-        "Growth & Market Expansion": calculatePercentages(
-          personaResponses,
-          "q2_growth"
-        ),
-        Innovation: calculatePercentages(personaResponses, "q2_innovation"),
-        Transformation: calculatePercentages(
-          personaResponses,
-          "q2_transformation"
-        ),
-        "AI & Technology": calculatePercentages(
-          personaResponses,
-          "q2_ai_technology"
-        ),
-        "Cost Efficiency": calculatePercentages(
-          personaResponses,
-          "q2_cost_efficiency"
-        ),
-        "Skills for Future": calculatePercentages(
-          personaResponses,
-          "q2_skills_future"
-        ),
-        "Culture Change": calculatePercentages(
-          personaResponses,
-          "q2_culture_change"
-        ),
-        "Risk Management": calculatePercentages(
-          personaResponses,
-          "q2_risk_reputation"
-        ),
-        "Sustainability & ESG": calculatePercentages(
-          personaResponses,
-          "q2_sustainability_esg"
-        ),
-      },
-      externalTrends: {
-        "Economic Uncertainty": calculatePercentages(
-          personaResponses,
-          "q3_economic_uncertainty"
-        ),
-        "Political Uncertainty": calculatePercentages(
-          personaResponses,
-          "q3_political_uncertainty"
-        ),
-        "Sustainability Transition": calculatePercentages(
-          personaResponses,
-          "q3_sustainability_transition"
-        ),
-        "Regulatory Changes": calculatePercentages(
-          personaResponses,
-          "q3_regulatory_changes"
-        ),
-        "Supply Chain Issues": calculatePercentages(
-          personaResponses,
-          "q3_supply_chain"
-        ),
-        "Labor/Skills Shortages": calculatePercentages(
-          personaResponses,
-          "q3_labor_skills_shortage"
-        ),
-        "Tech Changes/AI": calculatePercentages(
-          personaResponses,
-          "q3_technological_changes"
-        ),
-        "Industry Convergence": calculatePercentages(
-          personaResponses,
-          "q3_industry_convergence"
-        ),
-        "Consumer Behavior": calculatePercentages(
-          personaResponses,
-          "q3_consumer_behaviors"
-        ),
-        "Activist Behaviors": calculatePercentages(
-          personaResponses,
-          "q3_activist_behaviors"
-        ),
-        "M&A/Restructuring": calculatePercentages(
-          personaResponses,
-          "q3_ma_restructuring"
-        ),
-        "Competitive Innovation": calculatePercentages(
-          personaResponses,
-          "q3_competitive_innovation"
-        ),
-      },
-      organizationalProblems: {
-        "Lack of Productivity": calculatePercentages(
-          personaResponses,
-          "q4_lack_productivity"
-        ),
-        "Lack of Engagement": calculatePercentages(
-          personaResponses,
-          "q4_lack_engagement"
-        ),
-        "Return to Office Resistance": calculatePercentages(
-          personaResponses,
-          "q4_return_office_resistance"
-        ),
-        "Flexibility Requests": calculatePercentages(
-          personaResponses,
-          "q4_flexibility_requests"
-        ),
-        "Goal Misalignment": calculatePercentages(
-          personaResponses,
-          "q4_alignment_goals"
-        ),
-        "AI Resistance": calculatePercentages(
-          personaResponses,
-          "q4_ai_resistance"
-        ),
-        "Generational Challenges": calculatePercentages(
-          personaResponses,
-          "q4_generational_challenges"
-        ),
-        "Change Fatigue": calculatePercentages(
-          personaResponses,
-          "q4_change_fatigue"
-        ),
-      },
-    };
-  });
-
-  // Group by industry
-  const byIndustry: DashboardData["byIndustry"] = {};
-  const industryGroups = responses.reduce((acc, response) => {
-    const industry = response.industry || "Unknown";
-    if (!acc[industry]) acc[industry] = [];
-    acc[industry].push(response);
-    return acc;
-  }, {} as Record<string, SurveyResponse[]>);
-
-  Object.entries(industryGroups).forEach(([industry, industryResponses]) => {
-    byIndustry[industry] = {
-      strategicPriorities: {
-        "Growth & Market Expansion": calculatePercentages(
-          industryResponses,
-          "q2_growth"
-        ),
-        Innovation: calculatePercentages(industryResponses, "q2_innovation"),
-        Transformation: calculatePercentages(
-          industryResponses,
-          "q2_transformation"
-        ),
-        "AI & Technology": calculatePercentages(
-          industryResponses,
-          "q2_ai_technology"
-        ),
-        "Cost Efficiency": calculatePercentages(
-          industryResponses,
-          "q2_cost_efficiency"
-        ),
-        "Skills for Future": calculatePercentages(
-          industryResponses,
-          "q2_skills_future"
-        ),
-        "Culture Change": calculatePercentages(
-          industryResponses,
-          "q2_culture_change"
-        ),
-        "Risk Management": calculatePercentages(
-          industryResponses,
-          "q2_risk_reputation"
-        ),
-        "Sustainability & ESG": calculatePercentages(
-          industryResponses,
-          "q2_sustainability_esg"
-        ),
-      },
-      externalTrends: {
-        "Economic Uncertainty": calculatePercentages(
-          industryResponses,
-          "q3_economic_uncertainty"
-        ),
-        "Political Uncertainty": calculatePercentages(
-          industryResponses,
-          "q3_political_uncertainty"
-        ),
-        "Sustainability Transition": calculatePercentages(
-          industryResponses,
-          "q3_sustainability_transition"
-        ),
-        "Regulatory Changes": calculatePercentages(
-          industryResponses,
-          "q3_regulatory_changes"
-        ),
-        "Supply Chain Issues": calculatePercentages(
-          industryResponses,
-          "q3_supply_chain"
-        ),
-        "Labor/Skills Shortages": calculatePercentages(
-          industryResponses,
-          "q3_labor_skills_shortage"
-        ),
-        "Tech Changes/AI": calculatePercentages(
-          industryResponses,
-          "q3_technological_changes"
-        ),
-        "Industry Convergence": calculatePercentages(
-          industryResponses,
-          "q3_industry_convergence"
-        ),
-        "Consumer Behavior": calculatePercentages(
-          industryResponses,
-          "q3_consumer_behaviors"
-        ),
-        "Activist Behaviors": calculatePercentages(
-          industryResponses,
-          "q3_activist_behaviors"
-        ),
-        "M&A/Restructuring": calculatePercentages(
-          industryResponses,
-          "q3_ma_restructuring"
-        ),
-        "Competitive Innovation": calculatePercentages(
-          industryResponses,
-          "q3_competitive_innovation"
-        ),
-      },
-      organizationalProblems: {
-        "Lack of Productivity": calculatePercentages(
-          industryResponses,
-          "q4_lack_productivity"
-        ),
-        "Lack of Engagement": calculatePercentages(
-          industryResponses,
-          "q4_lack_engagement"
-        ),
-        "Return to Office Resistance": calculatePercentages(
-          industryResponses,
-          "q4_return_office_resistance"
-        ),
-        "Flexibility Requests": calculatePercentages(
-          industryResponses,
-          "q4_flexibility_requests"
-        ),
-        "Goal Misalignment": calculatePercentages(
-          industryResponses,
-          "q4_alignment_goals"
-        ),
-        "AI Resistance": calculatePercentages(
-          industryResponses,
-          "q4_ai_resistance"
-        ),
-        "Generational Challenges": calculatePercentages(
-          industryResponses,
-          "q4_generational_challenges"
-        ),
-        "Change Fatigue": calculatePercentages(
-          industryResponses,
-          "q4_change_fatigue"
-        ),
-      },
-    };
-  });
-
-  // Group by country
-  const byCountry: DashboardData["byCountry"] = {};
-  const countryGroups = responses.reduce((acc, response) => {
-    const country = response.country || "Unknown";
-    if (!acc[country]) acc[country] = [];
-    acc[country].push(response);
-    return acc;
-  }, {} as Record<string, SurveyResponse[]>);
-
-  Object.entries(countryGroups).forEach(([country, countryResponses]) => {
-    byCountry[country] = {
-      strategicPriorities: {
-        "Growth & Market Expansion": calculatePercentages(
-          countryResponses,
-          "q2_growth"
-        ),
-        Innovation: calculatePercentages(countryResponses, "q2_innovation"),
-        Transformation: calculatePercentages(
-          countryResponses,
-          "q2_transformation"
-        ),
-        "AI & Technology": calculatePercentages(
-          countryResponses,
-          "q2_ai_technology"
-        ),
-        "Cost Efficiency": calculatePercentages(
-          countryResponses,
-          "q2_cost_efficiency"
-        ),
-        "Skills for Future": calculatePercentages(
-          countryResponses,
-          "q2_skills_future"
-        ),
-        "Culture Change": calculatePercentages(
-          countryResponses,
-          "q2_culture_change"
-        ),
-        "Risk Management": calculatePercentages(
-          countryResponses,
-          "q2_risk_reputation"
-        ),
-        "Sustainability & ESG": calculatePercentages(
-          countryResponses,
-          "q2_sustainability_esg"
-        ),
-      },
-      externalTrends: {
-        "Economic Uncertainty": calculatePercentages(
-          countryResponses,
-          "q3_economic_uncertainty"
-        ),
-        "Political Uncertainty": calculatePercentages(
-          countryResponses,
-          "q3_political_uncertainty"
-        ),
-        "Sustainability Transition": calculatePercentages(
-          countryResponses,
-          "q3_sustainability_transition"
-        ),
-        "Regulatory Changes": calculatePercentages(
-          countryResponses,
-          "q3_regulatory_changes"
-        ),
-        "Supply Chain Issues": calculatePercentages(
-          countryResponses,
-          "q3_supply_chain"
-        ),
-        "Labor/Skills Shortages": calculatePercentages(
-          countryResponses,
-          "q3_labor_skills_shortage"
-        ),
-        "Tech Changes/AI": calculatePercentages(
-          countryResponses,
-          "q3_technological_changes"
-        ),
-        "Industry Convergence": calculatePercentages(
-          countryResponses,
-          "q3_industry_convergence"
-        ),
-        "Consumer Behavior": calculatePercentages(
-          countryResponses,
-          "q3_consumer_behaviors"
-        ),
-        "Activist Behaviors": calculatePercentages(
-          countryResponses,
-          "q3_activist_behaviors"
-        ),
-        "M&A/Restructuring": calculatePercentages(
-          countryResponses,
-          "q3_ma_restructuring"
-        ),
-        "Competitive Innovation": calculatePercentages(
-          countryResponses,
-          "q3_competitive_innovation"
-        ),
-      },
-      organizationalProblems: {
-        "Lack of Productivity": calculatePercentages(
-          countryResponses,
-          "q4_lack_productivity"
-        ),
-        "Lack of Engagement": calculatePercentages(
-          countryResponses,
-          "q4_lack_engagement"
-        ),
-        "Return to Office Resistance": calculatePercentages(
-          countryResponses,
-          "q4_return_office_resistance"
-        ),
-        "Flexibility Requests": calculatePercentages(
-          countryResponses,
-          "q4_flexibility_requests"
-        ),
-        "Goal Misalignment": calculatePercentages(
-          countryResponses,
-          "q4_alignment_goals"
-        ),
-        "AI Resistance": calculatePercentages(
-          countryResponses,
-          "q4_ai_resistance"
-        ),
-        "Generational Challenges": calculatePercentages(
-          countryResponses,
-          "q4_generational_challenges"
-        ),
-        "Change Fatigue": calculatePercentages(
-          countryResponses,
-          "q4_change_fatigue"
-        ),
-      },
-    };
-  });
+  // Get unique values for filters
+  const availablePersonas = Array.from(
+    new Set(validResponses.map((r) => r.jobTitle))
+  ).sort();
+  const availableIndustries = Array.from(
+    new Set(validResponses.map((r) => r.industry))
+  ).sort();
+  const availableCountries = Array.from(
+    new Set(validResponses.map((r) => r.country))
+  ).sort();
 
   return {
-    totalResponses,
+    totalResponses: validResponses.length,
+    allResponses: validResponses,
     strategicPriorities,
     externalTrends,
     organizationalProblems,
-    byPersona,
-    byIndustry,
-    byCountry,
+    availablePersonas,
+    availableIndustries,
+    availableCountries,
   };
 };
 
+// Apply filters function - THIS IS THE KEY FIX
+const applyFilters = (
+  data: DashboardData,
+  selectedPersona: string,
+  selectedIndustry: string,
+  selectedCountry: string
+): FilteredResults => {
+  // Filter responses using AND logic for multi-dimensional filtering
+  const filteredResponses = data.allResponses.filter((response) => {
+    const matchesPersona =
+      selectedPersona === "All" || response.jobTitle === selectedPersona;
+    const matchesIndustry =
+      selectedIndustry === "All" || response.industry === selectedIndustry;
+    const matchesCountry =
+      selectedCountry === "All" || response.country === selectedCountry;
+
+    // ALL conditions must be true (AND logic)
+    return matchesPersona && matchesIndustry && matchesCountry;
+  });
+
+  // Calculate percentages for filtered data
+  const strategicPriorities = {
+    "Growth & Market Expansion": calculatePercentages(
+      filteredResponses,
+      "q2_growth"
+    ),
+    Innovation: calculatePercentages(filteredResponses, "q2_innovation"),
+    Transformation: calculatePercentages(
+      filteredResponses,
+      "q2_transformation"
+    ),
+    "AI & Technology": calculatePercentages(
+      filteredResponses,
+      "q2_ai_technology"
+    ),
+    "Cost Efficiency": calculatePercentages(
+      filteredResponses,
+      "q2_cost_efficiency"
+    ),
+    "Skills for Future": calculatePercentages(
+      filteredResponses,
+      "q2_skills_future"
+    ),
+    "Culture Change": calculatePercentages(
+      filteredResponses,
+      "q2_culture_change"
+    ),
+    "Risk Management": calculatePercentages(
+      filteredResponses,
+      "q2_risk_reputation"
+    ),
+    "Sustainability & ESG": calculatePercentages(
+      filteredResponses,
+      "q2_sustainability_esg"
+    ),
+  };
+
+  const externalTrends = {
+    "Economic Uncertainty": calculatePercentages(
+      filteredResponses,
+      "q3_economic_uncertainty"
+    ),
+    "Political Uncertainty": calculatePercentages(
+      filteredResponses,
+      "q3_political_uncertainty"
+    ),
+    "Sustainability Transition": calculatePercentages(
+      filteredResponses,
+      "q3_sustainability_transition"
+    ),
+    "Regulatory Changes": calculatePercentages(
+      filteredResponses,
+      "q3_regulatory_changes"
+    ),
+    "Supply Chain Issues": calculatePercentages(
+      filteredResponses,
+      "q3_supply_chain"
+    ),
+    "Labor Shortages": calculatePercentages(
+      filteredResponses,
+      "q3_labor_skills_shortage"
+    ),
+    "Technology Changes": calculatePercentages(
+      filteredResponses,
+      "q3_technological_changes"
+    ),
+    "Industry Convergence": calculatePercentages(
+      filteredResponses,
+      "q3_industry_convergence"
+    ),
+    "Consumer Behavior": calculatePercentages(
+      filteredResponses,
+      "q3_consumer_behaviors"
+    ),
+    "Activist Behaviors": calculatePercentages(
+      filteredResponses,
+      "q3_activist_behaviors"
+    ),
+    "M&A Activity": calculatePercentages(
+      filteredResponses,
+      "q3_ma_restructuring"
+    ),
+    "Competitive Innovation": calculatePercentages(
+      filteredResponses,
+      "q3_competitive_innovation"
+    ),
+  };
+
+  const organizationalProblems = {
+    "Lack of Productivity": calculatePercentages(
+      filteredResponses,
+      "q4_lack_productivity"
+    ),
+    "Lack of Engagement": calculatePercentages(
+      filteredResponses,
+      "q4_lack_engagement"
+    ),
+    "Return to Office Resistance": calculatePercentages(
+      filteredResponses,
+      "q4_return_office_resistance"
+    ),
+    "Flexibility Requests": calculatePercentages(
+      filteredResponses,
+      "q4_flexibility_requests"
+    ),
+    "Goal Alignment Issues": calculatePercentages(
+      filteredResponses,
+      "q4_alignment_goals"
+    ),
+    "AI Resistance": calculatePercentages(
+      filteredResponses,
+      "q4_ai_resistance"
+    ),
+    "Generational Challenges": calculatePercentages(
+      filteredResponses,
+      "q4_generational_challenges"
+    ),
+    "Change Fatigue": calculatePercentages(
+      filteredResponses,
+      "q4_change_fatigue"
+    ),
+  };
+
+  return {
+    responses: filteredResponses,
+    sampleSize: filteredResponses.length,
+    strategicPriorities,
+    externalTrends,
+    organizationalProblems,
+  };
+};
+
+// Main Dashboard Component
 const StrategicPrioritiesDashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -811,9 +536,7 @@ const StrategicPrioritiesDashboard = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "/data/__src/Korn Ferry open ends Senior Leader Survey April 2025(Textual Data).csv"
-        );
+        const response = await fetch("/api/csv-data");
         if (!response.ok) {
           throw new Error(`Failed to fetch CSV: ${response.statusText}`);
         }
@@ -837,8 +560,11 @@ const StrategicPrioritiesDashboard = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading real survey data from CSV...</p>
+          <div
+            className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4"
+            style={{ borderColor: "#138D64" }}
+          ></div>
+          <p className="text-gray-600">Loading survey data...</p>
         </div>
       </div>
     );
@@ -848,7 +574,7 @@ const StrategicPrioritiesDashboard = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="text-red-600 mb-4">
+          <div className="mb-4" style={{ color: "#177D52" }}>
             <svg
               className="h-12 w-12 mx-auto"
               fill="none"
@@ -864,16 +590,13 @@ const StrategicPrioritiesDashboard = () => {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Error Loading Real Data
+            Error Loading Data
           </h3>
           <p className="text-gray-600 mb-4">{error}</p>
-          <p className="text-sm text-gray-500 mb-4">
-            Attempting to load: /data/__src/Korn Ferry open ends Senior Leader
-            Survey April 2025(Textual Data).csv
-          </p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="text-white px-4 py-2 rounded hover:opacity-90"
+            style={{ backgroundColor: "#138D64" }}
           >
             Retry
           </button>
@@ -886,93 +609,115 @@ const StrategicPrioritiesDashboard = () => {
     return <div>No data available</div>;
   }
 
-  // Get available filter options
-  const personaOptions = ["All", ...Object.keys(data.byPersona)];
-  const industryOptions = ["All", ...Object.keys(data.byIndustry)];
-  const countryOptions = ["All", ...Object.keys(data.byCountry)];
+  // Get filtered results
+  const filteredResults = applyFilters(
+    data,
+    selectedPersona,
+    selectedIndustry,
+    selectedCountry
+  );
 
-  // Get filtered data based on selections
-  const getFilteredData = () => {
-    if (
-      selectedPersona === "All" &&
-      selectedIndustry === "All" &&
-      selectedCountry === "All"
-    ) {
-      return {
-        strategicPriorities: data.strategicPriorities,
-        externalTrends: data.externalTrends,
-        organizationalProblems: data.organizationalProblems,
-      };
-    }
-
-    // For now, show persona-specific data if persona is selected
-    if (selectedPersona !== "All" && data.byPersona[selectedPersona]) {
-      return data.byPersona[selectedPersona];
-    }
-
-    // Industry-specific data
-    if (selectedIndustry !== "All" && data.byIndustry[selectedIndustry]) {
-      return data.byIndustry[selectedIndustry];
-    }
-
-    // Country-specific data
-    if (selectedCountry !== "All" && data.byCountry[selectedCountry]) {
-      return data.byCountry[selectedCountry];
-    }
-
-    return {
-      strategicPriorities: data.strategicPriorities,
-      externalTrends: data.externalTrends,
-      organizationalProblems: data.organizationalProblems,
-    };
+  // Convert data to chart format with consistent ordering
+  const formatChartData = (
+    dataObj: { [key: string]: number },
+    referenceOrder: string[]
+  ) => {
+    // Create entries for all items in reference order
+    return referenceOrder.map((name) => ({
+      name,
+      value: dataObj[name] || 0,
+    }));
   };
 
-  const filteredData = getFilteredData();
-
-  // Convert data to chart format
-  const formatChartData = (dataObj: { [key: string]: number }) => {
+  // Establish reference order based on overall data (highest to lowest when all filters are "All")
+  const getBaselineOrder = (dataObj: { [key: string]: number }) => {
     return Object.entries(dataObj)
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value);
+      .sort((a, b) => b[1] - a[1])
+      .map(([name]) => name);
   };
+
+  // Get baseline orders for consistent x-axis
+  const strategicPrioritiesOrder = getBaselineOrder(data.strategicPriorities);
+  const externalTrendsOrder = getBaselineOrder(data.externalTrends);
+  const organizationalProblemsOrder = getBaselineOrder(
+    data.organizationalProblems
+  );
 
   const strategicPrioritiesChart = formatChartData(
-    filteredData.strategicPriorities
+    filteredResults.strategicPriorities,
+    strategicPrioritiesOrder
   );
-  const externalTrendsChart = formatChartData(filteredData.externalTrends);
+  const externalTrendsChart = formatChartData(
+    filteredResults.externalTrends,
+    externalTrendsOrder
+  );
   const organizationalProblemsChart = formatChartData(
-    filteredData.organizationalProblems
+    filteredResults.organizationalProblems,
+    organizationalProblemsOrder
   );
 
+  // Create sorted data for Marketing Insights (top items by current filter values)
+  const strategicPrioritiesInsights = Object.entries(
+    filteredResults.strategicPriorities
+  )
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, value]) => ({ name, value }));
+
+  const externalTrendsInsights = Object.entries(filteredResults.externalTrends)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, value]) => ({ name, value }));
+
+  const organizationalProblemsInsights = Object.entries(
+    filteredResults.organizationalProblems
+  )
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, value]) => ({ name, value }));
+
   const COLORS = [
-    "#8884d8",
+    "#138D64",
+    "#177D52",
+    "#0E4230",
     "#82ca9d",
-    "#ffc658",
-    "#ff7c7c",
-    "#8dd1e1",
-    "#d084d0",
-    "#ffb347",
-    "#87ceeb",
+    "#66bb6a",
+    "#4caf50",
+    "#2e7d32",
+    "#1b5e20",
   ];
+
+  // Create dynamic title for Marketing Insights
+  const getMarketingInsightsTitle = () => {
+    const role = selectedPersona !== "All" ? selectedPersona : "Senior Leaders";
+    const industry =
+      selectedIndustry !== "All" ? ` in ${selectedIndustry}` : "";
+    const country = selectedCountry !== "All" ? ` in ${selectedCountry}` : "";
+    return `Marketing Insights: How to Engage ${role}${industry}${country}`;
+  };
 
   return (
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          🎯 Korn Ferry Senior Leader Survey Dashboard
+          Korn Ferry Senior Leader Survey Dashboard
         </h1>
         <p className="text-gray-600">
-          📊 Real data analysis of <strong>{data.totalResponses}</strong> global
-          senior leader survey responses
+          Analysis of <strong>{data.totalResponses}</strong> senior leader
+          survey responses from the Korn Ferry dataset
         </p>
-        <p className="text-sm text-green-600 mt-1">
-          ✅ Data loaded from actual CSV file - no more mock data!
+        <p className="text-sm text-gray-500 mt-1">
+          Data Source: Korn Ferry Senior Leader Survey April 2025
+        </p>
+        <p className="text-sm text-blue-600 mt-1">
+          <strong>For Marketers:</strong> Understand what senior leaders
+          prioritize, their challenges, and how to communicate effectively with
+          them
         </p>
       </div>
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-lg shadow mb-6">
-        <h3 className="text-lg font-semibold mb-4">🔍 Filters</h3>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: "#0E4230" }}>
+          Filters
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -981,9 +726,10 @@ const StrategicPrioritiesDashboard = () => {
             <select
               value={selectedPersona}
               onChange={(e) => setSelectedPersona(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500"
             >
-              {personaOptions.map((option) => (
+              <option value="All">All Personas</option>
+              {data.availablePersonas.map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -997,9 +743,10 @@ const StrategicPrioritiesDashboard = () => {
             <select
               value={selectedIndustry}
               onChange={(e) => setSelectedIndustry(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500"
             >
-              {industryOptions.map((option) => (
+              <option value="All">All Industries</option>
+              {data.availableIndustries.map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -1013,14 +760,40 @@ const StrategicPrioritiesDashboard = () => {
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500"
             >
-              {countryOptions.map((option) => (
+              <option value="All">All Countries</option>
+              {data.availableCountries.map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+
+        {/* Sample Size Display */}
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-sm font-medium text-blue-900">
+                Current Sample Size:{" "}
+                <strong>{filteredResults.sampleSize}</strong> responses
+              </span>
+              <span className="text-xs text-blue-700 ml-2">
+                (
+                {Math.round(
+                  (filteredResults.sampleSize / data.totalResponses) * 100
+                )}
+                % of total dataset)
+              </span>
+            </div>
+            {filteredResults.sampleSize < 10 && (
+              <div className="text-xs text-orange-600 font-medium">
+                ⚠️ Small sample size - results may not be statistically
+                significant
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1029,18 +802,21 @@ const StrategicPrioritiesDashboard = () => {
       <div className="mb-6">
         <nav className="flex space-x-8">
           {[
-            { id: "strategic", label: "🎯 Strategic Priorities" },
-            { id: "trends", label: "📈 External Trends" },
-            { id: "problems", label: "⚠️ Organizational Problems" },
+            { id: "strategic", label: "Strategic Priorities" },
+            { id: "trends", label: "External Trends" },
+            { id: "problems", label: "Organizational Problems" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
                 activeTab === tab.id
-                  ? "border-blue-500 text-blue-600"
+                  ? "text-gray-900"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
+              style={{
+                ...(activeTab === tab.id ? { borderColor: "#177D52" } : {}),
+              }}
             >
               {tab.label}
             </button>
@@ -1054,7 +830,7 @@ const StrategicPrioritiesDashboard = () => {
           <>
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-lg font-semibold mb-4">
-                Strategic Priorities (% of responses)
+                Strategic Priorities - Top Responses
               </h3>
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={strategicPrioritiesChart}>
@@ -1070,10 +846,11 @@ const StrategicPrioritiesDashboard = () => {
                   <Tooltip
                     formatter={(value) => [`${value}%`, "Response Rate"]}
                   />
-                  <Bar dataKey="value" fill="#8884d8" />
+                  <Bar dataKey="value" fill="#138D64" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
+
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-lg font-semibold mb-4">
                 Strategic Priorities Distribution
@@ -1081,15 +858,13 @@ const StrategicPrioritiesDashboard = () => {
               <ResponsiveContainer width="100%" height={400}>
                 <PieChart>
                   <Pie
-                    data={strategicPrioritiesChart.filter(
-                      (item) => item.value > 0
-                    )}
+                    data={strategicPrioritiesChart}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
                     label={({ name, value }) => `${name}: ${value}%`}
                     outerRadius={120}
-                    fill="#8884d8"
+                    fill="#138D64"
                     dataKey="value"
                   >
                     {strategicPrioritiesChart.map((entry, index) => (
@@ -1112,7 +887,7 @@ const StrategicPrioritiesDashboard = () => {
           <>
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-lg font-semibold mb-4">
-                External Trends Impact (% of responses)
+                External Trends - Impact Assessment
               </h3>
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={externalTrendsChart}>
@@ -1126,12 +901,13 @@ const StrategicPrioritiesDashboard = () => {
                   />
                   <YAxis />
                   <Tooltip
-                    formatter={(value) => [`${value}%`, "Response Rate"]}
+                    formatter={(value) => [`${value}%`, "Impact Rate"]}
                   />
-                  <Bar dataKey="value" fill="#82ca9d" />
+                  <Bar dataKey="value" fill="#177D52" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
+
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-lg font-semibold mb-4">
                 External Trends Distribution
@@ -1139,13 +915,13 @@ const StrategicPrioritiesDashboard = () => {
               <ResponsiveContainer width="100%" height={400}>
                 <PieChart>
                   <Pie
-                    data={externalTrendsChart.filter((item) => item.value > 0)}
+                    data={externalTrendsChart}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
                     label={({ name, value }) => `${name}: ${value}%`}
                     outerRadius={120}
-                    fill="#82ca9d"
+                    fill="#177D52"
                     dataKey="value"
                   >
                     {externalTrendsChart.map((entry, index) => (
@@ -1156,7 +932,7 @@ const StrategicPrioritiesDashboard = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value) => [`${value}%`, "Response Rate"]}
+                    formatter={(value) => [`${value}%`, "Impact Rate"]}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -1168,7 +944,7 @@ const StrategicPrioritiesDashboard = () => {
           <>
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-lg font-semibold mb-4">
-                Organizational Problems (% of responses)
+                Organizational Problems - Frequency
               </h3>
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={organizationalProblemsChart}>
@@ -1182,12 +958,13 @@ const StrategicPrioritiesDashboard = () => {
                   />
                   <YAxis />
                   <Tooltip
-                    formatter={(value) => [`${value}%`, "Response Rate"]}
+                    formatter={(value) => [`${value}%`, "Problem Rate"]}
                   />
-                  <Bar dataKey="value" fill="#ffc658" />
+                  <Bar dataKey="value" fill="#0E4230" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
+
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-lg font-semibold mb-4">
                 Organizational Problems Distribution
@@ -1195,15 +972,13 @@ const StrategicPrioritiesDashboard = () => {
               <ResponsiveContainer width="100%" height={400}>
                 <PieChart>
                   <Pie
-                    data={organizationalProblemsChart.filter(
-                      (item) => item.value > 0
-                    )}
+                    data={organizationalProblemsChart}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
                     label={({ name, value }) => `${name}: ${value}%`}
                     outerRadius={120}
-                    fill="#ffc658"
+                    fill="#0E4230"
                     dataKey="value"
                   >
                     {organizationalProblemsChart.map((entry, index) => (
@@ -1214,7 +989,7 @@ const StrategicPrioritiesDashboard = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value) => [`${value}%`, "Response Rate"]}
+                    formatter={(value) => [`${value}%`, "Problem Rate"]}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -1225,28 +1000,263 @@ const StrategicPrioritiesDashboard = () => {
 
       {/* Summary Stats */}
       <div className="mt-6 bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">
-          📋 Current Filter Summary
+        <h3 className="text-lg font-semibold mb-4" style={{ color: "#0E4230" }}>
+          Current Filter Summary
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold" style={{ color: "#138D64" }}>
+              {filteredResults.sampleSize}
+            </div>
+            <div className="text-gray-600">Sample Size</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold" style={{ color: "#138D64" }}>
               {selectedPersona !== "All" ? selectedPersona : "All Personas"}
             </div>
             <div className="text-gray-600">Selected Role</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold" style={{ color: "#177D52" }}>
               {selectedIndustry !== "All" ? selectedIndustry : "All Industries"}
             </div>
             <div className="text-gray-600">Selected Industry</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold" style={{ color: "#0E4230" }}>
               {selectedCountry !== "All" ? selectedCountry : "All Countries"}
             </div>
             <div className="text-gray-600">Selected Country</div>
           </div>
+        </div>
+      </div>
+
+      {/* Marketing Insights Section */}
+      <div
+        className="mt-6 p-6 rounded-lg border-l-4"
+        style={{
+          backgroundColor: "rgba(194, 217, 210, 0.5)",
+          borderColor: "#0E4230",
+        }}
+      >
+        <h3
+          className="text-xl font-bold text-gray-900 mb-4 flex items-center"
+          style={{ color: "#0E4230" }}
+        >
+          {getMarketingInsightsTitle()}
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {activeTab === "strategic" && (
+            <>
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h4 className="font-semibold mb-3" style={{ color: "#138D64" }}>
+                  Top Priorities to Address
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  {strategicPrioritiesInsights
+                    .slice(0, 3)
+                    .map((item, index) => (
+                      <li key={index} className="flex items-center">
+                        <span
+                          className="w-2 h-2 rounded-full mr-2"
+                          style={{ backgroundColor: "#138D64" }}
+                        ></span>
+                        <strong>{item.name}</strong> ({item.value}% of leaders
+                        prioritize this)
+                      </li>
+                    ))}
+                </ul>
+                <p className="text-xs text-gray-600 mt-3">
+                  <strong>Marketing Tip:</strong> Lead with solutions that
+                  address these top priorities in your messaging.
+                </p>
+              </div>
+
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h4 className="font-semibold mb-3" style={{ color: "#138D64" }}>
+                  Communication Strategy
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#138D64" }}
+                    ></span>
+                    <div>
+                      <strong>Be Data-Driven:</strong> These leaders make
+                      decisions based on metrics and ROI
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#138D64" }}
+                    ></span>
+                    <div>
+                      <strong>Focus on Outcomes:</strong> Show how you solve
+                      their top 3 priorities
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#138D64" }}
+                    ></span>
+                    <div>
+                      <strong>Address Pain Points:</strong> Acknowledge their
+                      specific organizational challenges
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeTab === "trends" && (
+            <>
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h4 className="font-semibold mb-3" style={{ color: "#177D52" }}>
+                  Top External Pressures
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  {externalTrendsInsights.slice(0, 3).map((item, index) => (
+                    <li key={index} className="flex items-center">
+                      <span
+                        className="w-2 h-2 rounded-full mr-2"
+                        style={{ backgroundColor: "#177D52" }}
+                      ></span>
+                      <strong>{item.name}</strong> ({item.value}% see this as
+                      impactful)
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-gray-600 mt-3">
+                  <strong>Marketing Tip:</strong> Reference these trends to show
+                  you understand their business environment.
+                </p>
+              </div>
+
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h4 className="font-semibold mb-3" style={{ color: "#177D52" }}>
+                  Trend-Based Messaging
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#177D52" }}
+                    ></span>
+                    <div>
+                      <strong>Show Awareness:</strong> Demonstrate understanding
+                      of their external challenges
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#177D52" }}
+                    ></span>
+                    <div>
+                      <strong>Offer Solutions:</strong> Position your services
+                      as responses to these trends
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#177D52" }}
+                    ></span>
+                    <div>
+                      <strong>Be Timely:</strong> Reference current market
+                      conditions in your outreach
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeTab === "problems" && (
+            <>
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h4 className="font-semibold mb-3" style={{ color: "#0E4230" }}>
+                  Biggest Pain Points
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  {organizationalProblemsInsights
+                    .slice(0, 3)
+                    .map((item, index) => (
+                      <li key={index} className="flex items-center">
+                        <span
+                          className="w-2 h-2 rounded-full mr-2"
+                          style={{ backgroundColor: "#0E4230" }}
+                        ></span>
+                        <strong>{item.name}</strong> ({item.value}% experiencing
+                        this)
+                      </li>
+                    ))}
+                </ul>
+                <p className="text-xs text-gray-600 mt-3">
+                  <strong>Marketing Tip:</strong> Position your solutions as
+                  addressing these specific pain points.
+                </p>
+              </div>
+
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h4 className="font-semibold mb-3" style={{ color: "#0E4230" }}>
+                  Problem-Solving Approach
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#0E4230" }}
+                    ></span>
+                    <div>
+                      <strong>Acknowledge Issues:</strong> Show you understand
+                      their specific challenges
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#0E4230" }}
+                    ></span>
+                    <div>
+                      <strong>Provide Evidence:</strong> Share case studies of
+                      similar problem resolution
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span
+                      className="w-2 h-2 rounded-full mr-2 mt-1.5"
+                      style={{ backgroundColor: "#0E4230" }}
+                    ></span>
+                    <div>
+                      <strong>Offer Quick Wins:</strong> Suggest immediate
+                      improvements alongside long-term solutions
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div
+          className="mt-4 p-4 rounded-lg"
+          style={{
+            backgroundColor: "rgba(23, 125, 82, 0.1)",
+            border: "1px solid #177D52",
+          }}
+        >
+          <p className="text-sm" style={{ color: "#0E4230" }}>
+            <strong>Pro Tip:</strong> Use the filters above to segment by role,
+            industry, or country to create highly targeted messaging for
+            specific senior leader personas. Sample size:{" "}
+            {filteredResults.sampleSize} responses.
+          </p>
         </div>
       </div>
     </div>

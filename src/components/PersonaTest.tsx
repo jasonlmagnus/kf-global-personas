@@ -116,8 +116,15 @@ function PersonaTestContent() {
         if (a.region !== "global" && b.region === "global") return 1;
         return a.region.localeCompare(b.region);
       }
+      // Handle cases where one or both regions are undefined
+      if (a.region && !b.region) return -1;
+      if (!a.region && b.region) return 1;
+
       // Fallback to title sort if region property is not available or for identical regions (e.g. two globals)
-      return a.title.localeCompare(b.title);
+      // Ensure both titles exist before calling localeCompare
+      const titleA = a.title || "";
+      const titleB = b.title || "";
+      return titleA.localeCompare(titleB);
     });
   }, [rolePersonas]);
 

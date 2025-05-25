@@ -2,10 +2,33 @@ import { notFound } from "next/navigation";
 import { Persona } from "@/types/personas"; // Assuming Persona type is defined here
 import DetailedPersonaCard from "@/components/personas/DetailedPersonaCard"; // Import DetailedPersonaCard
 
+// Force dynamic rendering to avoid build-time API calls
+export const dynamic = "force-dynamic";
+
+// Helper function to get the base URL for API calls
+function getBaseUrl(): string {
+  // During build time (static generation), use localhost
+  if (typeof window === "undefined") {
+    return process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.NEXT_PUBLIC_SITE_URL
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : "http://localhost:3000";
+  }
+  // Client-side, use relative URLs
+  return "";
+}
+
+// Helper to construct full URLs
+function getFullUrl(path: string): string {
+  const baseUrl = getBaseUrl();
+  return `${baseUrl}${path}`;
+}
+
 // Helper function to fetch all personas for static generation
 async function getAllPersonaIds() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/personas`, {
+    const res = await fetch(getFullUrl("/api/personas"), {
       cache: "no-store",
     }); // Fetch all personas
     if (!res.ok) {
@@ -25,13 +48,21 @@ async function getAllPersonaIds() {
       }));
   } catch (error) {
     console.error("Error in getAllPersonaIds:", error);
+    // During build time, if we can't fetch personas, return empty array
+    // This prevents build failures while still allowing dynamic rendering
     return [];
   }
 }
 
-export async function generateStaticParams() {
-  return getAllPersonaIds();
-}
+// export async function generateStaticParams() {
+//   try {
+//     return await getAllPersonaIds();
+//   } catch (error) {
+//     console.error("Error in generateStaticParams:", error);
+//     // Return empty array to prevent build failure
+//     return [];
+//   }
+// }
 
 // Helper function to fetch a single persona by its composite ID
 async function getPersonaById(id: string): Promise<Persona | null> {
@@ -48,7 +79,7 @@ async function getPersonaById(id: string): Promise<Persona | null> {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/personas?region=${region}&department=${department}`,
+      getFullUrl(`/api/personas?region=${region}&department=${department}`),
       { cache: "no-store" }
     );
     if (!res.ok) {

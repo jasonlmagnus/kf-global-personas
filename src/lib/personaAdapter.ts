@@ -1,11 +1,31 @@
 import { Persona, GlobalPersona, CountryPersona, Region, Department } from '../types/personas';
 
+// Helper function to get the base URL for API calls
+function getBaseUrl(): string {
+  // During build time (static generation), use localhost
+  if (typeof window === 'undefined') {
+    return process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.NEXT_PUBLIC_SITE_URL 
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : 'http://localhost:3000';
+  }
+  // Client-side, use relative URLs
+  return '';
+}
+
 // API paths for fetching persona data
 const API_PATHS = {
   ALL: '/api/personas',
   BY_REGION: (region: Region) => `/api/personas?region=${region}`,
   SPECIFIC: (region: Region, department: Department) => `/api/personas?region=${region}&department=${department}`,
 };
+
+// Helper to construct full URLs
+function getFullUrl(path: string): string {
+  const baseUrl = getBaseUrl();
+  return `${baseUrl}${path}`;
+}
 
 /**
  * Get available regions from the system
@@ -32,7 +52,7 @@ export async function getAvailableDepartments(region: Region): Promise<Departmen
  */
 export async function getPersona(region: Region, department: Department): Promise<Persona | null> {
   try {
-    const response = await fetch(API_PATHS.SPECIFIC(region, department));
+    const response = await fetch(getFullUrl(API_PATHS.SPECIFIC(region, department)));
     if (!response.ok) {
       console.error(`Error fetching persona: ${response.statusText}`);
       return null;
@@ -51,7 +71,7 @@ export async function getPersona(region: Region, department: Department): Promis
  */
 export async function getPersonasByRegion(region: Region): Promise<Persona[]> {
   try {
-    const response = await fetch(API_PATHS.BY_REGION(region));
+    const response = await fetch(getFullUrl(API_PATHS.BY_REGION(region)));
     if (!response.ok) {
       console.error(`Error fetching region personas: ${response.statusText}`);
       return [];
@@ -69,7 +89,7 @@ export async function getPersonasByRegion(region: Region): Promise<Persona[]> {
  */
 export async function getAllPersonas(): Promise<Persona[]> {
   try {
-    const response = await fetch(API_PATHS.ALL);
+    const response = await fetch(getFullUrl(API_PATHS.ALL));
     if (!response.ok) {
       console.error(`Error fetching all personas: ${response.statusText}`);
       return [];

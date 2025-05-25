@@ -4,6 +4,26 @@ import { useState, useEffect } from 'react';
 import { Persona, Region, Department, ConfigItem } from '../types/personas';
 import { getPersona, getPersonasByRegion, getAllPersonas } from '../lib/personaAdapter';
 
+// Helper function to get the base URL for API calls
+function getBaseUrl(): string {
+  // During build time (static generation), use localhost
+  if (typeof window === 'undefined') {
+    return process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.NEXT_PUBLIC_SITE_URL 
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : 'http://localhost:3000';
+  }
+  // Client-side, use relative URLs
+  return '';
+}
+
+// Helper to construct full URLs
+function getFullUrl(path: string): string {
+  const baseUrl = getBaseUrl();
+  return `${baseUrl}${path}`;
+}
+
 // API paths for fetching persona data (for future implementation)
 const API_PATHS = {
   ALL: '/api/personas',
@@ -189,9 +209,7 @@ export function useRolePersonas(selectedDepartment: Department | null, dynamicRe
 
         const fetchPromises = regionsToFetch.map((region) =>
           fetch(
-            // Construct API path carefully. Assuming API_PATHS.SPECIFIC or similar logic
-            // For now, using the literal path as it was in PersonaTest.tsx
-            `/api/personas?region=${region}&department=${selectedDepartment}`
+            getFullUrl(`/api/personas?region=${region}&department=${selectedDepartment}`)
           )
             .then((res) => {
               if (!res.ok) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import {
   Region,
   Department,
@@ -45,12 +45,30 @@ import { useSearchParams } from "next/navigation";
 //   "leadership_dev",
 // ];
 
+// Helper function to get the base URL for API calls
+function getBaseUrl(): string {
+  // During build time (static generation), use localhost
+  if (typeof window === "undefined") {
+    return process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.NEXT_PUBLIC_SITE_URL
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : "http://localhost:3000";
+  }
+  // Client-side, use relative URLs
+  return "";
+}
+
+// Helper to construct full URLs
+function getFullUrl(path: string): string {
+  const baseUrl = getBaseUrl();
+  return `${baseUrl}${path}`;
+}
+
 // DetailedPersonaCard component definition is removed from here if it exists.
 
-/**
- * A component for testing and understanding the persona data structure
- */
-export function PersonaTest() {
+// Component that uses useSearchParams wrapped in Suspense
+function PersonaTestContent() {
   const searchParams = useSearchParams();
   const isExperimental = searchParams.get("view") === "experimental";
 
@@ -238,7 +256,7 @@ export function PersonaTest() {
       setIsLoadingConfig(true);
       setConfigError(null);
       try {
-        const response = await fetch("/api/config");
+        const response = await fetch(getFullUrl("/api/config"));
         if (!response.ok) {
           throw new Error(`Failed to fetch config: ${response.statusText}`);
         }
@@ -596,5 +614,13 @@ export function PersonaTest() {
         )}
       </main>
     </div>
+  );
+}
+
+export function PersonaTest() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PersonaTestContent />
+    </Suspense>
   );
 }

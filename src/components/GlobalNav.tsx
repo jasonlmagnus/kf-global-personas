@@ -47,6 +47,14 @@ export default function GlobalNav() {
               Data
             </Link>
           )}
+
+          {pathname === "/content" ? (
+            <span className={activeItemClasses}>Content</span>
+          ) : (
+            <Link href="/content" className={inactiveItemClasses}>
+              Content
+            </Link>
+          )}
         </div>
       </div>
     </nav>

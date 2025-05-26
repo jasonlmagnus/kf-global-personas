@@ -380,7 +380,7 @@ function getAllPersonas(): Persona[] {
 
   try {
     const regions = fs.readdirSync(dataRootDir)
-      .filter(item => !item.startsWith('.') && item !== 'archive') // Exclude hidden files and 'archive' folder
+      .filter(item => !item.startsWith('.') && item !== 'archive' && item !== '__src') // Exclude hidden files, 'archive' folder, and '__src' folder
       .filter(item => fs.statSync(path.join(dataRootDir, item)).isDirectory()) as Region[];
 
     for (const region of regions) {
@@ -401,20 +401,7 @@ export async function GET(request: NextRequest) {
   const department = searchParams.get('department') as Department | null;
   
   try {
-    // Special handling for __src region (CSV data source)
-    if (region === '__src') {
-      return NextResponse.json({
-        message: 'CSV data source region',
-        note: 'This region contains source CSV files, not persona JSON files',
-        availableFiles: [
-          'global_ceo.csv',
-          '2025_global_data.csv',
-          'Korn Ferry open ends Senior Leader Survey April 2025(Textual Data).csv'
-        ],
-        csvEndpoint: '/api/data?file=<filename>',
-        listEndpoint: 'POST /api/data'
-      }, { status: 200 });
-    }
+    // Note: __src region handling removed as it's no longer a valid region type
 
     // If both region and department are specified, return a specific persona
     if (region && department) {

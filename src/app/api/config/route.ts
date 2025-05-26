@@ -28,7 +28,7 @@ export async function GET() {
   try {
     const dataDir = path.join(process.cwd(), 'data');
     const regionDirs = fs.readdirSync(dataDir).filter(item => {
-      if (item.startsWith('.') || item === 'archive') return false;
+      if (item.startsWith('.') || item === 'archive' || item === '__src') return false;
       try {
         return fs.statSync(path.join(dataDir, item)).isDirectory();
       } catch (e) {

@@ -1,5 +1,5 @@
 // Region types
-export type Region = 'global' | 'uk' | 'uae' | 'aus' | '__src';
+export type Region = 'global' | 'uk' | 'uae' | 'aus';
 
 // Department/role types
 export type Department = 'ceo' | 'chro' | 'sales' | 'talent' | 'rewards' | 'leadership_dev';

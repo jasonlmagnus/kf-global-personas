@@ -366,19 +366,6 @@ function PersonaTestContent() {
           </div>
         )}
 
-        {/* Display persona - Single view - UPDATED TO USE selectedDetailPersona */}
-        {!loading &&
-          selectedDetailPersona &&
-          !error &&
-          viewType === "single" && (
-            <div className="mx-4">
-              <DetailedPersonaCard
-                persona={selectedDetailPersona}
-                showCloseButton={false}
-              />
-            </div>
-          )}
-
         {/* Role Personas view - UPDATED */}
         {!loading && !error && viewType === "role" && (
           <div className="mx-4">
@@ -533,93 +520,34 @@ function PersonaTestContent() {
             </div>
           )}
 
-        {/* For Normal View - Non-Experimental */}
-        {!isExperimental && (
-          <>
-            {/* Persona selector */}
-            <div className="flex px-4 pb-6 relative z-10">
-              <PersonaSelector
-                viewType={viewType}
-                setViewType={setViewType}
-                selectedDepartment={selectedDepartment}
-                setSelectedDepartment={setSelectedDepartment}
-                selectedRegion={selectedRegion}
-                setSelectedRegion={setSelectedRegion}
-                dynamicDepartments={dynamicDepartments}
-                dynamicRegions={dynamicRegions}
-                isLoadingConfig={isLoadingConfig}
-              />
-            </div>
-
-            {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-pulse flex space-x-4">
-                  <div className="rounded-full bg-slate-200 h-10 w-10"></div>
-                  <div className="flex-1 space-y-6 py-1">
-                    <div className="h-2 bg-slate-200 rounded"></div>
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="h-2 bg-slate-200 rounded col-span-2"></div>
-                        <div className="h-2 bg-slate-200 rounded col-span-1"></div>
-                      </div>
-                      <div className="h-2 bg-slate-200 rounded"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : error ? (
-              <div className="text-red-600 text-center p-4 border border-red-200 rounded shadow bg-red-50 mx-4">
-                {error}
-              </div>
-            ) : (
-              <>
-                {viewType === "single" && persona && (
-                  <div className="px-4">
-                    <DetailedPersonaCard persona={persona} />
-                  </div>
-                )}
-
-                {viewType === "region" && regionPersonas && (
-                  <div className="px-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
-                      <PersonaList
-                        personas={regionPersonas}
-                        viewType="region"
-                        onPersonaClick={handlePersonaCardClick}
-                        selectedDetailPersonaId={
-                          selectedDetailPersona?.id || null
-                        }
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {viewType === "role" && sortedRolePersonas && (
-                  <div className="px-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
-                      <PersonaList
-                        personas={sortedRolePersonas}
-                        viewType="role"
-                        onPersonaClick={handlePersonaCardClick}
-                        selectedDetailPersonaId={
-                          selectedDetailPersona?.id || null
-                        }
-                      />
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* If there's a selected persona, show the detail view */}
-            {selectedDetailPersona && (
-              <div className="mt-6 px-4">
-                <DetailedPersonaCard persona={selectedDetailPersona} />
-              </div>
-            )}
-          </>
+        {/* Single view - handle directly without legacy wrapper */}
+        {!loading && !error && viewType === "single" && persona && (
+          <div className="mx-4">
+            <DetailedPersonaCard persona={persona} showCloseButton={false} />
+          </div>
         )}
       </main>
+      {/* Footer */}
+      <footer className="bg-[#003C2D] text-white p-6 mt-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <p className="text-sm">© 2024 Korn Ferry. All rights reserved.</p>
+            </div>
+            <div className="flex space-x-6 text-sm">
+              <a href="#" className="hover:text-gray-300 transition-colors">
+                Privacy Policy
+              </a>
+              <a href="#" className="hover:text-gray-300 transition-colors">
+                Terms of Service
+              </a>
+              <a href="#" className="hover:text-gray-300 transition-colors">
+                Contact
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

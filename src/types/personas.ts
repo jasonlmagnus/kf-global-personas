@@ -69,29 +69,136 @@ export interface CountryPersona extends BasePersona {
   regionalNuances?: Record<string, string>;
   culturalContext?: string;
   presentation?: Record<string, string>;
-  comparison?: Array<{
-    "Key Dimension": string;
-    "Generic CEO Persona": string;
-    "Australian CEO Persona": string;
-    "Value-Add for Australian Context": string;
-  }>;
+  comparison?: Array<Record<string, string>>;
   behaviors?: Record<string, string[]>;
   keyResponsibilities?: Record<string, string[]>;
   collaborationInsights?: Record<string, string[]>;
   type: "country";
 }
 
-// Union type for all persona types
-export type Persona = GlobalPersona | CountryPersona;
+// Global persona v3 structure (hierarchical)
+export interface GlobalPersonaV3 extends BasePersona {
+  isGlobal: true;
+  type: "global";
+  
+  metadata: {
+    version: string;
+    type: string;
+    lastUpdated: string;
+  };
+  coreUnderstanding: {
+    core: {
+      role: string;
+      userGoalStatement: string;
+      coreBelief: string;
+      contentImplication: string;
+    };
+    responsibilities: {
+      items: Array<{ Category: string; Description: string }>;
+      contentImplication: string;
+    };
+    knowledge: {
+      items: string[];
+      contentImplication: string;
+    };
+  };
+  strategicValuePoints: {
+    connectionOpportunities: {
+      items: Array<{
+        Area: string;
+        Finding: string;
+        Leverage_Point: string;
+        dataSource?: string;
+      }>;
+      contentImplication: string;
+    };
+    motivations: {
+      items: string[];
+      contentImplication: string;
+    };
+    needs: {
+      items: Array<{ Category: string; Description: string }>;
+      contentImplication: string;
+    };
+  };
+  painPointsAndChallenges: {
+    perceptionGaps: {
+      items: Array<{
+        Area: string;
+        Gap: string;
+        Business_Impact: string;
+        Opportunity: string;
+        dataSource?: string;
+      }>;
+      contentImplication: string;
+    };
+    frustrations: {
+      items: string[];
+      contentImplication: string;
+    };
+    emotionalTriggers: {
+      items: Array<{
+        Trigger: string;
+        Emotional_Response: string;
+        Messaging_Implication: string;
+      }>;
+      contentImplication: string;
+    };
+  };
+  engagementApproach: {
+    description: string;
+    behaviors: {
+      items: string[];
+      contentImplication: string;
+    };
+    collaborationInsights: {
+      items: string[];
+      contentImplication: string;
+    };
+    problemSolvingMethod: {
+      description: string;
+      value: string;
+    };
+    analogies: {
+      items: string[];
+      contentImplication: string;
+    };
+    messagingAngles: {
+      description: string;
+      items: string[];
+      contentImplication: string;
+    };
+  };
+  supportingResources: {
+    referenceSources: Array<{
+      Category: string;
+      Sources: string[];
+      URLs?: string[];
+    }>;
+  };
+}
 
-// Type guard to check if a persona is global
+// Union type for all persona types
+export type Persona = GlobalPersona | CountryPersona | GlobalPersonaV3;
+
+// Type guard to check if a persona is global v3
+export function isGlobalPersonaV3(persona: Persona): persona is GlobalPersonaV3 {
+  return 'metadata' in persona && 
+         persona.metadata?.type === 'global' && 
+         'coreUnderstanding' in persona;
+}
+
+// Type guard to check if a persona is global v1
 export function isGlobalPersona(persona: Persona): persona is GlobalPersona {
-  return persona.type === "global";
+  return 'type' in persona && 
+         persona.type === "global" && 
+         !('metadata' in persona) && 
+         'goalStatement' in persona;
 }
 
 // Type guard to check if a persona is country-specific
 export function isCountryPersona(persona: Persona): persona is CountryPersona {
-  return persona.type === "country";
+  return 'type' in persona && persona.type === "country";
 }
 
 // Added ConfigItem interface

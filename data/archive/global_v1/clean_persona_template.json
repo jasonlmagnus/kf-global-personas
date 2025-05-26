@@ -1,0 +1,220 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "type": "global",
+    "lastUpdated": "YYYY-MM-DD"
+  },
+  "coreUnderstanding": {
+    "core": {
+      "role": "[Persona Role Title]",
+      "userGoalStatement": "As a [Role], I am committed to [primary goal/mission]. My role is to [key responsibility] while [key challenge or context].",
+      "coreBelief": "[Core belief about their role, industry, or approach to work that drives their decision-making].",
+      "contentImplication": "Use this foundational information to frame all content. Reference the [Role]'s goal of '[primary goal]' and belief in '[core belief]' to establish immediate relevance."
+    },
+    "responsibilities": {
+      "items": [
+        {
+          "Category": "[Responsibility Category 1]",
+          "Description": "[Description of key responsibility area]"
+        },
+        {
+          "Category": "[Responsibility Category 2]",
+          "Description": "[Description of key responsibility area]"
+        },
+        {
+          "Category": "[Responsibility Category 3]",
+          "Description": "[Description of key responsibility area]"
+        },
+        {
+          "Category": "[Responsibility Category 4]",
+          "Description": "[Description of key responsibility area]"
+        },
+        {
+          "Category": "[Responsibility Category 5]",
+          "Description": "[Description of key responsibility area]"
+        }
+      ],
+      "contentImplication": "Align content themes with these responsibility areas. Each piece of content should address at least one of these areas to ensure relevance to the [Role]'s core role."
+    },
+    "knowledge": {
+      "items": [
+        "[Knowledge area 1]",
+        "[Knowledge area 2]",
+        "[Knowledge area 3]",
+        "[Knowledge area 4]",
+        "[Knowledge area 5]",
+        "[Knowledge area 6]"
+      ],
+      "contentImplication": "Use these knowledge areas to establish Korn Ferry's credibility. Content should demonstrate expertise in at least one of these domains to position as valuable to the [Role]."
+    }
+  },
+  "strategicValuePoints": {
+    "connectionOpportunities": {
+      "items": [
+        {
+          "Area": "[Connection Area 1]",
+          "Finding": "[Survey finding or data point with percentage/metric]",
+          "Leverage_Point": "[How to leverage this finding for engagement]",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "[Connection Area 2]",
+          "Finding": "[Survey finding or data point with percentage/metric]",
+          "Leverage_Point": "[How to leverage this finding for engagement]",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "[Connection Area 3]",
+          "Finding": "[Survey finding or data point with percentage/metric]",
+          "Leverage_Point": "[How to leverage this finding for engagement]",
+          "dataSource": "survey"
+        }
+      ],
+      "contentImplication": "These data-backed connection points should be primary themes in content. Lead with these topics to create immediate resonance with [Role]s."
+    },
+    "motivations": {
+      "items": [
+        "[Primary motivation 1 - what drives them professionally]",
+        "[Primary motivation 2 - what they want to achieve]",
+        "[Primary motivation 3 - how they measure success]",
+        "[Primary motivation 4 - what they value in their work]",
+        "[Primary motivation 5 - their long-term aspirations]"
+      ],
+      "contentImplication": "Use these motivations as content themes and in calls-to-action. Frame benefits in terms of these key drivers to increase engagement."
+    },
+    "needs": {
+      "items": [
+        {
+          "Category": "[Need Category 1]",
+          "Description": "[Description of what they need, including relevant survey data or metrics]"
+        },
+        {
+          "Category": "[Need Category 2]",
+          "Description": "[Description of what they need, including relevant survey data or metrics]"
+        },
+        {
+          "Category": "[Need Category 3]",
+          "Description": "[Description of what they need, including relevant survey data or metrics]"
+        }
+      ],
+      "contentImplication": "These needs represent the [Role]'s priority challenges. Each piece of content should address at least one of these need areas, with emphasis on the survey-backed insights."
+    }
+  },
+  "painPointsAndChallenges": {
+    "perceptionGaps": {
+      "items": [
+        {
+          "Area": "[Perception Gap Area 1]",
+          "Gap": "[Description of the perception gap with specific metrics/percentages]",
+          "Business_Impact": "[How this gap impacts business outcomes]",
+          "Opportunity": "[What can be done to address this gap]",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "[Perception Gap Area 2]",
+          "Gap": "[Description of the perception gap with specific metrics/percentages]",
+          "Business_Impact": "[How this gap impacts business outcomes]",
+          "Opportunity": "[What can be done to address this gap]",
+          "dataSource": "survey"
+        }
+      ],
+      "contentImplication": "These data-driven insights reveal blind spots that are unique to Korn Ferry's research. Use these gaps to create urgency and 'aha moments' in your content."
+    },
+    "frustrations": {
+      "items": [
+        "[Frustration 1 - daily operational challenge]",
+        "[Frustration 2 - strategic challenge]",
+        "[Frustration 3 - resource or capability challenge]",
+        "[Frustration 4 - external pressure or constraint]",
+        "[Frustration 5 - measurement or validation challenge]"
+      ],
+      "contentImplication": "These frustrations should be used to create problem-focused headlines and introductions that immediately capture attention by addressing recognized pain points."
+    },
+    "emotionalTriggers": {
+      "items": [
+        {
+          "Trigger": "[Situation or event that creates emotional response]",
+          "Emotional_Response": "[How they feel when this trigger occurs]",
+          "Messaging_Implication": "[How to address this in messaging and content]"
+        },
+        {
+          "Trigger": "[Situation or event that creates emotional response]",
+          "Emotional_Response": "[How they feel when this trigger occurs]",
+          "Messaging_Implication": "[How to address this in messaging and content]"
+        }
+      ],
+      "contentImplication": "These emotional triggers should guide the tone and emotional appeal of content. Each messaging implication offers a direct framework for how to approach sensitive topics."
+    }
+  },
+  "engagementApproach": {
+    "description": "Tactical guidance for content development: formats, tone, engagement strategies, and metaphors that will resonate with [Role]s.",
+    "behaviors": {
+      "items": [
+        "[Behavior 1 - how they approach their work]",
+        "[Behavior 2 - how they make decisions]",
+        "[Behavior 3 - how they interact with others]",
+        "[Behavior 4 - how they consume information]",
+        "[Behavior 5 - how they prioritize tasks]"
+      ],
+      "contentImplication": "Use these behaviors to inform tone and format. Content should be [tone guidance based on behaviors]."
+    },
+    "collaborationInsights": {
+      "items": [
+        "[Collaboration insight 1 - how they prefer to work with vendors/partners]",
+        "[Collaboration insight 2 - what they value in business relationships]",
+        "[Collaboration insight 3 - how they evaluate solutions]",
+        "[Collaboration insight 4 - what builds trust with them]",
+        "[Collaboration insight 5 - what they need for decision-making]"
+      ],
+      "contentImplication": "Collaboration insights help shape engagement strategies and content formats that will resonate with [Role]s."
+    },
+    "problemSolvingMethod": {
+      "description": "How the [Role] approaches problem solving",
+      "value": "[Description of their preferred problem-solving approach]"
+    },
+    "analogies": {
+      "items": [
+        "[Analogy 1 that relates to their role or industry]",
+        "[Analogy 2 that captures their challenges or approach]"
+      ],
+      "contentImplication": "Use these analogies to create memorable, relatable content and metaphors."
+    },
+    "messagingAngles": {
+      "description": "Proven messaging approaches that resonate with [Role]s",
+      "items": [
+        "[Messaging Angle 1]: '[Sample messaging that addresses specific pain points or opportunities with data/metrics]'",
+        "[Messaging Angle 2]: '[Another proven approach with specific data or insights that connect to their priorities]'",
+        "[Messaging Angle 3]: '[Third messaging angle that connects to strategic priorities and includes survey data]'",
+        "[Messaging Angle 4]: '[Fourth messaging angle addressing key challenges with specific metrics]'",
+        "[Messaging Angle 5]: '[Fifth messaging angle that leverages perception gaps or opportunities]'"
+      ],
+      "contentImplication": "Use these proven messaging angles as templates for content creation, adapting the specific metrics and examples to match your solution's capabilities while addressing the [Role]'s core responsibilities and perception gaps."
+    }
+  },
+  "supportingResources": {
+    "description": "Reference sources and additional research pathways for content developers.",
+    "referenceSources": [
+      {
+        "Category": "[Resource Category 1]",
+        "Sources": ["[Source 1]", "[Source 2]", "[Source 3]"],
+        "URLs": [
+          "[URL 1]",
+          "[URL 2]",
+          "[URL 3]"
+        ]
+      },
+      {
+        "Category": "[Resource Category 2]",
+        "Sources": ["[Source 1]", "[Source 2]"]
+      },
+      {
+        "Category": "[Resource Category 3]",
+        "Sources": [
+          "[Resource type 1]",
+          "[Resource type 2]",
+          "[Resource type 3]"
+        ]
+      }
+    ]
+  }
+} 

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { generatePersonaDocument } from "@/lib/docGenerator";
+import { GlobalPersonaV3 } from "@/types/personas";
 import {
   Briefcase,
   Target,
@@ -352,6 +354,33 @@ const ExperimentalGlobalPersonaTemplate = () => {
   const getGroupButtonLabel = (group: keyof typeof expandedGroups) =>
     expandedGroups[group] ? "Hide Group" : "Expand Group";
 
+  // Export handler
+  const handleExport = async () => {
+    if (!personaData || !currentPersona) return;
+
+    try {
+      // Convert PersonaData to GlobalPersonaV3 format for export
+      const v3Persona: GlobalPersonaV3 = {
+        id: `global-${selectedPersona}`,
+        title: `${currentPersona.name} Persona`,
+        department: selectedPersona as any,
+        region: "global",
+        isGlobal: true,
+        type: "global",
+        metadata: personaData.metadata,
+        coreUnderstanding: personaData.coreUnderstanding,
+        strategicValuePoints: personaData.strategicValuePoints,
+        painPointsAndChallenges: personaData.painPointsAndChallenges,
+        engagementApproach: personaData.engagementApproach,
+        supportingResources: personaData.supportingResources,
+      };
+
+      await generatePersonaDocument(v3Persona);
+    } catch (error) {
+      console.error("Error exporting persona:", error);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto py-10">
       <div className="bg-white shadow-xl rounded-2xl p-8 md:p-12 border border-gray-200">
@@ -428,7 +457,10 @@ const ExperimentalGlobalPersonaTemplate = () => {
               >
                 Collapse All
               </button>
-              <button className="flex items-center bg-[#ff6b00] text-white px-5 py-2.5 rounded-md font-semibold hover:bg-opacity-90 transition-all duration-200 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#ff6b00] focus:ring-opacity-50 whitespace-nowrap">
+              <button
+                onClick={handleExport}
+                className="flex items-center bg-[#ff6b00] text-white px-5 py-2.5 rounded-md font-semibold hover:bg-opacity-90 transition-all duration-200 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#ff6b00] focus:ring-opacity-50 whitespace-nowrap"
+              >
                 <FileCheck size={18} className="mr-2" />
                 Export Persona
               </button>

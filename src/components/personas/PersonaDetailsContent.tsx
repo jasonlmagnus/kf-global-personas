@@ -4,6 +4,7 @@ import React from "react";
 import {
   Persona,
   isGlobalPersona,
+  isGlobalPersonaV3,
   isCountryPersona,
 } from "../../types/personas"; // Adjusted import path
 import GlobalPersonaTemplate from "./GlobalPersonaTemplate"; // Added import
@@ -11,10 +12,9 @@ import CountryPersonaTemplate from "./CountryPersonaTemplate"; // Added import
 
 // Component to display detailed persona content
 const PersonaDetailsContent = ({ persona }: { persona: Persona }) => {
-  if (isGlobalPersona(persona)) {
+  if (isGlobalPersonaV3(persona)) {
     return <GlobalPersonaTemplate persona={persona} />;
   } else if (isCountryPersona(persona)) {
-    // Ensure you pass the correct persona type if CountryPersonaTemplate expects CountryPersona specifically
     return <CountryPersonaTemplate persona={persona} />;
   }
 

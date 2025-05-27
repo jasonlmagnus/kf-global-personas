@@ -31,9 +31,7 @@ export default function DataPage() {
                 <option value="chro">
                   Senior Executive (CHRO Proxy) Dashboard
                 </option>
-                <option value="strategic">
-                  Strategic Priorities Dashboard
-                </option>
+                <option value="strategic">Senior Leader Survey</option>
               </select>
               <ChevronDown className="selector-icon" />
             </div>

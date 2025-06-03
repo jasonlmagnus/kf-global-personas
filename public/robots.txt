@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /
+
+# Specific blocks for major search engines
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+# Social media crawlers
+User-agent: facebookexternalhit
+Disallow: / 

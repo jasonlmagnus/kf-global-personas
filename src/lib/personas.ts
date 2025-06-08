@@ -238,19 +238,22 @@ function normalizePersonaData(data: PersonaJsonData | GlobalPersonaV3, region: R
   }
 }
 
-export function getAllPersonas(): Persona[] {
-  const allPersonas: Persona[] = [];
-  const regions: Region[] = ['global', 'uk', 'aus', 'uae'];
-  const departments: Department[] = ['ceo', 'chro', 'sales', 'talent', 'rewards', 'leadership_dev'];
+// DEPRECATED: This function has been replaced by the API endpoint /api/personas
+// The working getAllPersonas implementation is now in src/app/api/personas/route.ts
+// Use fetch('/api/personas') or the personaAdapter instead
+// export function getAllPersonas(): Persona[] {
+//   const allPersonas: Persona[] = [];
+//   const regions: Region[] = ['global', 'uk', 'aus', 'uae'];
+//   const departments: Department[] = ['ceo', 'chro', 'sales', 'talent', 'rewards', 'leadership_dev'];
   
-  for (const region of regions) {
-    for (const department of departments) {
-      const persona = getPersonaById(region, department);
-      if (persona) {
-        allPersonas.push(persona);
-      }
-    }
-  }
+//   for (const region of regions) {
+//     for (const department of departments) {
+//       const persona = getPersonaById(region, department);
+//       if (persona) {
+//         allPersonas.push(persona);
+//       }
+//     }
+//   }
   
-  return allPersonas;
-} 
+//   return allPersonas;
+// } 

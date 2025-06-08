@@ -147,6 +147,13 @@ export async function POST(request: NextRequest) {
     const personas = await getAllPersonas();
     console.log('Chat API: Loaded', personas.length, 'personas');
     
+    // Always include all personas - let the AI decide what's relevant
+    const relevantPersonas = personas;
+    
+    console.log('Chat API: Query:', userMessage.substring(0, 100));
+    console.log('Chat API: Using all personas:', relevantPersonas.length);
+    console.log('Chat API: Persona titles:', relevantPersonas.map(p => p.title || p.Role || 'Unknown'));
+
     // Read CSV data files
     console.log('Chat API: Reading CSV files...');
     const globalData = await readCSVFile('2025_global_data.csv');
@@ -160,25 +167,81 @@ export async function POST(request: NextRequest) {
     const relevantSurveyData = getRelevantSurveyData(seniorLeaderData, userMessage);
     console.log('Chat API: Relevant survey data length:', relevantSurveyData.length);
     
-    // Format CSV data for the system prompt
-    const csvDataSummary = [
-      formatCSVForAI(globalData, "2025 Global Survey Data"),
-      relevantSurveyData || formatCSVForAI(seniorLeaderData, "Senior Leader Survey Textual Responses")
-    ].join('\n');
-
     console.log('Chat API: Creating system prompt...');
-    // Create dynamic system prompt with persona data and CSV data - minimal version for gpt-4o-mini
-    const systemPrompt = `You are an AI assistant for KF Personas providing insights based on Korn Ferry research and survey data.
+    
+    // Create detailed persona data with FULL content - no truncation
+    const personaDetails = personas.map(persona => {
+      let details = `\n## ${persona.title || persona.Role || 'Unknown Role'}\n`;
+      details += `**Region:** ${(persona.region || '').toUpperCase()}\n`;
+      details += `**Department:** ${persona.department || persona.Department || ''}\n\n`;
+      
+      // Include FULL Goal Statement
+      if (persona['User Goal Statement']) {
+        details += `**Goal Statement:**\n${persona['User Goal Statement']}\n\n`;
+      }
+      
+      // Include ALL Motivations with proper structure
+      if (persona['Motivations']) {
+        details += `**Motivations:**\n`;
+        Object.entries(persona['Motivations']).forEach(([category, motivations]) => {
+          if (Array.isArray(motivations)) {
+            details += `- ${category}:\n`;
+            motivations.forEach(motivation => {
+              details += `  • ${motivation}\n`;
+            });
+          }
+        });
+        details += '\n';
+      }
+      
+      // Include ALL Pain Points with proper structure  
+      if (persona['Frustrations / Pain Points']) {
+        details += `**Pain Points:**\n`;
+        Object.entries(persona['Frustrations / Pain Points']).forEach(([category, painPoints]) => {
+          if (Array.isArray(painPoints)) {
+            details += `- ${category}:\n`;
+            painPoints.forEach(point => {
+              details += `  • ${point}\n`;
+            });
+          }
+        });
+        details += '\n';
+      }
+      
+      // Include any other key fields
+      Object.keys(persona).forEach(key => {
+        if (!['title', 'Role', 'region', 'department', 'Department', 'User Goal Statement', 'Motivations', 'Frustrations / Pain Points'].includes(key)) {
+          const value = persona[key];
+          if (value && typeof value === 'string' && value.length > 10) {
+            details += `**${key}:**\n${value}\n\n`;
+          } else if (value && typeof value === 'object') {
+            details += `**${key}:**\n${JSON.stringify(value, null, 2)}\n\n`;
+          }
+        }
+      });
+      
+      return details;
+    }).join('\n---\n');
+    
+    // Create system prompt with FULL persona data
+    const systemPrompt = `You are an AI assistant specialized in Korn Ferry persona insights with access to detailed research data.
 
-## Available Personas (${personas.length} total)
-${personas.slice(0, 6).map(persona => `- ${persona.title}`).join('\n')}
+# AVAILABLE PERSONA DATA
+${personaDetails}
 
-## Survey Data Available
-- Global Survey: ${globalData.split('\n').length - 1} responses
+# SURVEY DATA AVAILABLE
+- Global Survey: ${globalData.split('\n').length - 1} responses  
 - Senior Leader Survey: ${seniorLeaderData.split('\n').length - 1} executive responses
-${relevantSurveyData ? '\n### Key Survey Insights:\n' + relevantSurveyData.substring(0, 800) + '...' : ''}
+${relevantSurveyData ? '\n## Relevant Survey Data:\n' + relevantSurveyData : ''}
 
-Provide data-driven insights about professional personas using the research and survey data.`;
+# INSTRUCTIONS
+1. **Use ONLY the specific persona data provided above** - do not use general business knowledge
+2. **Reference exact quotes** from Goal Statements, Motivations, and Pain Points
+3. **Be specific to the personas mentioned** in the user's question
+4. **When comparing personas** (like UK CEO vs Global CEO), highlight the actual differences from their profiles
+5. **Include direct quotes** from the persona data to support your answers
+
+Answer the user's question using the specific persona data above.`;
 
     console.log('Chat API: System prompt length:', systemPrompt.length);
     console.log('Chat API: Calling OpenAI with gpt-4o-mini...');

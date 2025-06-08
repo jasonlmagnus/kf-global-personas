@@ -5,6 +5,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import GlobalNav from "@/components/GlobalNav";
 import PasswordProtection from "@/components/PasswordProtection";
+import { ChatbotProvider } from "@/contexts/ChatbotContext";
+import { ChatbotPanel } from "@/components/chatbot/ChatbotPanel";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,9 +36,11 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} flex flex-col min-h-screen`}>
         <PasswordProtection>
-          <GlobalNav />
-          <main className="flex-grow container mx-auto p-4">{children}</main>
-          {/* You could add a GlobalFooter here later if needed */}
+          <ChatbotProvider>
+            <GlobalNav />
+            <main className="flex-grow container mx-auto p-4">{children}</main>
+            <ChatbotPanel />
+          </ChatbotProvider>
         </PasswordProtection>
       </body>
     </html>

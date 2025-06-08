@@ -4,9 +4,12 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { MessageCircle } from "lucide-react";
+import { useChatbot } from "@/contexts/ChatbotContext";
 
 export default function GlobalNav() {
   const pathname = usePathname();
+  const { openPanel } = useChatbot();
 
   const navItemBaseClasses = "px-4 py-2 rounded-md text-sm font-semibold";
   // Active item: plain text, not acting like a link, distinct background
@@ -55,6 +58,15 @@ export default function GlobalNav() {
               Content
             </Link>
           )}
+
+          {/* AI Chat Icon */}
+          <button
+            onClick={openPanel}
+            className="p-2 rounded-md text-gray-200 hover:text-white hover:bg-black/10 transition-colors duration-150"
+            title="Open AI Personas Assistant"
+          >
+            <MessageCircle size={20} />
+          </button>
         </div>
       </div>
     </nav>

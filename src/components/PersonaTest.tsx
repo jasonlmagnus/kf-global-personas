@@ -72,7 +72,7 @@ function PersonaTestContent() {
   const searchParams = useSearchParams();
   const isExperimental = searchParams.get("view") === "experimental";
 
-  // Change default region to 'global' instead of 'uk'
+  // Change default region to 'global' instead of 'uk' and ensure it's set immediately
   const [selectedRegion, setSelectedRegion] = useState<Region | null>("global");
   // Add state to store previous region when switching to role view
   const [savedRegion, setSavedRegion] = useState<Region | null>(null);
@@ -87,12 +87,22 @@ function PersonaTestContent() {
     "single"
   );
 
-  // Add state for dynamic config data
-  const [dynamicRegions, setDynamicRegions] = useState<ConfigItem[]>([]);
-  const [dynamicDepartments, setDynamicDepartments] = useState<ConfigItem[]>(
-    []
-  );
-  const [isLoadingConfig, setIsLoadingConfig] = useState(true);
+  // Add state for dynamic config data - initialize with default values to prevent loading issues
+  const [dynamicRegions, setDynamicRegions] = useState<ConfigItem[]>([
+    { id: "global", name: "Global" },
+    { id: "uk", name: "United Kingdom" },
+    { id: "uae", name: "United Arab Emirates" },
+    { id: "aus", name: "Australia" },
+  ]);
+  const [dynamicDepartments, setDynamicDepartments] = useState<ConfigItem[]>([
+    { id: "ceo", name: "CEO" },
+    { id: "chro", name: "CHRO" },
+    { id: "sales", name: "Sales" },
+    { id: "talent", name: "Talent" },
+    { id: "rewards", name: "Rewards" },
+    { id: "leadership_dev", name: "Leadership Development" },
+  ]);
+  const [isLoadingConfig, setIsLoadingConfig] = useState(false); // Start as false since we have defaults
   const [configError, setConfigError] = useState<string | null>(null);
 
   // Use the new useRolePersonas hook
@@ -170,6 +180,15 @@ function PersonaTestContent() {
     error: personaError,
   } = usePersona(selectedRegion, selectedDepartment);
 
+  console.log("PersonaTest Debug:", {
+    viewType,
+    selectedRegion,
+    selectedDepartment,
+    persona: persona?.title || "null",
+    personaLoading,
+    personaError,
+  });
+
   const {
     personas: regionPersonas,
     loading: regionLoading,
@@ -227,6 +246,13 @@ function PersonaTestContent() {
     selectedDepartment,
   ]);
 
+  // Add effect to ensure single view always shows the loaded persona immediately
+  useEffect(() => {
+    if (viewType === "single" && persona) {
+      setSelectedDetailPersona(persona);
+    }
+  }, [viewType, persona]);
+
   // Add an effect to handle viewType changes directly
   useEffect(() => {
     // Clear selection when switching TO a different view type,
@@ -268,46 +294,26 @@ function PersonaTestContent() {
           throw new Error(`Failed to fetch config: ${response.statusText}`);
         }
         const configData = await response.json();
-        setDynamicRegions(configData.regions || []);
-        setDynamicDepartments(configData.departments || []);
 
-        // Initialize selectedRegion and selectedDepartment if lists are not empty
-        // and current selections are not part of the dynamic lists or if they are null/undefined.
-        // This part handles setting initial valid selections after config loads.
+        // Merge fetched config with defaults, preferring fetched data
         if (configData.regions && configData.regions.length > 0) {
-          const currentSelectedRegionIsValid = configData.regions.some(
-            (r: ConfigItem) => r.id === selectedRegion
-          );
-          if (!currentSelectedRegionIsValid || !selectedRegion) {
-            // Default to global if available, else first in list, or keep current if valid
-            const globalRegion = configData.regions.find(
-              (r: ConfigItem) => r.id === "global"
-            );
-            setSelectedRegion(
-              (globalRegion
-                ? globalRegion.id
-                : configData.regions[0].id) as Region
-            );
-          }
-        } else {
-          setSelectedRegion(null); // Clear if no regions from config
+          setDynamicRegions(configData.regions);
+        }
+        if (configData.departments && configData.departments.length > 0) {
+          setDynamicDepartments(configData.departments);
         }
 
-        if (configData.departments && configData.departments.length > 0) {
-          const currentSelectedDeptIsValid = configData.departments.some(
-            (d: ConfigItem) => d.id === selectedDepartment
-          );
-          if (!currentSelectedDeptIsValid || !selectedDepartment) {
-            setSelectedDepartment(configData.departments[0].id as Department);
-          }
-        } else {
-          setSelectedDepartment(null); // Clear if no departments from config
-        }
+        // No need for complex initialization logic since we have good defaults
+        console.log("Config loaded successfully", {
+          regions: configData.regions?.length,
+          departments: configData.departments?.length,
+        });
       } catch (error) {
         console.error("Error fetching config:", error);
         setConfigError(
           error instanceof Error ? error.message : "An unknown error occurred"
         );
+        // Keep default values on error - no need to clear them
       } finally {
         setIsLoadingConfig(false);
       }
@@ -521,9 +527,26 @@ function PersonaTestContent() {
           )}
 
         {/* Single view - handle directly without legacy wrapper */}
-        {!loading && !error && viewType === "single" && persona && (
+        {viewType === "single" && (
           <div className="mx-4">
-            <DetailedPersonaCard persona={persona} showCloseButton={false} />
+            {personaLoading && (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#0A523E]"></div>
+              </div>
+            )}
+            {!personaLoading && personaError && (
+              <div className="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200">
+                {personaError}
+              </div>
+            )}
+            {!personaLoading && persona && (
+              <DetailedPersonaCard persona={persona} showCloseButton={false} />
+            )}
+            {!personaLoading && !persona && !personaError && (
+              <div className="text-center py-8 text-gray-500">
+                <p>No persona data available for this selection.</p>
+              </div>
+            )}
           </div>
         )}
       </main>

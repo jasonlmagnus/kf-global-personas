@@ -83,8 +83,15 @@ export function useChat() {
 
             for (const line of lines) {
               if (line.startsWith('data: ')) {
+                const dataContent = line.slice(6).trim();
+                
+                // Check for the [DONE] marker which signals end of stream
+                if (dataContent === '[DONE]') {
+                  break;
+                }
+                
                 try {
-                  const data = JSON.parse(line.slice(6));
+                  const data = JSON.parse(dataContent);
                   
                   if (data.done) {
                     // Streaming complete
@@ -96,7 +103,7 @@ export function useChat() {
                     updateMessage(assistantMessageId, assistantContent);
                   }
                 } catch (e) {
-                  console.error('Error parsing chunk:', e);
+                  console.error('Error parsing chunk:', e, 'Line:', line);
                 }
               }
             }

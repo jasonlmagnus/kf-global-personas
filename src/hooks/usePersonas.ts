@@ -79,7 +79,8 @@ export function useAllPersonas() {
  */
 export function usePersonasByRegion(region: Region | null) {
   const [personas, setPersonas] = useState<Persona[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Start with loading=false if we have a region, otherwise true
+  const [loading, setLoading] = useState(!region);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -95,8 +96,11 @@ export function usePersonasByRegion(region: Region | null) {
         return;
       }
 
-      setLoading(true);
-      setError(null);
+      if (isMounted) {
+        setLoading(true);
+        setError(null);
+      }
+      
       try {
         // Use the adapter to fetch personas for a region
         const regionPersonas = await getPersonasByRegion(region);
@@ -130,7 +134,8 @@ export function usePersonasByRegion(region: Region | null) {
  */
 export function usePersona(region: Region | null, department: Department | null) {
   const [persona, setPersona] = useState<Persona | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Always start with loading=true if we have both region and department to show spinner while fetching
+  const [loading, setLoading] = useState(Boolean(region && department));
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -147,8 +152,12 @@ export function usePersona(region: Region | null, department: Department | null)
         return;
       }
 
-      setLoading(true); // Set loading to true only when we are actually fetching
-      setError(null);
+      // Set loading to true when starting fetch
+      if (isMounted) {
+        setLoading(true);
+        setError(null);
+      }
+      
       try {
         // Use the adapter to fetch a specific persona
         const personaData = await getPersona(region, department);
@@ -165,6 +174,7 @@ export function usePersona(region: Region | null, department: Department | null)
         console.error(`Error loading persona for ${region}/${department}:`, err);
         if (isMounted) {
           setError(err instanceof Error ? err.message : 'Failed to load persona');
+          setPersona(null); // Clear persona on error
           setLoading(false);
         }
       }

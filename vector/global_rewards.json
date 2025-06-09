@@ -1,0 +1,190 @@
+{
+  "metadata": {
+    "version": "2.1",
+    "type": "global",
+    "lastUpdated": "2025-05-24"
+  },
+  "coreUnderstanding": {
+    "core": {
+      "role": "Rewards Leader",
+      "userGoalStatement": "As a Reward Leader, I focus on designing and implementing competitive, equitable compensation and benefits strategies that attract, retain, and motivate talent while ensuring cost-effectiveness and compliance across global markets.",
+      "coreBelief": "Fair, transparent, and competitive rewards are essential to attracting top talent and driving organizational performance in an increasingly complex global market.",
+      "contentImplication": "Use this foundational information to frame all content. Reference the Rewards Leader's goal of 'designing competitive, equitable compensation strategies' and belief in 'fair, transparent, and competitive rewards' to establish immediate relevance."
+    },
+    "responsibilities": {
+      "items": [
+        { "Category": "Strategy Development", "Description": "Developing global compensation and benefits strategies aligned with business objectives." },
+        { "Category": "Program Management", "Description": "Managing reward program implementation and administration across regions." },
+        { "Category": "Compliance", "Description": "Ensuring adherence to local regulations and global governance frameworks." },
+        { "Category": "Market Analysis", "Description": "Analyzing compensation trends and adjusting strategies to maintain competitiveness." },
+        { "Category": "Performance Systems", "Description": "Overseeing performance-based reward systems that align employee contributions with business goals." }
+      ],
+      "contentImplication": "Align content themes with these responsibility areas. Each piece of content should address at least one of these areas to ensure relevance to the Rewards Leader's core role."
+    },
+    "knowledge": {
+      "items": [
+        "Compensation structures and incentive plan design",
+        "Global benefits administration and localization",
+        "Regulatory compliance across multiple jurisdictions",
+        "Performance management frameworks",
+        "Financial modeling and budgeting",
+        "Pay equity analysis and remediation",
+        "Executive compensation and governance"
+      ],
+      "contentImplication": "Use these knowledge areas to establish Korn Ferry's credibility. Content should demonstrate expertise in at least one of these domains to position as valuable to the Rewards Leader."
+    }
+  },
+  "strategicValuePoints": {
+    "connectionOpportunities": {
+      "items": [
+        {
+          "Area": "Pay Equity & Demographic Disparities",
+          "Finding": "Rewards Leaders face significant pay-equity perception challenges: 37% of women vs 27% of men feel overlooked for pay rises; 34.3% feel overlooked due to racial factors.",
+          "Leverage_Point": "Position pay-equity analysis and remediation as essential for building trust and addressing perceived biases across demographic groups",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Compensation Satisfaction Gap",
+          "Finding": "There is a 34-point gap in compensation satisfaction between executives and individual contributors (82% vs 48%) and only 58% of employees believe pay matches skill value.",
+          "Leverage_Point": "Use transparent compensation bands and market benchmarking to close the gap and signal the organization truly values all talent levels",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Compensation as Talent Validator",
+          "Finding": "Pay remains the #1 factor for job moves—80% cite poor compensation as a primary reason for leaving.",
+          "Leverage_Point": "Frame competitive compensation as the ultimate litmus test of organizational value and essential for talent attraction and retention",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Benefits Strategy & Regional Variations",
+          "Finding": "68% agree companies understand benefits importance, but regional differences are stark (51% Japan vs 91% Saudi Arabia).",
+          "Leverage_Point": "Drive conversations on localized benefits strategies that respect regional expectations while preserving global equity",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Trust & Leadership Alignment",
+          "Finding": "Only 52% believe leaders value people over profits, with trust dropping sharply at lower levels.",
+          "Leverage_Point": "Show how modern reward design rebuilds trust by linking leadership rhetoric to tangible, equitable pay practices",
+          "dataSource": "survey"
+        }
+      ],
+      "contentImplication": "Lead with these survey-backed topics to create immediate resonance with Rewards Leaders."
+    },
+    "motivations": {
+      "items": [
+        "Creating fair and competitive reward packages that reflect organizational values",
+        "Driving employee engagement and retention through effective rewards strategies",
+        "Supporting business growth with scalable reward approaches that attract top talent",
+        "Ensuring market competitiveness in key talent segments critical to business success",
+        "Building sustainable, cost-effective reward programs that balance employee needs with business realities"
+      ],
+      "contentImplication": "Use these motivations as content themes and in calls-to-action. Frame benefits in terms of these key drivers to increase engagement."
+    },
+    "needs": {
+      "items": [
+        { "Category": "Analytics Tools", "Description": "Advanced compensation analytics and benchmarking tools for data-driven decisions, addressing the 34-point satisfaction gap between organizational levels" },
+        { "Category": "Benefits Platforms", "Description": "Global benefits administration platforms that adapt to regional requirements, addressing significant regional variations in benefits perception" },
+        { "Category": "Compliance Systems", "Description": "Monitoring and reporting systems for navigating complex regulatory environments across multiple jurisdictions" },
+        { "Category": "Performance Frameworks", "Description": "Performance-linked reward frameworks that align compensation with contribution and the 26-point gap in development planning satisfaction" },
+        { "Category": "Financial Modeling", "Description": "Cost modeling and budgeting tools to maintain competitiveness while 70% of employees cite cost-of-living pressures" },
+        { "Category": "Pay Equity Solutions", "Description": "Robust pay-equity analysis and remediation tools to address demographic disparities and perceived biases" },
+        { "Category": "ROI Measurement Tools", "Description": "Analytics to prove impact on attrition, engagement, and productivity—e.g., track savings from a 12% drop in regrettable turnover after salary refresh" },
+        { "Category": "Real-Time Market Data", "Description": "Comprehensive benchmarking data feeds to stay ahead of market moves where pay is the #1 factor" },
+        { "Category": "Global Compliance Management", "Description": "Integrated compliance solutions ensuring consistency while meeting local regulations" }
+      ],
+      "contentImplication": "Each piece of content should tackle at least one of these priority needs."
+    }
+  },
+  "painPointsAndChallenges": {
+    "perceptionGaps": {
+      "items": [
+        {
+          "Area": "Compensation Satisfaction",
+          "Gap": "34-point exec/IC gap and only 58% feel pay matches skill value.",
+          "Business_Impact": "Undermines retention and fuels distrust.",
+          "Opportunity": "Adopt transparent bands, data-driven benchmarking, and frequent market refreshes."
+        },
+        {
+          "Area": "Pay Equity Perceptions",
+          "Gap": "37% women vs 27% men—and up to 56% in some regions—feel overlooked for raises.",
+          "Business_Impact": "Trust, compliance, and brand risk.",
+          "Opportunity": "Implement systemic pay-equity monitoring with public progress metrics."
+        }
+      ]
+    },
+    "frustrations": {
+      "items": [
+        "Balancing cost control with competitive pay, especially amid 70% cost-of-living concern",
+        "Proving ROI when leaders see rewards as a cost center",
+        "Navigating complex, shifting regulations across markets",
+        "Maintaining global philosophy yet allowing regional flexibility",
+        "Bridging demographic and level-based compensation gaps"
+      ]
+    },
+    "emotionalTriggers": {
+      "items": [
+        {
+          "Trigger": "Rising attrition in hot-skill roles",
+          "Emotional_Response": "Fear of losing top talent",
+          "Messaging_Implication": "Showcase salary-refresh playbooks that cut regrettable turnover 12% in 12 months"
+        },
+        {
+          "Trigger": "Executive demand for hard ROI",
+          "Emotional_Response": "Anxiety about justification",
+          "Messaging_Implication": "Provide dashboards linking pay-equity closure and competitive-pay actions to quantified retention gains"
+        }
+      ]
+    }
+  },
+  "engagementApproach": {
+    "description": "Data-driven, compliance-focused content that positions rewards as both a strategic growth lever and a trust-building mechanism.",
+    "behaviors": {
+      "items": [
+        "Conducts regular market analysis and benchmarking to maintain competitive positioning",
+        "Implements continuous compliance monitoring and updates to mitigate regulatory risks",
+        "Employs data-driven decision making for program design and optimization",
+        "Engages stakeholders across regions to ensure reward programs meet diverse needs",
+        "Proactively monitors industry trends and adjusts strategies to stay ahead of market shifts",
+        "Prioritizes pay-equity rigor and market-competitive base pay as evergreen evaluation criteria for any solution"
+      ]
+    },
+    "collaborationInsights": {
+      "items": [
+        "Require solutions adaptable to diverse market conditions and regulations",
+        "Need clear data on program effectiveness, cost impact, and ROI",
+        "Integration with HRIS/payroll is non-negotiable",
+        "Seek tools that position rewards as trust-building and cultural alignment levers",
+        "Pay-equity closure and competitive pay benchmarking are evergreen hot buttons"
+      ]
+    },
+    "problemSolvingMethod": {
+      "description": "Relies on market data, compliance insight, and ROI modeling—balancing competitiveness with cost discipline and trust building."
+    },
+    "messagingAngles": {
+      "description": "Angles that move both the head (data) and the heart (fairness & trust).",
+      "items": [
+        "ROI-Focused: 'Cut regrettable attrition 12 % by refreshing below-market salaries—track savings in our live dashboard.'",
+        "Market Competitiveness: 'Stay ahead of pay wars with real-time benchmarks covering 180+ countries.'",
+        "Pay-Equity Champion: 'Close your gender pay gap by 5 pp in a year—built-in analytics, remediation budgeting, and progress reporting.'",
+        "Trust Building: 'Only 52 % believe leaders value people over profits—transparent pay practices backed by our platform move that needle fast.'",
+        "Global Compliance: 'One console to manage pay-transparency laws from New York to Nairobi.'",
+        "Performance Integration: 'Link contribution to cash—seamless performance-pay loop fuels motivation and fairness.'"
+      ]
+    },
+    "analogies": {
+      "items": [
+        "Rewards strategy as an ecosystem—balance nutrients (cash, benefits, equity) so talent flourishes",
+        "Compensation design as architecture—solid foundations for fairness, flexible extensions for local needs"
+      ]
+    }
+  },
+  "supportingResources": {
+    "description": "Key references and data sources for content creators.",
+    "referenceSources": [
+      { "Category": "Industry Publications", "Sources": ["WorldatWork", "Mercer", "WTW"] },
+      { "Category": "Professional Associations", "Sources": ["SHRM", "IFEBP"] },
+      { "Category": "Research Materials", "Sources": ["Global comp surveys", "Benefits benchmarking", "Compliance updates"] },
+      { "Category": "Survey Data Applications", "Sources": ["Compensation satisfaction gap", "Pay-equity perceptions", "Regional benefits variations"] }
+    ]
+  }
+}

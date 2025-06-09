@@ -1,0 +1,247 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "type": "global",
+    "lastUpdated": "2025-05-24"
+  },
+  "coreUnderstanding": {
+    "core": {
+      "role": "Global Chief Executive Officer (CEO)",
+      "userGoalStatement": "As a CEO, I am committed to driving sustainable growth, navigating economic uncertainty, and fostering innovation. My role is to mobilize the organization for long-term value creation while delivering short-term performance.",
+      "coreBelief": "Sustainable success comes from balancing near-term results with bold, long-term investments—especially in technology, talent, and ESG.",
+      "contentImplication": "Frame all content around the CEO’s dual mandate of near-term results and future-proofing, surfacing data that affirms this balance."
+    },
+    "responsibilities": {
+      "items": [
+        {
+          "Category": "Driving Growth",
+          "Description": "Define and execute strategies that expand revenue, margin, and market share."
+        },
+        {
+          "Category": "Technology Adoption & Digital Transformation",
+          "Description": "Champion AI-led innovation and ensure the organisation extracts measurable value from emerging tech."
+        },
+        {
+          "Category": "Operational Leadership & Risk Management",
+          "Description": "Safeguard resilience across supply chains, cost structures, and geopolitical risks."
+        },
+        {
+          "Category": "Talent & Culture Stewardship",
+          "Description": "Shape an inclusive, high-performance culture that attracts, engages, and retains top talent."
+        },
+        {
+          "Category": "Strategic Stakeholder Engagement",
+          "Description": "Align boards, investors, employees, and society behind the enterprise mission."
+        }
+      ],
+      "contentImplication": "Tie every asset to at least one responsibility to remain top-of-mind and high-value to CEOs."
+    },
+    "knowledge": {
+      "items": [
+        "Strategic growth planning",
+        "Digital transformation & AI",
+        "Operational & supply-chain excellence",
+        "Workforce engagement & leadership development",
+        "ESG integration & CSR",
+        "Financial performance & enterprise risk"
+      ],
+      "contentImplication": "Demonstrate Korn Ferry authority by anchoring insights in one or more of these domains."
+    }
+  },
+  "strategicValuePoints": {
+    "connectionOpportunities": {
+      "items": [
+        {
+          "Area": "AI Readiness",
+          "Finding": "71% of CEOs expect to leverage AI effectively, but only 47% of employees agree (24-pt gap).",
+          "Leverage_Point": "Present AI programs that pair C-suite vision with workforce-level enablement.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "ESG Commitment",
+          "Finding": "83% of CEOs say CSR commitment is 'just right' vs. 47% of ICs (36-pt gap).",
+          "Leverage_Point": "Use transparent metrics and employee co-creation to turn ESG into a trust accelerator.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Work-Life Well-Being",
+          "Finding": "74% of CEOs feel able to ‘switch off’ vs. 59% of ICs (15-pt gap).",
+          "Leverage_Point": "Show evidence-based tactics that protect well-being without hurting performance.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Sustainability as Growth Lever",
+          "Finding": "CEOs value environmental sustainability 15 % more than peers when evaluating roles.",
+          "Leverage_Point": "Position sustainability initiatives as revenue drivers, not mere compliance.",
+          "dataSource": "survey"
+        }
+      ],
+      "contentImplication": "Lead with these quantified disconnects to spark instant relevance and dialogue."
+    },
+    "motivations": {
+      "items": [
+        "Achieving durable, above-market growth",
+        "Building an adaptable, tech-enabled organisation",
+        "Outpacing competitors through innovation and speed",
+        "Strengthening brand reputation with investors, employees, and society",
+        "Future-proofing the enterprise against shocks"
+      ],
+      "contentImplication": "Explicitly link your solution’s benefits to these motivational levers."
+    },
+    "needs": {
+      "items": [
+        {
+          "Category": "Growth Enablement",
+          "Description": "Blueprints for revenue expansion that address the 34-pt gap in perceived tech-experimentation encouragement (78 % CEOs vs 44 % ICs)."
+        },
+        {
+          "Category": "AI Learning Ecosystem",
+          "Description": "Scalable learning paths to close the 38-pt gap in AI skill confidence (73 % CEOs vs 35 % ICs)."
+        },
+        {
+          "Category": "Talent & Reward Alignment",
+          "Description": "Retention strategies that tackle the 16-pt fairness gap in pay perception (86 % CEOs vs 70 % ICs)."
+        }
+      ],
+      "contentImplication": "Address one or more of these survey-backed needs in every offer or insight."
+    }
+  },
+  "painPointsAndChallenges": {
+    "perceptionGaps": {
+      "items": [
+        {
+          "Area": "AI Adoption & Training",
+          "Gap": "24-pt optimism gap on AI leverage and 38-pt training confidence gap.",
+          "Business_Impact": "Slows ROI on tech investments; fuels change fatigue.",
+          "Opportunity": "Provide inclusive upskilling and quick-win pilots that validate AI value.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "ESG Credibility & Culture Fit",
+          "Gap": "36-pt gap on CSR commitment and 33-pt gap on culture perception.",
+          "Business_Impact": "Erodes trust and hampers engagement; reputational risk.",
+          "Opportunity": "Deploy transparent reporting and employee-voice programs to align narrative with reality.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Job Security & Organisational Culture",
+          "Gap": "CEO over-weights job security (+2 %) and culture importance (+6 %) vs. employees.",
+          "Business_Impact": "Retention levers may miss actual employee priorities.",
+          "Opportunity": "Probe broader engagement drivers when designing talent strategy.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Work-Life Boundaries",
+          "Gap": "Hybrid preference (+6 %) and ‘switch-off’ expectation gap (+7 %).",
+          "Business_Impact": "Risk of mixed messages on availability and flexibility.",
+          "Opportunity": "Set explicit boundary norms that respect both business and employee needs.",
+          "dataSource": "survey"
+        }
+      ],
+      "contentImplication": "Use these quantified blind spots to frame urgency and unique insight."
+    },
+    "frustrations": {
+      "items": [
+        "Balancing quarterly performance with moon-shot investments",
+        "Managing supply-chain shocks and geopolitical volatility",
+        "Tackling talent churn amid divergent perceptions of culture and reward",
+        "Translating digital-transformation ambition into execution readiness",
+        "Meeting shareholder demands while nurturing innovation"
+      ],
+      "contentImplication": "Open with problem statements that mirror these frustrations."
+    },
+    "emotionalTriggers": {
+      "items": [
+        {
+          "Trigger": "Media or employee challenge to ESG authenticity",
+          "Emotional_Response": "Defensiveness and concern for reputational fallout",
+          "Messaging_Implication": "Supply hard data, third-party benchmarks, and transparent progress road-maps."
+        },
+        {
+          "Trigger": "Missed AI roll-out milestones",
+          "Emotional_Response": "Fear of competitive lag",
+          "Messaging_Implication": "Showcase quick-win pilots and peer success stories to restore confidence."
+        }
+      ],
+      "contentImplication": "Let empathy and evidence guide tone around these triggers."
+    }
+  },
+  "engagementApproach": {
+    "description": "Practical guidance for building executive-level, evidence-rich content.",
+    "behaviors": {
+      "items": [
+        "Benchmarks relentlessly to inform decisions",
+        "Delegates yet retains final call on high-stakes moves",
+        "Seeks insight via selective peer networks",
+        "Prefers concise, data-dense formats (two-page brief > 20-slide deck)",
+        "Prioritises high-impact issues first"
+      ],
+      "contentImplication": "Use crisp language, rich data visuals, and clear next steps."
+    },
+    "collaborationInsights": {
+      "items": [
+        "Values partners who deliver strategic foresight backed by data",
+        "Demands speed and transparency",
+        "Assesses ROI and scalability before committing",
+        "Trust builds through credible case evidence",
+        "Needs executive-ready summaries, not technical deep dives"
+      ],
+      "contentImplication": "Lead with quantified outcomes and accelerated timelines."
+    },
+    "problemSolvingMethod": {
+      "description": "How the CEO approaches problem solving",
+      "value": "Runs scenario stress-tests, weighing impact vs. feasibility against long-term vision."
+    },
+    "analogies": {
+      "items": [
+        "Pilot navigating turbulence—adjust course continually while maintaining altitude.",
+        "Gardener cultivating an ecosystem—align conditions so culture and talent thrive."
+      ],
+      "contentImplication": "Employ these metaphors for memorable storytelling."
+    },
+    "messagingAngles": {
+      "description": "Proven angles that land with CEOs",
+      "items": [
+        "[AI Confidence Gap]: “Close the 24-point disconnect with inclusion-first AI programmes that deliver ROI in 90 days.”",
+        "[ESG Trust Multiplier]: “Transform the 36-point CSR gap into investor-grade transparency that lifts brand equity.”",
+        "[Resilience Playbook]: “Convert supply-chain shocks into growth using data-backed scenario pivots.”",
+        "[Talent-Well-Being Dividend]: “Bridge the 15-point ‘switch-off’ gap to cut attrition risk by 25 %.”",
+        "[Learning Culture Catalyst]: “Turn the 38-pt AI-skills deficit into a culture of experimentation within six months.”"
+      ],
+      "contentImplication": "Use these angles as ready-made headlines or webinar hooks."
+    }
+  },
+  "supportingResources": {
+    "description": "Source library for further research and citation.",
+    "referenceSources": [
+      {
+        "Category": "Global CEO Surveys",
+        "Sources": [
+          "PwC 2025 Global CEO Survey",
+          "Deloitte Spring 2025 CEO Survey",
+          "EY 2025 Corporate Transformation Mindset"
+        ],
+        "URLs": [
+          "https://www.pwc.com/bm/en/press-releases/pwc-2025-global-ceo-survey.html",
+          "https://www2.deloitte.com/content/dam/Deloitte/us/Documents/us-spring-2025-ceo-survey-final-050125.pdf",
+          "https://www.ey.com/en_gl/ceo/corporate-transformation-mindset-unlock-long-term-value"
+        ]
+      },
+      {
+        "Category": "Strategy & Transformation Insights",
+        "Sources": [
+          "BCG Five Dynamics Testing CEOs 2025",
+          "McKinsey Eight CEO Priorities 2024"
+        ]
+      },
+      {
+        "Category": "Workforce & Engagement Studies",
+        "Sources": [
+          "Gallup Employee Engagement 2025",
+          "Korn Ferry Workforce 2025",
+          "Businessolver 2024 Empathy Study"
+        ]
+      }
+    ]
+  }
+}

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-// Force Vercel redeployment - updated timestamp
+// Force Vercel redeployment - vector store integration complete
 export default function HomePage() {
   useEffect(() => {
     window.location.replace("/personas");

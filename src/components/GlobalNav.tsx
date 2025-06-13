@@ -56,6 +56,18 @@ const GlobalNav: React.FC = () => {
               ))}
             </ul>
           </nav>
+          <Link
+            href="/personas"
+            className="text-gray-600 hover:text-blue-600 transition-colors"
+          >
+            Personas
+          </Link>
+          <Link
+            href="/admin/upload"
+            className="text-gray-600 hover:text-blue-600 transition-colors"
+          >
+            Upload
+          </Link>
           <button
             onClick={openPanel}
             className="p-2 rounded-md hover:bg-black/10 transition-colors"

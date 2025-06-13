@@ -5,11 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useChatbot } from "@/contexts/ChatbotContext";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, LogIn, LogOut } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 
 const GlobalNav: React.FC = () => {
   const { theme, isLoading } = useTheme();
   const { openPanel } = useChatbot();
+  const { data: session, status } = useSession();
 
   if (isLoading || !theme) {
     // Render a placeholder or loader while the theme is loading
@@ -28,9 +30,17 @@ const GlobalNav: React.FC = () => {
   }
 
   const { brandName, logoUrl, navigation } = theme;
+  const user = session?.user;
+
+  // Filter navigation based on user role
+  const filteredNavigation = navigation.filter(
+    (item) =>
+      item.path !== "/admin/brand-setup" ||
+      (user && user.role === "SUPER_ADMIN")
+  );
 
   return (
-    <header className="bg-brand-primary text-brand-header-text p-4 shadow-md">
+    <header className="bg-primary text-white p-4 shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-3">
           <Image
@@ -44,7 +54,7 @@ const GlobalNav: React.FC = () => {
         <div className="flex items-center space-x-6">
           <nav>
             <ul className="flex items-center space-x-6">
-              {navigation.map((item) => (
+              {filteredNavigation.map((item) => (
                 <li key={item.name}>
                   <Link
                     href={item.path}
@@ -56,18 +66,6 @@ const GlobalNav: React.FC = () => {
               ))}
             </ul>
           </nav>
-          <Link
-            href="/personas"
-            className="text-gray-600 hover:text-blue-600 transition-colors"
-          >
-            Personas
-          </Link>
-          <Link
-            href="/admin/upload"
-            className="text-gray-600 hover:text-blue-600 transition-colors"
-          >
-            Upload
-          </Link>
           <button
             onClick={openPanel}
             className="p-2 rounded-md hover:bg-black/10 transition-colors"
@@ -75,6 +73,30 @@ const GlobalNav: React.FC = () => {
           >
             <MessageCircle size={20} />
           </button>
+
+          {status === "loading" ? (
+            <div className="h-6 w-24 bg-gray-700 rounded animate-pulse"></div>
+          ) : user ? (
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-300">{user.email}</span>
+              <button
+                onClick={() => signOut()}
+                className="flex items-center space-x-2 p-2 rounded-md hover:bg-black/10 transition-colors"
+                title="Logout"
+              >
+                <LogOut size={20} />
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center space-x-2 p-2 rounded-md hover:bg-black/10 transition-colors"
+              title="Login"
+            >
+              <LogIn size={20} />
+              <span className="text-sm font-medium">Login</span>
+            </Link>
+          )}
         </div>
       </div>
     </header>

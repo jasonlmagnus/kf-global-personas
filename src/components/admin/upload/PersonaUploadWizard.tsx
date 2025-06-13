@@ -52,15 +52,6 @@ const PersonaUploadWizard = () => {
     }
   };
 
-  const handleProcessingComplete = () => {
-    if (generatedPersona) {
-      setCurrentStage("review");
-    } else {
-      setError("An unknown error occurred during processing.");
-      setCurrentStage("error");
-    }
-  };
-
   const handleSave = async () => {
     if (!generatedPersona) return;
     try {
@@ -80,6 +71,15 @@ const PersonaUploadWizard = () => {
       const errorMessage =
         e instanceof Error ? e.message : "An unknown error occurred.";
       setError(errorMessage);
+      setCurrentStage("error");
+    }
+  };
+
+  const handleProcessingComplete = () => {
+    if (generatedPersona) {
+      setCurrentStage("review");
+    } else {
+      setError("An unknown error occurred during processing.");
       setCurrentStage("error");
     }
   };
@@ -119,7 +119,7 @@ const PersonaUploadWizard = () => {
       </p>
       <button
         onClick={onRetry}
-        className="px-8 py-3 bg-coral-500 text-white font-semibold rounded-lg shadow-md hover:bg-coral-600 transition-all"
+        className="px-8 py-3 bg-primary text-white font-semibold rounded-lg shadow-md hover:bg-primary/90 transition-all"
       >
         Try Again
       </button>
@@ -134,14 +134,14 @@ const PersonaUploadWizard = () => {
             <div
               className={`flex items-center space-x-3 transition-all duration-300 ${
                 ["input"].includes(currentStage)
-                  ? "text-coral-600"
+                  ? "text-primary"
                   : "text-emerald-600"
               }`}
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
                   ["input"].includes(currentStage)
-                    ? "bg-coral-100 text-coral-700"
+                    ? "bg-primary/20 text-primary"
                     : "bg-emerald-100 text-emerald-700"
                 }`}
               >
@@ -157,14 +157,14 @@ const PersonaUploadWizard = () => {
             <div
               className={`h-px w-16 transition-all duration-300 ${
                 ["processing", "review"].includes(currentStage)
-                  ? "bg-coral-300"
+                  ? "bg-primary/50"
                   : "bg-stone-300"
               }`}
             ></div>
             <div
               className={`flex items-center space-x-3 transition-all duration-300 ${
                 currentStage === "processing"
-                  ? "text-coral-600"
+                  ? "text-primary"
                   : currentStage === "review"
                   ? "text-emerald-600"
                   : "text-slate-400"
@@ -173,7 +173,7 @@ const PersonaUploadWizard = () => {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
                   currentStage === "processing"
-                    ? "bg-coral-100 text-coral-700"
+                    ? "bg-primary/20 text-primary"
                     : currentStage === "review"
                     ? "bg-emerald-100 text-emerald-700"
                     : "bg-stone-100 text-slate-500"
@@ -188,20 +188,18 @@ const PersonaUploadWizard = () => {
             </div>
             <div
               className={`h-px w-16 transition-all duration-300 ${
-                currentStage === "review" ? "bg-coral-300" : "bg-stone-300"
+                currentStage === "review" ? "bg-primary/50" : "bg-stone-300"
               }`}
             ></div>
             <div
               className={`flex items-center space-x-3 transition-all duration-300 ${
-                currentStage === "review" ? "text-coral-600" : "text-slate-400"
+                currentStage === "review" ? "text-primary" : "text-slate-400"
               }`}
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
                   currentStage === "review"
-                    ? "bg-coral-100 text-coral-700"
-                    : currentStage === "success" || currentStage === "error"
-                    ? "bg-stone-100 text-slate-500"
+                    ? "bg-primary/20 text-primary"
                     : "bg-stone-100 text-slate-500"
                 }`}
               >

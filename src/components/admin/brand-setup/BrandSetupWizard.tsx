@@ -1,0 +1,287 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import LogoUploader from "./LogoUploader";
+import ColorSettings from "./ColorSettings";
+import FontSettings from "./FontSettings";
+import LivePreview from "./LivePreview";
+import { BrandConfig } from "@/contexts/ThemeContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const DEFAULT_LOGO_URL = "/kf-logo-white.svg"; // A known default
+
+const BrandSetupWizard = () => {
+  const [brands, setBrands] = useState<string[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<string>("");
+  const [settings, setSettings] = useState<BrandConfig | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [previewLogoUrl, setPreviewLogoUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [newBrandName, setNewBrandName] = useState("");
+
+  // Fetch the list of available brands on mount
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        // This is the correct endpoint for listing brands, restricted to admins
+        const response = await fetch("/api/brands");
+        if (!response.ok) throw new Error("Failed to fetch brand list.");
+        const brandList: string[] = await response.json();
+        setBrands(brandList);
+        if (brandList.length > 0) {
+          setSelectedBrand(brandList[0]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch brands", error);
+      }
+    };
+    fetchBrands();
+  }, []);
+
+  // Fetch the settings for the selected brand whenever it changes
+  useEffect(() => {
+    if (!selectedBrand) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchBrandSettings = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/brand?name=${selectedBrand}`);
+        if (!response.ok) {
+          throw new Error(`Could not load settings for ${selectedBrand}`);
+        }
+        const config: BrandConfig = await response.json();
+        setSettings(config);
+        setPreviewLogoUrl(config.logoUrl);
+      } catch (error) {
+        console.error(error);
+        setSettings(null); // Clear settings on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBrandSettings();
+  }, [selectedBrand]);
+
+  const handleFileSelect = (file: File | null) => {
+    setLogoFile(file);
+    setPreviewLogoUrl(
+      file ? URL.createObjectURL(file) : settings?.logoUrl || null
+    );
+  };
+
+  const handleLogoRemove = () => {
+    setLogoFile(null);
+    setPreviewLogoUrl(DEFAULT_LOGO_URL);
+    // Also update the settings in state so this change gets saved
+    setSettings((prev) =>
+      prev ? { ...prev, logoUrl: DEFAULT_LOGO_URL } : null
+    );
+  };
+
+  const handleSettingsChange = (updatedSettings: Partial<BrandConfig>) => {
+    setSettings((prev) => (prev ? { ...prev, ...updatedSettings } : null));
+  };
+
+  const handleCreateBrand = async () => {
+    if (!newBrandName.trim()) {
+      alert("Please enter a name for the new brand.");
+      return;
+    }
+    const sanitizedBrandName = newBrandName
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+    if (brands.includes(sanitizedBrandName)) {
+      alert(`Brand "${sanitizedBrandName}" already exists.`);
+      return;
+    }
+
+    setIsSaving(true);
+    const defaultConfig: BrandConfig = {
+      brandName: newBrandName.trim(),
+      logoUrl: "/kf-logo-white.svg", // Default logo
+      faviconUrl: "/favicon.ico",
+      colors: {
+        primary: "#3b82f6",
+        secondary: "#6b7280",
+        accent: "#3b82f6",
+        text: "#111827",
+        textLight: "#f9fafb",
+        background: "#f9fafb",
+        headerText: "#ffffff",
+      },
+      typography: {
+        fontFamily: "'Inter', sans-serif",
+        googleFontUrl:
+          "https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap",
+      },
+      navigation: [
+        { name: "Personas", path: "/personas" },
+        { name: "Upload", path: "/admin/upload" },
+        { name: "Brand Setup", path: "/admin/brand-setup" },
+      ],
+      footer: { copyrightName: newBrandName.trim(), links: [] },
+      chatbot: {
+        headerColor: "#3b82f6",
+        assistantName: `${newBrandName.trim()} Assistant`,
+        assistantSubtitle: "Online",
+        welcomeMessage: "How can I help you?",
+        userBubbleColor: "#d1d5db",
+        assistantBubbleColor: "#3b82f6",
+      },
+    };
+
+    try {
+      const response = await fetch(`/api/brand?name=${sanitizedBrandName}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(defaultConfig),
+      });
+
+      if (!response.ok) throw new Error("Failed to create new brand.");
+      alert(`Brand "${sanitizedBrandName}" created successfully!`);
+
+      setBrands([...brands, sanitizedBrandName].sort());
+      setSelectedBrand(sanitizedBrandName);
+      setNewBrandName("");
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!settings || !selectedBrand) return;
+    setIsSaving(true);
+
+    const formData = new FormData();
+    formData.append("settings", JSON.stringify(settings));
+    if (logoFile) {
+      formData.append("logo", logoFile);
+    }
+
+    try {
+      const response = await fetch(`/api/brand?name=${selectedBrand}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save brand settings.");
+      }
+
+      alert(
+        `Brand "${selectedBrand}" saved successfully! The page will now reload to apply the changes.`
+      );
+
+      // Force a reload to make the new theme active across the app
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="mb-8">
+        <label
+          htmlFor="brand-selector"
+          className="block text-lg font-medium text-slate-800 mb-3"
+        >
+          Select Brand to Edit
+        </label>
+        <Select
+          value={selectedBrand}
+          onValueChange={setSelectedBrand}
+          disabled={brands.length === 0}
+        >
+          <SelectTrigger className="w-full max-w-sm">
+            <SelectValue placeholder="Select a brand..." />
+          </SelectTrigger>
+          <SelectContent>
+            {brands.map((brand) => (
+              <SelectItem key={brand} value={brand}>
+                {brand.charAt(0).toUpperCase() + brand.slice(1)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="mt-8 pt-8 border-t border-slate-200">
+        <h3 className="text-lg font-medium text-slate-800 mb-3">
+          Create New Brand
+        </h3>
+        <div className="flex items-center space-x-2">
+          <input
+            type="text"
+            value={newBrandName}
+            onChange={(e) => setNewBrandName(e.target.value)}
+            placeholder="Enter New Brand Name"
+            className="w-full max-w-sm p-3 border-2 border-stone-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+          <button
+            onClick={handleCreateBrand}
+            disabled={isSaving}
+            className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 disabled:bg-gray-400 transition-all"
+          >
+            {isSaving ? "Creating..." : "Create"}
+          </button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div>Loading brand settings...</div>
+      ) : !settings ? (
+        <div>Could not load settings for brand: {selectedBrand}</div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <LogoUploader
+              logoPath={previewLogoUrl}
+              onFileSelect={handleFileSelect}
+              onLogoRemove={handleLogoRemove}
+            />
+            <ColorSettings
+              settings={settings}
+              onSettingsChange={handleSettingsChange}
+            />
+            <FontSettings
+              settings={settings}
+              onSettingsChange={handleSettingsChange}
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <LivePreview settings={settings} />
+          </div>
+          <div className="lg:col-span-3 flex justify-end mt-4">
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 disabled:bg-gray-400 transition-all"
+            >
+              {isSaving ? "Saving..." : `Save "${selectedBrand}" Brand`}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default BrandSetupWizard;

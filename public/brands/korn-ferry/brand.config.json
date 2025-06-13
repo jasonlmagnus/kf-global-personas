@@ -18,7 +18,9 @@
   "navigation": [
     { "name": "Personas", "path": "/personas" },
     { "name": "Data", "path": "/data" },
-    { "name": "Content", "path": "/content" }
+    { "name": "Content", "path": "/content-library" },
+    { "name": "Upload", "path": "/admin/upload" },
+    { "name": "Brand Setup", "path": "/admin/brand-setup" }
   ],
   "footer": {
     "copyrightName": "Korn Ferry",

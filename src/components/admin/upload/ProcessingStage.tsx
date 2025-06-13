@@ -23,7 +23,7 @@ const ProcessingStage: React.FC<ProcessingStageProps> = ({ personaType }) => {
       </p>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-center p-6 rounded-lg bg-coral-100 text-coral-800">
+        <div className="flex items-center justify-center p-6 rounded-lg bg-primary/20 text-primary">
           <div className="animate-spin mr-4">
             <Bot className="w-8 h-8" />
           </div>

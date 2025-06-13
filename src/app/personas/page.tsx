@@ -5,9 +5,9 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { ChevronDown } from "lucide-react";
 import DetailedPersonaCard from "@/components/personas/DetailedPersonaCard";
 import PersonaSummaryCard from "@/components/personas/PersonaSummaryCard";
-import { Persona, Department } from "@/types/personas"; // Using the correct Persona type
+import { Persona } from "@/types/personas";
 
-// Selector component, adapted from PersonaSelector.tsx
+// Inline the selector component again for simplicity
 const PersonaSelector = ({
   roles,
   regions,
@@ -64,15 +64,33 @@ const PersonaSelector = ({
 
 function PersonasPageContent() {
   const { theme, isLoading: isThemeLoading } = useTheme();
+  // Removed session logic
   const [allPersonas, setAllPersonas] = useState<Persona[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [personaForDetail, setPersonaForDetail] = useState<Persona | null>(
     null
   );
-
-  // State for filters
   const [selectedRole, setSelectedRole] = useState("all");
   const [selectedRegion, setSelectedRegion] = useState("all");
+
+  // Reverted fetching logic
+  useEffect(() => {
+    const fetchAllPersonas = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/personas"); // Simple fetch
+        if (!response.ok) throw new Error("API call failed");
+        const data = await response.json();
+        setAllPersonas(data.personas || []);
+      } catch (error) {
+        console.error("Failed to fetch personas", error);
+        setAllPersonas([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAllPersonas();
+  }, []);
 
   // Memoized lists for selectors
   const availableRoles = useMemo(() => {
@@ -84,26 +102,6 @@ function PersonasPageContent() {
     const regions = new Set(allPersonas.map((p) => p.region));
     return Array.from(regions).sort();
   }, [allPersonas]);
-
-  // Fetch all personas on mount
-  useEffect(() => {
-    const fetchAllPersonas = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/personas");
-        if (!response.ok) {
-          throw new Error(`API call failed with status: ${response.status}`);
-        }
-        const personas: Persona[] = await response.json();
-        setAllPersonas(personas);
-      } catch (error) {
-        console.error("Failed to fetch personas", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchAllPersonas();
-  }, []);
 
   // Filtered personas based on selection
   const filteredPersonas = useMemo(() => {
@@ -134,10 +132,44 @@ function PersonasPageContent() {
     setPersonaForDetail(null);
   };
 
+  const handleDeletePersona = async (personaToDelete: Persona) => {
+    try {
+      const response = await fetch("/api/personas/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // Reverted to simple payload
+          region: personaToDelete.region,
+          department: personaToDelete.department,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete persona.");
+      }
+
+      // On successful deletion, update the state
+      setAllPersonas((prevPersonas) =>
+        prevPersonas.filter((p) => p.id !== personaToDelete.id)
+      );
+      // If the deleted persona was the one being viewed in detail, return to list
+      if (personaForDetail?.id === personaToDelete.id) {
+        setPersonaForDetail(null);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      // In a real app, you'd show a toast notification here
+      alert(`Error deleting persona: ${message}`);
+      console.error("Error deleting persona:", error);
+    }
+  };
+
   if (isThemeLoading || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary"></div>
       </div>
     );
   }
@@ -163,11 +195,15 @@ function PersonasPageContent() {
         setSelectedRegion={setSelectedRegion}
       />
 
-      {personaForDetail ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      ) : personaForDetail ? (
         <div>
           <button
             onClick={handleReturnToList}
-            className="inline-flex items-center mb-6 text-blue-600 font-semibold hover:underline"
+            className="inline-flex items-center mb-6 text-primary font-semibold hover:underline"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -197,6 +233,7 @@ function PersonasPageContent() {
                   key={p.id}
                   persona={p}
                   onSelect={handleSelectPersona}
+                  onDelete={handleDeletePersona}
                 />
               ))}
             </div>

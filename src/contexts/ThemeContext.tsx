@@ -48,7 +48,7 @@ interface BrandChatbot {
   assistantBubbleColor: string;
 }
 
-interface BrandConfig {
+export interface BrandConfig {
   brandName: string;
   logoUrl: string;
   faviconUrl: string;
@@ -76,17 +76,25 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
-  brand = "magnus",
+  brand, // Remove the hardcoded default
 }) => {
   const [theme, setTheme] = useState<BrandConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // If no brand is provided, do nothing. Wait for a brand.
+    if (!brand) {
+      setIsLoading(false); // Not loading, just waiting for a brand
+      setTheme(null); // Ensure no old theme persists
+      return;
+    }
+
     const fetchTheme = async () => {
       setIsLoading(true);
       try {
-        // For now, we fetch from a local path. This could be an API endpoint later.
-        const response = await fetch(`/brands/${brand}/brand.config.json`);
+        const response = await fetch(
+          `/brands/${brand}/brand.config.json?v=${new Date().getTime()}`
+        );
         if (!response.ok) {
           throw new Error(`Failed to load brand config for: ${brand}`);
         }
@@ -104,7 +112,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     };
 
     fetchTheme();
-  }, [brand]);
+  }, [brand]); // Restoring `brand` to the dependency array
 
   const applyThemeToDocument = (config: BrandConfig) => {
     const root = document.documentElement;
@@ -143,14 +151,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   return (
     <ThemeContext.Provider value={{ theme, isLoading }}>
-      {isLoading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          {/* Simple loading spinner */}
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-        </div>
-      ) : (
-        children
-      )}
+      {/* 
+        The loading spinner is removed from here. 
+        Individual pages should handle their own loading state based on the context's `isLoading` flag.
+        This prevents the entire application from being blocked.
+      */}
+      {children}
     </ThemeContext.Provider>
   );
 };

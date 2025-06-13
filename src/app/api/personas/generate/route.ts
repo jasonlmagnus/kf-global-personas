@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { generatePersonaPrompt } from "@/lib/persona-generation/prompts";
 
 // The client will be instantiated on each request to ensure the API key is handled correctly.
@@ -8,6 +10,12 @@ import { generatePersonaPrompt } from "@/lib/persona-generation/prompts";
 // });
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
   if (!process.env.OPENAI_API_KEY) {
     return new NextResponse(
       JSON.stringify({
@@ -28,7 +36,18 @@ export async function POST(req: NextRequest) {
     });
 
     const body = await req.json();
-    const { type, content, region, department } = body;
+    const { type, content, region, department, brand } = body;
+
+    // --- Authorization Check ---
+    if (!brand) {
+      return NextResponse.json({ error: 'Brand is a required field.' }, { status: 400 });
+    }
+
+    if (session.user.role === 'BRAND_USER' && session.user.brand !== brand) {
+      return NextResponse.json({ error: 'Forbidden. You can only generate personas for your own brand.' }, { status: 403 });
+    }
+    // Super admins can generate for any brand, so no explicit check is needed here for them.
+    // --- End Authorization Check ---
 
     if (!type || !content || !region || !department) {
       return new NextResponse(

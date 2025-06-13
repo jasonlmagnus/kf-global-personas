@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { UploadCloud } from "lucide-react";
 
+// This component's responsibility is just to gather the core content,
+// not to know about the brand. The parent wizard handles the brand.
 interface InputData {
   type: "advanced" | "simple";
   content: string;
@@ -53,8 +55,8 @@ const InputStage: React.FC<InputStageProps> = ({ onGenerate }) => {
               onClick={() => setType("advanced")}
               className={`p-5 rounded-lg border-2 cursor-pointer transition-all ${
                 type === "advanced"
-                  ? "border-coral-500 bg-coral-50"
-                  : "border-stone-200 hover:border-coral-300"
+                  ? "border-primary bg-primary/10"
+                  : "border-stone-200 hover:border-primary/50"
               }`}
             >
               <h3 className="font-semibold text-slate-900">
@@ -68,8 +70,8 @@ const InputStage: React.FC<InputStageProps> = ({ onGenerate }) => {
               onClick={() => setType("simple")}
               className={`p-5 rounded-lg border-2 cursor-pointer transition-all ${
                 type === "simple"
-                  ? "border-coral-500 bg-coral-50"
-                  : "border-stone-200 hover:border-coral-300"
+                  ? "border-primary bg-primary/10"
+                  : "border-stone-200 hover:border-primary/50"
               }`}
             >
               <h3 className="font-semibold text-slate-900">Simple (Country)</h3>
@@ -93,12 +95,12 @@ const InputStage: React.FC<InputStageProps> = ({ onGenerate }) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Paste raw text from your source document here..."
-            className="w-full h-48 p-4 border-2 border-stone-200 rounded-lg focus:ring-2 focus:ring-coral-400 focus:border-coral-400 transition-all"
+            className="w-full h-48 p-4 border-2 border-stone-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
           />
           <div className="mt-4 text-center">
             <label
               htmlFor="file-upload"
-              className="cursor-pointer inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-coral-600 bg-coral-100 hover:bg-coral-200"
+              className="cursor-pointer inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-primary/20 hover:bg-primary/30"
             >
               <UploadCloud className="mr-3" size={20} />
               Or upload a document (.txt, .md)
@@ -125,14 +127,14 @@ const InputStage: React.FC<InputStageProps> = ({ onGenerate }) => {
               value={region}
               onChange={(e) => setRegion(e.target.value.toLowerCase())}
               placeholder="Region (e.g., global, uk, aus)"
-              className="w-full p-4 border-2 border-stone-200 rounded-lg focus:ring-2 focus:ring-coral-400 focus:border-coral-400 transition-all"
+              className="w-full p-4 border-2 border-stone-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
             />
             <input
               type="text"
               value={department}
               onChange={(e) => setDepartment(e.target.value.toLowerCase())}
               placeholder="Department (e.g., ceo, sales)"
-              className="w-full p-4 border-2 border-stone-200 rounded-lg focus:ring-2 focus:ring-coral-400 focus:border-coral-400 transition-all"
+              className="w-full p-4 border-2 border-stone-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
             />
           </div>
         </div>
@@ -141,7 +143,7 @@ const InputStage: React.FC<InputStageProps> = ({ onGenerate }) => {
       <div className="mt-8 flex justify-end">
         <button
           type="submit"
-          className="px-10 py-4 bg-coral-500 text-white font-semibold rounded-lg shadow-md hover:bg-coral-600 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral-500"
+          className="px-10 py-4 bg-primary text-white font-semibold rounded-lg shadow-md hover:bg-primary/90 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
         >
           Generate Persona
         </button>

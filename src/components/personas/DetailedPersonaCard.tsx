@@ -72,7 +72,7 @@ DetailedPersonaCardProps) => {
         </div>
         <button
           onClick={handleDownload}
-          className="flex items-center bg-[#ff6b00] text-white px-5 py-2.5 rounded-md font-semibold hover:bg-opacity-90 transition-all duration-200 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#ff6b00] focus:ring-opacity-50 whitespace-nowrap"
+          className="flex items-center bg-primary text-white px-5 py-2.5 rounded-md font-semibold hover:bg-opacity-90 transition-all duration-200 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 whitespace-nowrap"
         >
           <FileDown size={18} className="mr-2" />
           Export Persona

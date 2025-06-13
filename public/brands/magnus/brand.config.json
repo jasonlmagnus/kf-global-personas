@@ -3,7 +3,7 @@
   "logoUrl": "/magnus-logo-placeholder.svg",
   "faviconUrl": "/favicon.ico",
   "colors": {
-    "primary": "#212529",
+    "primary": "#f04103",
     "secondary": "#E63946",
     "accent": "#A8DADC",
     "text": "#212529",
@@ -12,19 +12,38 @@
     "headerText": "#FFFFFF"
   },
   "typography": {
-    "fontFamily": "'Montserrat', sans-serif",
-    "googleFontUrl": "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+    "fontFamily": "Lato, sans-serif",
+    "googleFontUrl": "https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
   },
   "navigation": [
-    { "name": "Personas", "path": "/personas" },
-    { "name": "Data", "path": "/data" },
-    { "name": "Content", "path": "/content" }
+    {
+      "name": "Personas",
+      "path": "/personas"
+    },
+    {
+      "name": "Data",
+      "path": "/data"
+    },
+    {
+      "name": "Content",
+      "path": "/content"
+    },
+    {
+      "name": "Upload",
+      "path": "/admin/upload"
+    }
   ],
   "footer": {
     "copyrightName": "Magnus Consulting",
     "links": [
-      { "name": "Privacy", "path": "#" },
-      { "name": "Terms", "path": "#" }
+      {
+        "name": "Privacy",
+        "path": "#"
+      },
+      {
+        "name": "Terms",
+        "path": "#"
+      }
     ]
   },
   "chatbot": {
@@ -35,4 +54,4 @@
     "userBubbleColor": "#E63946",
     "assistantBubbleColor": "#F1FAEE"
   }
-} 
+}

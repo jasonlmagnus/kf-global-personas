@@ -1,0 +1,38 @@
+{
+  "brandName": "Magnus Consulting",
+  "logoUrl": "/magnus-logo-placeholder.svg",
+  "faviconUrl": "/favicon.ico",
+  "colors": {
+    "primary": "#212529",
+    "secondary": "#E63946",
+    "accent": "#A8DADC",
+    "text": "#212529",
+    "textLight": "#F1FAEE",
+    "background": "#F1FAEE",
+    "headerText": "#FFFFFF"
+  },
+  "typography": {
+    "fontFamily": "'Montserrat', sans-serif",
+    "googleFontUrl": "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+  },
+  "navigation": [
+    { "name": "Personas", "path": "/personas" },
+    { "name": "Data", "path": "/data" },
+    { "name": "Content", "path": "/content" }
+  ],
+  "footer": {
+    "copyrightName": "Magnus Consulting",
+    "links": [
+      { "name": "Privacy", "path": "#" },
+      { "name": "Terms", "path": "#" }
+    ]
+  },
+  "chatbot": {
+    "headerColor": "#212529",
+    "assistantName": "Magnus AI Assistant",
+    "assistantSubtitle": "Ask about personas & insights",
+    "welcomeMessage": "Hello! I am the Magnus AI Assistant. How can I help you explore our persona library today?",
+    "userBubbleColor": "#E63946",
+    "assistantBubbleColor": "#F1FAEE"
+  }
+} 

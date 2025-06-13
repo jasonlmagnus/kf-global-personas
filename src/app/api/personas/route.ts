@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { Persona, GlobalPersona, CountryPersona, GlobalPersonaV3, Region, Department, isGlobalPersonaV3 } from '@/types/personas';
 import { formatDepartmentName } from '@/lib/personaUtils';
+import fsPromises from 'fs/promises';
 
 // Define interfaces for the JSON data structure
 interface PersonaJsonData {
@@ -120,21 +121,46 @@ const transformReferenceSourcesToStringArray = (sourcesData: any): string[] => {
     }).filter(item => item !== "Invalid reference source");
 };
 
+// NEW Helper to robustly process fields into Record<string, string[]> for country personas
+const ensureRecordStringArray = (fieldData: any): Record<string, string[]> => {
+  // Case 1: Data is already a well-formed object of string arrays (the ideal format)
+  if (typeof fieldData === 'object' && fieldData !== null && !Array.isArray(fieldData)) {
+    // A simple validation to ensure values are arrays of strings
+    Object.keys(fieldData).forEach(key => {
+      if (!Array.isArray(fieldData[key])) {
+        // If a value isn't an array, wrap it in one
+        fieldData[key] = [String(fieldData[key])];
+      } else {
+        // Ensure all items in the array are strings
+        fieldData[key] = fieldData[key].map(String);
+      }
+    });
+    return fieldData as Record<string, string[]>;
+  }
+  // Case 2: Data is a flat array of strings
+  if (Array.isArray(fieldData)) {
+    // Convert to a record under a 'General' category
+    return { 'General': fieldData.map(String) };
+  }
+  // Fallback for any other type
+  return {};
+};
+
 // Convert raw data into a normalized Persona
 function normalizePersonaData(data: PersonaJsonData | GlobalPersonaV3, region: Region, department: Department): Persona {
   // Check if data is already in v3 format
-  if ('metadata' in data && typeof data.metadata === 'object' && data.metadata !== null && 'type' in data.metadata && data.metadata.type === 'global') {
+  if (isGlobalPersonaV3(data as Persona)) {
     const v3Data = data as GlobalPersonaV3;
-    // Return v3 data with required base properties
+    // Return v3 data, ensuring base properties are correctly typed and assigned
     return {
       ...v3Data,
-      id: `${region}-${department}`,
-      title: `Global ${formatDepartmentName(department)}`,
+      id: `${region}_${department}`,
+      title: v3Data.title || `Global ${formatDepartmentName(department)}`, // Use existing title or generate one
       department,
       region,
       isGlobal: true,
-      type: "global"
-    } as GlobalPersonaV3;
+      type: "global",
+    };
   }
   
   // Cast to PersonaJsonData for v1 processing
@@ -165,7 +191,7 @@ function normalizePersonaData(data: PersonaJsonData | GlobalPersonaV3, region: R
     };
     
     const persona: GlobalPersona = {
-      id: `${region}-${department}`,
+      id: `${region}_${department}`,
       title: globalTitle,
       department,
       region,
@@ -209,35 +235,13 @@ function normalizePersonaData(data: PersonaJsonData | GlobalPersonaV3, region: R
     const countryPainPointsKey = jsonData.Frustrations_Pain_Points ? 'Frustrations_Pain_Points' : 
                                 (jsonData['Frustrations / Pain Points'] ? 'Frustrations / Pain Points' : 'Frustrations');
 
-    const rawNeeds = jsonData.Needs;
-    const countryNeeds = (typeof rawNeeds === 'object' && !Array.isArray(rawNeeds) && rawNeeds !== null) 
-                       ? rawNeeds as Record<string, string[]> 
-                       : {};
-
-    const rawMotivations = jsonData.Motivations;
-    const countryMotivations = (typeof rawMotivations === 'object' && !Array.isArray(rawMotivations) && rawMotivations !== null) 
-                             ? rawMotivations as Record<string, string[]> 
-                             : {};
-
-    const rawPainPoints = jsonData[countryPainPointsKey!]; 
-    const countryPainPoints = (typeof rawPainPoints === 'object' && !Array.isArray(rawPainPoints) && rawPainPoints !== null) 
-                            ? rawPainPoints as Record<string, string[]> 
-                            : {};
-
-    const rawKeyResponsibilitiesSource = jsonData['Key Responsibilities'] || jsonData.Key_Responsibilities;
-    const countryKeyResponsibilities = (typeof rawKeyResponsibilitiesSource === 'object' && !Array.isArray(rawKeyResponsibilitiesSource) && rawKeyResponsibilitiesSource !== null)
-                                   ? rawKeyResponsibilitiesSource as Record<string, string[]>
-                                   : {};
-    
-    const rawBehaviors = jsonData.Behaviors;
-    const countryBehaviors = (typeof rawBehaviors === 'object' && !Array.isArray(rawBehaviors) && rawBehaviors !== null)
-                           ? rawBehaviors as Record<string, string[]>
-                           : {};
-
-    const rawCollaborationInsightsSource = jsonData['Collaboration Insights'] || jsonData.Collaboration_Insights;
-    const countryCollaborationInsights = (typeof rawCollaborationInsightsSource === 'object' && !Array.isArray(rawCollaborationInsightsSource) && rawCollaborationInsightsSource !== null)
-                                       ? rawCollaborationInsightsSource as Record<string, string[]>
-                                       : {};
+    // Use the new robust helper function for all relevant fields
+    const countryNeeds = ensureRecordStringArray(jsonData.Needs);
+    const countryMotivations = ensureRecordStringArray(jsonData.Motivations);
+    const countryPainPoints = ensureRecordStringArray(jsonData[countryPainPointsKey!]);
+    const countryKeyResponsibilities = ensureRecordStringArray(jsonData['Key Responsibilities'] || jsonData.Key_Responsibilities);
+    const countryBehaviors = ensureRecordStringArray(jsonData.Behaviors);
+    const countryCollaborationInsights = ensureRecordStringArray(jsonData['Collaboration Insights'] || jsonData.Collaboration_Insights);
     
     // For regionalNuances (e.g., Australian_Differentiation from JSON)
     const regionalNuancesData = jsonData['Regional Nuances'] || jsonData[`${region.toUpperCase()} Differentiation`] || jsonData['Australian_Differentiation'];
@@ -279,7 +283,7 @@ function normalizePersonaData(data: PersonaJsonData | GlobalPersonaV3, region: R
     }
 
     const persona: CountryPersona = {
-      id: `${region}-${department}`,
+      id: `${region}_${department}`,
       title: countryTitle,
       department,
       region,
@@ -308,142 +312,51 @@ function normalizePersonaData(data: PersonaJsonData | GlobalPersonaV3, region: R
   }
 }
 
-// New function to get a specific persona by ID (region and department)
-function getPersonaById(region: Region, department: Department): Persona | null {
-  const dataDir = path.join(process.cwd(), 'data');
-  const filePath = path.join(dataDir, region, department, `${department}.json`); // Standard path
-
-  if (!fs.existsSync(filePath)) {
-    // REMOVED: Special handling for ceo_board and ceo_persona_card.json
-    // Now strictly expects {department}.json
-    console.log(`File does not exist: ${filePath}`);
-    return null;
-  }
-
-  const jsonData = readJsonFile(filePath);
-  if (!jsonData) return null;
-
-  try {
-    return normalizePersonaData(jsonData, region, department);
-  } catch (error) {
-    console.error(`Error normalizing persona data from ${filePath}:`, error);
-    return null;
-  }
-}
-
-// Get all personas for a specific region
-function getPersonasByRegion(region: Region): Persona[] {
-  const personas: Persona[] = [];
-  const dataDir = path.join(process.cwd(), 'data', region);
-
-  // Check if directory exists
-  if (!fs.existsSync(dataDir)) {
-    console.log(`Directory does not exist: ${dataDir}`);
-    return [];
-  }
-
-  try {
-    // Get all department directories
-    const departmentDirs = fs.readdirSync(dataDir)
-      .filter(dir => !dir.startsWith('.')) // Skip hidden files
-      .filter(dir => {
-        const stat = fs.statSync(path.join(dataDir, dir));
-        return stat.isDirectory();
-      }); // No longer filter by a hardcoded list of departments
-
-    // Process each department
-    for (const dept of departmentDirs) {
-      const filePath = path.join(dataDir, dept, `${dept}.json`);
-
-      if (!fs.existsSync(filePath)) {
-        // Attempt to read <region_name>.json if <department_name>.json doesn't exist (for global personas)
-        const regionFilePath = path.join(dataDir, dept, `${region}.json`);
-        if (fs.existsSync(regionFilePath)) {
-          const data = readJsonFile(regionFilePath);
-          if (data) {
-            // Assuming normalizePersonaData can handle global data structure or we need a normalizeGlobalPersona
-            // For now, let's assume normalizePersonaData is flexible enough or we'll adapt it later.
-            // The department for global personas might be considered the folder name itself.
-            const persona = normalizePersonaData(data, region, dept as Department);
-            personas.push(persona);
-          }
-        } else {
-          console.log(`Skipping non-existent file(s): ${filePath} and ${regionFilePath}`);
-        }
-        continue;
-      }
-      
-      const data = readJsonFile(filePath);
-      if (data) {
-        // For global, the department is the folder name, e.g., 'ceo', 'sales'
-        // For regional, it's also the folder name.
-        const persona = normalizePersonaData(data, region, dept as Department);
-        personas.push(persona);
-      }
-    }
-    
-    return personas;
-  } catch (error) {
-    console.error(`Error reading directories in ${dataDir}:`, error);
-    return [];
-  }
-}
-
-// Get all personas
-function getAllPersonas(): Persona[] {
-  const dataRootDir = path.join(process.cwd(), 'data');
-  let allPersonas: Persona[] = [];
-
-  if (!fs.existsSync(dataRootDir)) {
-    console.error('Root data directory does not exist:', dataRootDir);
-    return [];
-  }
-
-  try {
-    const regions = fs.readdirSync(dataRootDir)
-      .filter(item => !item.startsWith('.') && item !== 'archive' && item !== '__src') // Exclude hidden files, 'archive' folder, and '__src' folder
-      .filter(item => fs.statSync(path.join(dataRootDir, item)).isDirectory()) as Region[];
-
-    for (const region of regions) {
-      const regionPersonas = getPersonasByRegion(region);
-      allPersonas = [...allPersonas, ...regionPersonas];
-    }
-  } catch (error) {
-    console.error('Error scanning data directory for regions:', error);
-    return [];
-  }
-  
-  return allPersonas;
-}
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const region = searchParams.get('region') as Region | null;
   const department = searchParams.get('department') as Department | null;
-  
-  try {
-    // Note: __src region handling removed as it's no longer a valid region type
+  const dataDirectory = path.join(process.cwd(), 'public', 'data');
 
-    // If both region and department are specified, return a specific persona
+  try {
+    // If both region and department are specified, return a single specific persona
     if (region && department) {
-      const persona = getPersonaById(region, department);
-      
-      if (!persona) {
+      const filename = `${region}_${department}.json`;
+      const filePath = path.join(dataDirectory, filename);
+
+      if (!fs.existsSync(filePath)) {
         return NextResponse.json({ error: 'Persona not found' }, { status: 404 });
       }
-      
+
+      const jsonData = readJsonFile(filePath);
+      if (!jsonData) {
+        return NextResponse.json({ error: `Error reading persona data from ${filename}` }, { status: 500 });
+      }
+
+      const persona = normalizePersonaData(jsonData, region, department);
       return NextResponse.json(persona);
-    } 
-    // If only region is specified, return all personas for that region
-    else if (region) {
-      const personas = getPersonasByRegion(region);
-      return NextResponse.json(personas);
-    } 
-    // Otherwise, return all personas
-    else {
-      const personas = getAllPersonas();
-      return NextResponse.json(personas);
     }
+
+    // If no params are given, return all personas
+    const files = await fsPromises.readdir(dataDirectory);
+    const personaFiles = files.filter(file => file.endsWith('.json'));
+
+    const personas: Persona[] = [];
+    for (const file of personaFiles) {
+      const id = file.replace('.json', '');
+      const filePath = path.join(dataDirectory, file);
+      const jsonData = readJsonFile(filePath);
+      if (jsonData) {
+        const idParts = id.split('_');
+        const fileRegion = idParts[0] as Region;
+        const fileDepartment = idParts.slice(1).join('_') as Department;
+        if (fileRegion && fileDepartment) {
+          personas.push(normalizePersonaData(jsonData, fileRegion, fileDepartment));
+        }
+      }
+    }
+    return NextResponse.json(personas);
+
   } catch (error) {
     console.error('Error processing request:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -1,0 +1,252 @@
+{
+  "metadata": {
+    "version": "2.2",
+    "type": "global",
+    "lastUpdated": "2025-05-24"
+  },
+  "coreUnderstanding": {
+    "core": {
+      "role": "Sales Leader",
+      "userGoalStatement": "As a Sales Leader, my primary focus is on achieving consistent revenue growth by executing rigorously, empowering my team, and delivering an exceptional experience for every customer.",
+      "coreBelief": "Sustainable revenue growth rests on empowered teams, disciplined data-driven execution, and enduring customer value.",
+      "contentImplication": "Frame all content around revenue execution, team empowerment, and customer value. Present technology (AI, analytics, automation) as an enabler—not a silver bullet."
+    },
+    "responsibilities": {
+      "items": [
+        {
+          "Category": "Strategy Development & Execution",
+          "Description": "Designing and operationalising sales strategies tightly aligned with revenue objectives."
+        },
+        {
+          "Category": "Team Leadership & Coaching",
+          "Description": "Motivating and developing a high-performing global team; closing the manager-empowerment gap."
+        },
+        {
+          "Category": "Performance & Forecast Management",
+          "Description": "Monitoring pipeline and KPIs to keep forecasts within ±5 % and enable rapid course-correction."
+        },
+        {
+          "Category": "Customer Value & Relationships",
+          "Description": "Driving retention/expansion by proving realised value across the customer lifecycle."
+        },
+        {
+          "Category": "Cross-Functional Collaboration",
+          "Description": "Aligning with Marketing/Product on a shared lead definition and seamless conversion."
+        }
+      ],
+      "contentImplication": "Each content piece should map to at least one responsibility—with execution discipline and customer value featured prominently."
+    },
+    "knowledge": {
+      "items": [
+        "Pipeline optimisation & forecast accuracy techniques",
+        "CRM orchestration and data hygiene best practices",
+        "Account retention, expansion and value-realisation motions",
+        "Lead qualification frameworks & shared marketing SLAs",
+        "Competitive & market-intelligence analysis",
+        "Technology & analytics enablement (AI, automation, dashboards)",
+        "Sales-talent development and coaching methodologies"
+      ],
+      "contentImplication": "Show Korn Ferry expertise across these domains—highlight ops rigour first, tech enablement second."
+    }
+  },
+  "strategicValuePoints": {
+    "connectionOpportunities": {
+      "items": [
+        {
+          "Area": "Forecast Accuracy & Execution Discipline",
+          "Finding": "Only 25 % of companies forecast within a ±5 % margin; 45 % of CSOs missed 2024 strategic goals.",
+          "Leverage_Point": "Position disciplined, data-driven execution frameworks as the fastest path to revenue reliability.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Sales Force Engagement & Performance",
+          "Finding": "Sales shows 73 % high engagement; 89 % say goal clarity is critical (vs. 76 % in non-sales).",
+          "Leverage_Point": "Use goal clarity & transparency as competitive advantage for hitting plan.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Talent Attraction & Retention Challenges",
+          "Finding": "40 % of sales pros eyeing exit; comp & career growth both at 87 % importance.",
+          "Leverage_Point": "Frame holistic retention (L&D, recognition, progression) as cost-of-sales protection.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Technology & Analytics Enablement",
+          "Finding": "81 % adoption of AI/automation, but only 55 % feel trained; 72 % want more enablement.",
+          "Leverage_Point": "Position tech-driven selling programs that upskill reps and harden data quality.",
+          "dataSource": "survey"
+        },
+        {
+          "Area": "Work Flexibility & Productivity",
+          "Finding": "70 % desire more flexibility; 73 % believe it lifts performance; hybrid teams 28 % likelier to outperform.",
+          "Leverage_Point": "Show how structured hybrid models boost both retention and quota-attainment.",
+          "dataSource": "survey"
+        }
+      ],
+      "contentImplication": "Open with execution/forecast data; weave tech enablement as secondary proof-point."
+    },
+    "motivations": {
+      "items": [
+        "Delivering plan in a slowing, unpredictable economy",
+        "Protecting and expanding existing accounts through realised-value selling",
+        "Building a resilient, high-engagement team that stays",
+        "Sharpening data-driven insight to out-maneuver competitors",
+        "Streamlining process via tech & analytics to free selling time"
+      ],
+      "contentImplication": "Calls-to-action should emphasise hitting plan, retaining talent, and operational excellence, with tech as catalyst."
+    },
+    "needs": {
+      "items": [
+        {
+          "Category": "Execution & Forecast Frameworks",
+          "Description": "Methodologies and tools to reach ±5 % forecast accuracy and close the strategy-execution gap."
+        },
+        {
+          "Category": "Sales Enablement & L&D",
+          "Description": "Continuous coaching and personalised learning to reduce 40 % departure risk and bridge skills gaps."
+        },
+        {
+          "Category": "Technology & Analytics Enablement",
+          "Description": "Integrated CRM/analytics/AI stack that improves data hygiene, seller productivity, and buyer insights."
+        },
+        {
+          "Category": "Market & Competitive Intelligence",
+          "Description": "Real-time insights on geo-economic shifts, buyer trends, and competitor plays."
+        },
+        {
+          "Category": "Cross-Functional Alignment",
+          "Description": "Shared lead definitions, KPIs, and feedback loops with Marketing & Product to raise conversion quality."
+        },
+        {
+          "Category": "Flexible Work Infrastructure",
+          "Description": "Processes and tools that maintain cohesion and coaching in hybrid environments."
+        }
+      ],
+      "contentImplication": "Prioritise execution frameworks and holistic enablement before drilling into specific AI features."
+    }
+  },
+  "painPointsAndChallenges": {
+    "perceptionGaps": {
+      "items": [
+        {
+          "Area": "Forecast Volatility",
+          "Gap": "48 % of organisations miss forecast by >10 %; pipeline data quality inconsistent.",
+          "Business_Impact": "Missed numbers, credibility loss with board/investors.",
+          "Opportunity": "Implement governance + analytics coaching to tighten forecast."
+        },
+        {
+          "Area": "Manager Empowerment & Trust",
+          "Gap": "Only 68 % of reps feel empowered; 46 % of managers overwhelmed.",
+          "Business_Impact": "Lower morale, stalled deals, higher attrition.",
+          "Opportunity": "Manager-capacity programs and delegation playbooks."
+        },
+        {
+          "Area": "Work-Life Balance & Burnout",
+          "Gap": "Sales WLB 9 pts below company avg; overtime → 10 % less likely to hit quota.",
+          "Business_Impact": "Burnout drives churn and misses.",
+          "Opportunity": "Boundaries + workload analytics + hybrid norms."
+        },
+        {
+          "Area": "Tech Adoption & Skills",
+          "Gap": "Enthusiasm high but 45 % lack confidence using new tools.",
+          "Business_Impact": "Under-realised ROI on tech spend.",
+          "Opportunity": "Role-based enablement, data-fluency sprints."
+        }
+      ],
+      "contentImplication": "Lead with forecast and burnout pain—solutions should then segue to tech enablement."
+    },
+    "frustrations": {
+      "items": [
+        "Inaccurate pipeline data blindsiding end-of-quarter.",
+        "Inconsistent lead quality due to misaligned definitions.",
+        "Talent turnover destabilising key territories.",
+        "Tech stack bloat adding admin instead of selling time.",
+        "Economic/geopolitical shocks collapsing carefully built plans."
+      ],
+      "contentImplication": "Problem-first headlines should spotlight execution gaps before offering tech or AI answers."
+    },
+    "emotionalTriggers": {
+      "items": [
+        {
+          "Trigger": "Missing quarterly target",
+          "Emotional_Response": "Fear of board scrutiny, loss of credibility.",
+          "Messaging_Implication": "Show how disciplined forecasting + agile plans de-risk the number."
+        },
+        {
+          "Trigger": "Star rep quits to competitor",
+          "Emotional_Response": "Anxiety over territory collapse.",
+          "Messaging_Implication": "Present retention ecosystem (career paths, recognition, flexibility)."
+        },
+        {
+          "Trigger": "Customer churn after price hike",
+          "Emotional_Response": "Panic over revenue hole.",
+          "Messaging_Implication": "Highlight value-realisation frameworks and account health analytics."
+        }
+      ],
+      "contentImplication": "Tap real fears—tie solutions to tangible revenue protection."
+    }
+  },
+  "engagementApproach": {
+    "description": "Content should be pragmatic, metrics-driven, and battle-tested; tone = peer-to-peer advisor.",
+    "behaviors": {
+      "items": [
+        "Runs weekly pipeline sanity and forecast risk drills",
+        "Uses shared KPIs with marketing to police lead quality",
+        "Blocks time for rep coaching and data-fluency training",
+        "Reviews tech-stack utilisation quarterly to prune bloat",
+        "Tracks regional macro/geo impacts and scenario plans"
+      ],
+      "contentImplication": "Provide checklists, scorecards, and benchmark data they can plug in tomorrow."
+    },
+    "collaborationInsights": {
+      "items": [
+        "Value dashboards that marry CRM + marketing + product usage data",
+        "Seek quick-hit playbooks to fix lead-def mismatch",
+        "Prefer vendors who can help lift manager capacity, not just rep skills",
+        "Expect evidence of ROI within 1–2 quarters for tech investments"
+      ],
+      "contentImplication": "Position offerings as accelerators to these collaboration goals."
+    },
+    "problemSolvingMethod": {
+      "description": "Iterative, data-backed experimentation; weekly cadences; fail-fast adjustments."
+    },
+    "analogies": {
+      "items": [
+        "Sales leadership as air-traffic control—keeping planes (deals) safely sequencing despite storms.",
+        "Forecasting as weather radar—seeing squalls early so the route (resources) can be adjusted."
+      ]
+    },
+    "messagingAngles": {
+      "description": "Templates that resonate post-rebalancing",
+      "items": [
+        "Execution Discipline: \"Tighten forecast variance from 10 % to 3 % in 90 days with our pipeline-rigour framework.\"",
+        "Retention Flywheel: \"Cut rep churn by 25 % through career-path and recognition blueprints—without raising OTE.\"",
+        "Tech-Driven Selling: \"Free two hours of rep selling time daily by integrating analytics, AI and automation in one workspace—no extra admin.\"",
+        "Lead-Def Alignment: \"Boost SQL-to-win rate 18 % after a single joint workshop that locks sales & marketing to one lead score.\"",
+        "Hybrid Performance: \"Hybrid teams using our cadence model are 30 % likelier to exceed quota while rating WLB 15 pts higher.\""
+      ]
+    }
+  },
+  "supportingResources": {
+    "description": "Key research & associations remain; execution-focused case studies now prioritised.",
+    "referenceSources": [
+      {
+        "Category": "Industry Publications",
+        "Sources": ["Harvard Business Review", "Gartner for Sales", "McKinsey Sales Growth"],
+        "URLs": ["https://hbr.org/", "https://www.gartner.com/en/sales", "https://www.mckinsey.com/capabilities/growth-marketing-and-sales"]
+      },
+      {
+        "Category": "Professional Associations",
+        "Sources": ["Sales Management Association", "AA-ISP"]
+      },
+      {
+        "Category": "Research Materials",
+        "Sources": ["Forecast accuracy benchmarks", "Revenue operations best practices"]
+      },
+      {
+        "Category": "Survey Data Applications",
+        "Sources": ["CSO forecast & talent surveys", "AI adoption impact analyses"]
+      }
+    ]
+  }
+}

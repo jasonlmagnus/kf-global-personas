@@ -1,0 +1,16 @@
+{
+  "name": "ingestion-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for processing persona data.",
+  "main": "process.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+} 

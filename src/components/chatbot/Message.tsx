@@ -4,6 +4,7 @@ import React from "react";
 import { Message as MessageType } from "@/contexts/ChatbotContext";
 import { User, Bot } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface MessageProps {
   message: MessageType;
@@ -12,6 +13,11 @@ interface MessageProps {
 export function Message({ message }: MessageProps) {
   const isUser = message.role === "user";
   const isStreaming = message.isStreaming;
+  const { theme } = useTheme();
+
+  const userBubbleColor = theme?.chatbot.userBubbleColor || "#0A523E";
+  const assistantBubbleColor = theme?.chatbot.assistantBubbleColor || "#F1FAEE";
+  const assistantTextColor = theme?.colors.text || "#1f2937";
 
   return (
     <div
@@ -19,11 +25,14 @@ export function Message({ message }: MessageProps) {
     >
       {/* Avatar */}
       <div
-        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-          isUser ? "bg-[#0A523E] text-white" : "bg-gray-100 text-gray-600"
-        }`}
+        className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white"
+        style={{ backgroundColor: isUser ? userBubbleColor : "transparent" }}
       >
-        {isUser ? <User size={16} /> : <Bot size={16} />}
+        {isUser ? (
+          <User size={16} />
+        ) : (
+          <Bot size={16} className="text-gray-600" />
+        )}
       </div>
 
       {/* Message content */}
@@ -33,11 +42,14 @@ export function Message({ message }: MessageProps) {
         }`}
       >
         <div
-          className={`px-4 py-2 rounded-lg ${
-            isUser
-              ? "bg-[#0A523E] text-white rounded-br-sm"
-              : "bg-gray-100 text-gray-900 rounded-bl-sm"
-          }`}
+          className="px-4 py-2 rounded-lg"
+          style={{
+            backgroundColor: isUser ? userBubbleColor : assistantBubbleColor,
+            color: isUser ? theme?.colors.textLight : assistantTextColor,
+            borderRadius: isUser
+              ? "0.5rem 0.5rem 0.125rem 0.5rem"
+              : "0.5rem 0.5rem 0.5rem 0.125rem",
+          }}
         >
           <div className="text-sm">
             {isUser ? (

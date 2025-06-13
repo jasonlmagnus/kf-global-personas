@@ -1,0 +1,38 @@
+{
+  "brandName": "Korn Ferry",
+  "logoUrl": "/kf-logo-white.svg",
+  "faviconUrl": "/favicon.ico",
+  "colors": {
+    "primary": "#0A523E",
+    "secondary": "#ff6b00",
+    "accent": "#7ab7f0",
+    "text": "#1f2937",
+    "textLight": "#f8f9fa",
+    "background": "#f8f9fa",
+    "headerText": "#FFFFFF"
+  },
+  "typography": {
+    "fontFamily": "'Inter', sans-serif",
+    "googleFontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  },
+  "navigation": [
+    { "name": "Personas", "path": "/personas" },
+    { "name": "Data", "path": "/data" },
+    { "name": "Content", "path": "/content" }
+  ],
+  "footer": {
+    "copyrightName": "Korn Ferry",
+    "links": [
+      { "name": "Privacy Policy", "path": "#" },
+      { "name": "Terms of Service", "path": "#" }
+    ]
+  },
+  "chatbot": {
+    "headerColor": "#0A523E",
+    "assistantName": "Korn Ferry AI Assistant",
+    "assistantSubtitle": "Ask about personas & insights",
+    "welcomeMessage": "Hello! I am the Korn Ferry AI Assistant. How can I help you explore our persona library today?",
+    "userBubbleColor": "#0A523E",
+    "assistantBubbleColor": "#F3F4F6"
+  }
+} 

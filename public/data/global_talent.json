@@ -1,0 +1,236 @@
+{
+  "metadata": {
+    "version": "3.0",
+    "type": "global",
+    "lastUpdated": "2025-05-24"
+  },
+  "coreUnderstanding": {
+    "core": {
+      "role": "Global Talent Acquisition Leader",
+      "userGoalStatement": "As the Global Talent Acquisition Leader, I architect a future-ready workforce—building diverse, skilled teams, aligning external hiring with internal mobility, and delivering measurable value to the business.",
+      "coreBelief": "Strategic, skills-based talent acquisition—powered by ethical AI, robust analytics, and systemic DEI—is a critical business driver and risk mitigator.",
+      "contentImplication": "Frame all content around shaping a future-ready, diverse workforce and proving TA’s strategic ROI through data, AI governance, and inclusive practices."
+    },
+    "responsibilities": {
+      "items": [
+        {
+          "Category": "Workforce & Talent Strategy",
+          "Description": "Integrating global workforce planning with skills-based hiring to meet long-term business objectives."
+        },
+        {
+          "Category": "Team & Capability Leadership",
+          "Description": "Upskilling globally dispersed TA teams in data literacy, AI tools, and consultative partnership."
+        },
+        {
+          "Category": "Ecosystem Orchestration",
+          "Description": "Managing a complex partner portfolio—vendors, universities, RPOs, mobility & L&D—to build resilient pipelines."
+        },
+        {
+          "Category": "Process & Technology Optimization",
+          "Description": "Deploying and governing AI-driven, compliant TA tech stacks for efficiency, bias mitigation, and candidate experience."
+        },
+        {
+          "Category": "Employer Brand & ESG Storytelling",
+          "Description": "Showcasing authentic EVP, DEI progress, and ESG impact to attract values-driven talent."
+        },
+        {
+          "Category": "Analytics & ROI Reporting",
+          "Description": "Delivering predictive insights and business-level metrics (quality-of-hire, retention uplift, cost avoidance)."
+        }
+      ],
+      "contentImplication": "Each asset should hook into at least one of these strategic responsibility areas."
+    },
+    "knowledge": {
+      "items": [
+        "Global labour-market intelligence & demographic trends",
+        "Advanced TA technologies, AI ethics & governance frameworks",
+        "Skills taxonomies and internal talent marketplaces",
+        "Data-driven DEI strategies and bias-mitigation techniques",
+        "Employer branding, ESG & candidate-experience design",
+        "Predictive analytics, talent intelligence and ROI modelling",
+        "International employment law, pay-transparency & AI regulation",
+        "Tech-stack integration and change-management best practices"
+      ],
+      "contentImplication": "Demonstrate Korn Ferry expertise in at least one domain to build credibility."
+    }
+  },
+  "strategicValuePoints": {
+    "connectionOpportunities": {
+      "items": [
+        {
+          "Area": "Competitive Talent Market",
+          "Finding": "50% of employees are actively or passively job-hunting; global Net Employment Outlook +25%",
+          "Leverage_Point": "Position TA as a proactive, intelligence-driven competitive moat that secures scarce skills ahead of rivals",
+          "dataSource": "Gallup, ManpowerGroup"
+        },
+        {
+          "Area": "Candidate Attraction Drivers",
+          "Finding": "Compensation & job security top priorities; hybrid flexibility gap >40 pts",
+          "Leverage_Point": "Align EVP and flexible work policies with market expectations to widen pipelines",
+          "dataSource": "WTW, Mitel"
+        },
+        {
+          "Area": "Systemic DEI & Inclusion",
+          "Finding": "Only 28% believe companies achieve DEI goals; bias persists across hiring funnels",
+          "Leverage_Point": "Showcase data-driven, bias-detection frameworks and inclusive sourcing to unlock innovation",
+          "dataSource": "HR Grapevine"
+        },
+        {
+          "Area": "AI Enablement vs. Readiness",
+          "Finding": "99% of TA teams use AI, yet 55% feel under-trained; new AI laws emerging",
+          "Leverage_Point": "Provide explainable-AI tools, governance playbooks, and up-skilling to turn risk into advantage",
+          "dataSource": "HeroHunt.ai, EU AI Act"
+        },
+        {
+          "Area": "Predictive Workforce Planning",
+          "Finding": "80% of firms aim to use predictive analytics in HR by 2025",
+          "Leverage_Point": "Embed talent intelligence to forecast skill gaps and de-risk growth initiatives",
+          "dataSource": "HR Cloud"
+        }
+      ],
+      "contentImplication": "Lead with these proof-points to create instant relevance and urgency."
+    },
+    "motivations": {
+      "items": [
+        "Delivering diverse, future-ready talent that fuels growth & innovation",
+        "Proving TA’s strategic ROI to the C-suite with hard data",
+        "Creating an ethical, transparent candidate experience that amplifies brand trust",
+        "Embedding predictive analytics for agile, risk-aware hiring decisions",
+        "Championing continuous learning & capability-building within TA"
+      ],
+      "contentImplication": "Position solutions as enablers of these motivations."
+    },
+    "needs": {
+      "items": [
+        { "Category": "Integrated TA Tech Stack", "Description": "Global ATS/CRM with open APIs and real-time analytics" },
+        { "Category": "AI Governance Frameworks", "Description": "Explainable-AI, bias audits, regulatory compliance support" },
+        { "Category": "Predictive Talent Intelligence", "Description": "Market sensing, supply-demand forecasting, skills adjacency mapping" },
+        { "Category": "Employer Brand & ESG Content", "Description": "Authentic storytelling assets and campaign toolkits" },
+        { "Category": "DEI Enablement Tools", "Description": "Inclusive-sourcing platforms, bias-free assessments, progress dashboards" },
+        { "Category": "Upskilling & Change-Enablement", "Description": "Role-based learning paths for AI, analytics, consultative skills" },
+        { "Category": "Flexible Work Infrastructure", "Description": "Processes & EOR solutions to hire anywhere and support hybrid models" },
+        { "Category": "Candidate-Experience Orchestration", "Description": "Hyper-personalised journeys, immersive assessments, feedback loops" },
+        { "Category": "Strategic Partnerships", "Description": "University, boot-camp & gig-talent networks for emerging skills" }
+      ],
+      "contentImplication": "Map offerings to at least one high-priority need."
+    }
+  },
+  "painPointsAndChallenges": {
+    "perceptionGaps": {
+      "items": [
+        {
+          "Area": "Hybrid Work Expectation",
+          "Gap": "61% office vs. only 19% prefer it; talent opts out without flexibility",
+          "Business_Impact": "Shrinks talent pool, lengthens time-to-fill",
+          "Opportunity": "Position remote hiring & hybrid frameworks"
+        },
+        {
+          "Area": "DEI Progress Credibility",
+          "Gap": "28% confidence, with gender & regional disparities",
+          "Business_Impact": "Brand risk & lost innovation",
+          "Opportunity": "Embed measurable DEI by design"
+        },
+        {
+          "Area": "AI Readiness",
+          "Gap": "55% TA staff under-trained; low trust in ‘black-box’ tools",
+          "Business_Impact": "Tech ROI stalls, bias/liability risk",
+          "Opportunity": "Deliver explainable AI & robust change-management"
+        }
+      ],
+      "contentImplication": "Use gap statistics to create urgency and differentiation."
+    },
+    "frustrations": {
+      "items": [
+        "Orchestrating global strategy amid conflicting local laws & cultures",
+        "Proving ROI of ever-expanding tech stack to finance/C-suite",
+        "Maintaining candidate & hiring-manager experience consistency worldwide",
+        "Scaling quickly when hiring surges, then flexing back without waste",
+        "Meeting DEI targets under intense public scrutiny",
+        "Keeping up with rapid AI/skills shifts while up-skilling team",
+        "Navigating geopolitical shocks that disrupt talent supply"
+      ],
+      "contentImplication": "Headlines should address these board-level headaches."
+    },
+    "emotionalTriggers": {
+      "items": [
+        { "Trigger": "Losing a unicorn candidate to a faster rival", "Emotional_Response": "Fear of reputational damage & strategic setback", "Messaging_Implication": "Highlight speed-to-offer benchmarks & talent-intel alerts" },
+        { "Trigger": "AI bias incident hitting social media", "Emotional_Response": "Anxiety over legal penalties & brand trust", "Messaging_Implication": "Promote governance, bias-audit & explainability features" },
+        { "Trigger": "C-suite challenge on TA spend vs. value", "Emotional_Response": "Urgency to defend budgets with hard ROI", "Messaging_Implication": "Show dashboards linking TA metrics to revenue & retention" },
+        { "Trigger": "Regulatory change across multiple regions", "Emotional_Response": "Stress from compliance risk & process disruption", "Messaging_Implication": "Offer real-time legal updates & configurable workflows" }
+      ],
+      "contentImplication": "Tone should empathise with high stakes and offer clear risk-mitigation paths."
+    }
+  },
+  "engagementApproach": {
+    "description": "Content should be data-rich, solutions-oriented, and speak the language of risk, ROI and strategic advantage.",
+    "behaviors": {
+      "items": [
+        "Quarterly market-sensing & geopolitical briefings for execs",
+        "Monthly TA tech-stack value reviews",
+        "Bi-weekly bias-audit checkpoints on AI tools",
+        "Weekly global-regional KPI huddles",
+        "Continuous A/B testing of candidate-experience flows"
+      ],
+      "contentImplication": "Provide frameworks, checklists, and benchmarks that slot into these cadences."
+    },
+    "collaborationInsights": {
+      "items": [
+        "Expect partners to deliver transparent AI & compliance assurances",
+        "Demand seamless integration with HRIS, LXP and talent marketplace",
+        "Value thought-leadership white-papers to brief C-suite on talent risk",
+        "Prioritise vendors who offer change-management & up-skilling services",
+        "Seek dashboards tying TA metrics to business outcomes"
+      ],
+      "contentImplication": "Position offerings as integrated, consultative and governance-ready."
+    },
+    "problemSolvingMethod": {
+      "description": "Iterative, data-driven, risk-aware experimentation",
+      "value": "Blend predictive analytics with human judgment, pilot fast, measure ROI, scale wins regionally."
+    },
+    "analogies": {
+      "items": [
+        "Talent acquisition as treasure hunting",
+        "Pipeline cultivation as gardening",
+        "TA leader as orchestra conductor harmonising tech, teams & data",
+        "Managing talent as portfolio management—balancing risk & return"
+      ],
+      "contentImplication": "Use to make abstract strategy concrete and memorable."
+    },
+    "messagingAngles": {
+      "description": "Hooks that resonate most in 2025",
+      "items": [
+        "AI Governance Advantage – ‘Turn compliance into competitive edge with explainable-AI hiring.’",
+        "Predictive Intelligence – ‘Forecast tomorrow’s skills today; cut vacancy risk before it hits the P&L.’",
+        "Flex-First Hiring – ‘Unlock 40% larger talent pools via borderless, hybrid solutions.’",
+        "DEI by Design – ‘Embed equity into every funnel step—with auditable, bias-free tech.’",
+        "Board-Grade ROI – ‘Link every dollar of TA spend to revenue, retention and innovation gains.’"
+      ],
+      "contentImplication": "Anchor copy in hard numbers and governance language."
+    }
+  },
+  "supportingResources": {
+    "description": "Authoritative references for deeper research.",
+    "referenceSources": [
+      {
+        "Category": "Industry & Analyst Firms",
+        "Sources": ["Josh Bersin Co.", "Gartner", "Deloitte HC Trends"]
+      },
+      {
+        "Category": "Regulators & Standards",
+        "Sources": ["EU AI Act", "GDPR", "EEOC", "ISO 30414"]
+      },
+      {
+        "Category": "Professional Associations",
+        "Sources": ["SHRM", "ATAP", "World Employment Confederation"]
+      },
+      {
+        "Category": "Research Portals",
+        "Sources": ["Gallup Workplace", "ManpowerGroup MEOS", "LinkedIn Talent Insights"]
+      },
+      {
+        "Category": "ESG & DEI Benchmarks",
+        "Sources": ["MSCI ESG Ratings", "Great Place to Work", "UN Global Compact"]
+      }
+    ]
+  }
+}

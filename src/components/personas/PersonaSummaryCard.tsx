@@ -1,66 +1,38 @@
 import React from "react";
-import { Persona } from "../../types/personas";
-import { getRegionBackground, getRoleCardTitle } from "../../lib/personaUtils";
+import { Persona } from "@/types/personas";
+import { formatDepartmentName } from "@/lib/personaUtils";
+import { ArrowRight } from "lucide-react";
 
 interface PersonaSummaryCardProps {
   persona: Persona;
-  viewType: "role" | "region";
-  isSelected: boolean;
-  onClick: () => void;
+  onSelect: (persona: Persona) => void;
 }
 
 const PersonaSummaryCard: React.FC<PersonaSummaryCardProps> = ({
-  persona: p, // alias for brevity if preferred, or use persona directly
-  viewType,
-  isSelected,
-  onClick,
+  persona,
+  onSelect,
 }) => {
+  const departmentName = formatDepartmentName(persona.department);
+  const regionName = persona.region.toUpperCase();
+
   return (
     <div
-      key={p.id} // Key should ideally be handled by the parent list mapping
-      className={`persona-nav-item ${isSelected ? "selected" : ""}`}
-      onClick={onClick}
+      className="bg-white shadow-md rounded-lg p-6 cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-blue-500 border-2 border-transparent"
+      onClick={() => onSelect(persona)}
+      role="button"
+      tabIndex={0}
+      onKeyPress={(e) =>
+        (e.key === "Enter" || e.key === " ") && onSelect(persona)
+      }
     >
-      <div
-        className="persona-nav-bg"
-        style={{
-          backgroundImage: getRegionBackground(
-            p.region,
-            viewType,
-            p.department
-          ),
-        }}
-      ></div>
-      <div className="persona-nav-content">
-        <h3 className="persona-nav-title">
-          {viewType === "role" ? getRoleCardTitle(p, viewType) : p.title}
-        </h3>
-        <button className="persona-nav-button">
-          {isSelected ? "Selected" : "View Details"}
-          <svg
-            className="ml-1"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5 12H19"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M12 5L19 12L12 19"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+      <h3 className="text-xl font-bold text-gray-800 mb-1">{persona.title}</h3>
+      <p className="text-sm text-gray-500 mb-6">{`${regionName} - ${departmentName}`}</p>
+      <div className="flex items-center text-blue-600 font-semibold group">
+        View Details
+        <ArrowRight
+          size={16}
+          className="ml-2 transform transition-transform group-hover:translate-x-1"
+        />
       </div>
     </div>
   );

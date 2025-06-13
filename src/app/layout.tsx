@@ -7,6 +7,8 @@ import GlobalNav from "@/components/GlobalNav";
 import PasswordProtection from "@/components/PasswordProtection";
 import { ChatbotProvider } from "@/contexts/ChatbotContext";
 import { ChatbotPanel } from "@/components/chatbot/ChatbotPanel";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,14 +36,21 @@ export default function RootLayout({
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="bingbot" content="noindex, nofollow" />
       </head>
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
-        <PasswordProtection>
-          <ChatbotProvider>
-            <GlobalNav />
-            <main className="flex-grow container mx-auto p-4">{children}</main>
-            <ChatbotPanel />
-          </ChatbotProvider>
-        </PasswordProtection>
+      <body className={`${inter.className} bg-brand-background`}>
+        <ThemeProvider>
+          <PasswordProtection>
+            <ChatbotProvider>
+              <div className="flex flex-col min-h-screen">
+                <GlobalNav />
+                <main className="flex-grow container mx-auto p-4">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+              <ChatbotPanel />
+            </ChatbotProvider>
+          </PasswordProtection>
+        </ThemeProvider>
       </body>
     </html>
   );

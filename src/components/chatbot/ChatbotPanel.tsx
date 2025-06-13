@@ -6,10 +6,12 @@ import { useChatbot } from "@/contexts/ChatbotContext";
 import { useChat } from "@/hooks/useChat";
 import { ChatMessages } from "./ChatMessages";
 import { ChatInput } from "./ChatInput";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export function ChatbotPanel() {
   const { isOpen, closePanel } = useChatbot();
   const { clearMessages, messages } = useChat();
+  const { theme } = useTheme();
 
   const handleNewChat = () => {
     if (messages.length > 0) {
@@ -87,17 +89,20 @@ export function ChatbotPanel() {
       {/* Panel */}
       <div className="fixed right-0 top-0 h-full w-96 bg-white shadow-2xl z-50 flex flex-col transform transition-transform duration-300 ease-in-out">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-[#0A523E] text-white">
+        <div
+          className="flex items-center justify-between p-4 border-b border-gray-200 text-white"
+          style={{ backgroundColor: theme?.chatbot.headerColor }}
+        >
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <span className="text-sm font-bold">AI</span>
             </div>
             <div>
               <h3 className="font-semibold text-white">
-                KF Personas Assistant
+                {theme?.chatbot.assistantName}
               </h3>
               <p className="text-xs text-white/80">
-                Ask about personas & insights
+                {theme?.chatbot.assistantSubtitle}
               </p>
             </div>
           </div>

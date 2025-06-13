@@ -3,72 +3,70 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { MessageCircle } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useChatbot } from "@/contexts/ChatbotContext";
+import { MessageCircle } from "lucide-react";
 
-export default function GlobalNav() {
-  const pathname = usePathname();
+const GlobalNav: React.FC = () => {
+  const { theme, isLoading } = useTheme();
   const { openPanel } = useChatbot();
 
-  const navItemBaseClasses = "px-4 py-2 rounded-md text-sm font-semibold";
-  // Active item: plain text, not acting like a link, distinct background
-  const activeItemClasses = `${navItemBaseClasses} bg-black/20 text-white cursor-default`;
-  // Inactive item: styled link with hover effects
-  const inactiveItemClasses = `${navItemBaseClasses} text-gray-200 hover:text-white hover:bg-black/10 transition-colors duration-150`;
+  if (isLoading || !theme) {
+    // Render a placeholder or loader while the theme is loading
+    return (
+      <header className="bg-gray-800 text-white p-4 shadow-md">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="h-8 w-32 bg-gray-700 rounded animate-pulse"></div>
+          <div className="flex items-center space-x-6">
+            <div className="h-6 w-20 bg-gray-700 rounded animate-pulse"></div>
+            <div className="h-6 w-20 bg-gray-700 rounded animate-pulse"></div>
+            <div className="h-6 w-20 bg-gray-700 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  const { brandName, logoUrl, navigation } = theme;
 
   return (
-    // Using bg-[#0A523E] for the main nav bar background
-    <nav className="bg-[#0A523E] text-white w-full p-4 shadow-lg">
-      <div className="container mx-auto flex items-center justify-between">
-        <Link href="/" className="flex items-center">
+    <header className="bg-brand-primary text-brand-header-text p-4 shadow-md">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <Link href="/" className="flex items-center space-x-3">
           <Image
-            src="/kf-logo-white.svg"
-            alt="Korn Ferry Logo"
-            width={160}
-            height={45}
+            src={logoUrl}
+            alt={`${brandName} Logo`}
+            width={140}
+            height={40}
             priority
           />
         </Link>
-        <span className="text-xl font-bold text-white ml-4">
-          Global Personas
-        </span>
-
-        <div className="flex items-center space-x-6 ml-auto">
-          {pathname === "/personas" ? (
-            <span className={activeItemClasses}>Personas</span>
-          ) : (
-            <Link href="/personas" className={inactiveItemClasses}>
-              Personas
-            </Link>
-          )}
-
-          {pathname === "/data" ? (
-            <span className={activeItemClasses}>Data</span>
-          ) : (
-            <Link href="/data" className={inactiveItemClasses}>
-              Data
-            </Link>
-          )}
-
-          {pathname === "/content" ? (
-            <span className={activeItemClasses}>Content</span>
-          ) : (
-            <Link href="/content" className={inactiveItemClasses}>
-              Content
-            </Link>
-          )}
-
-          {/* AI Chat Icon */}
+        <div className="flex items-center space-x-6">
+          <nav>
+            <ul className="flex items-center space-x-6">
+              {navigation.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    href={item.path}
+                    className="hover:text-gray-300 transition-colors font-medium"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
           <button
             onClick={openPanel}
-            className="p-2 rounded-md text-gray-200 hover:text-white hover:bg-black/10 transition-colors duration-150"
-            title="Open AI Personas Assistant"
+            className="p-2 rounded-md hover:bg-black/10 transition-colors"
+            title="Open AI Assistant"
           >
             <MessageCircle size={20} />
           </button>
         </div>
       </div>
-    </nav>
+    </header>
   );
-}
+};
+
+export default GlobalNav;

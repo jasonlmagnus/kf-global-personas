@@ -4,9 +4,11 @@ import React, { useEffect } from "react";
 import { Message } from "./Message";
 import { useChat } from "@/hooks/useChat";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export function ChatMessages() {
   const { messages, isStreaming, stopStreaming } = useChat();
+  const { theme } = useTheme();
 
   const { containerRef, userHasScrolled, resetScrollBehavior } = useAutoScroll(
     messages,
@@ -28,10 +30,10 @@ export function ChatMessages() {
       >
         <div className="text-center">
           <div className="text-lg font-medium mb-2">
-            Welcome to KF Personas AI Chat
+            {theme?.chatbot.welcomeMessage.split(". ")[0]}
           </div>
           <div className="text-sm">
-            Ask me anything about personas, consumer data, or market insights!
+            {theme?.chatbot.welcomeMessage.split(". ").slice(1).join(". ")}
           </div>
         </div>
       </div>

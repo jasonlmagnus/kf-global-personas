@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, Suspense } from "react";
+import { toast } from "react-hot-toast";
 import { useTheme } from "@/contexts/ThemeContext";
 import { ChevronDown } from "lucide-react";
 import DetailedPersonaCard from "@/components/personas/DetailedPersonaCard";
@@ -160,8 +161,7 @@ function PersonasPageContent() {
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "An unknown error occurred";
-      // In a real app, you'd show a toast notification here
-      alert(`Error deleting persona: ${message}`);
+      toast.error(`Error deleting persona: ${message}`);
       console.error("Error deleting persona:", error);
     }
   };

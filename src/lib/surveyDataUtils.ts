@@ -298,7 +298,7 @@ export const getDashboardData = async (filters?: DashboardFilters) => {
   
   // Apply filters if provided
   let filteredResponses = [...surveyResponses];
-  let appliedFilters: Record<string, string> = {};
+  const appliedFilters: Record<string, string> = {};
 
   if (filters) {
     // Filter by persona role (mapping from jobTitle and jobFunction)

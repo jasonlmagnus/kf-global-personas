@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 import { UploadCloud } from "lucide-react";
 
 // This component's responsibility is just to gather the core content,
@@ -25,7 +26,7 @@ const InputStage: React.FC<InputStageProps> = ({ onGenerate }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content || !region || !department) {
-      alert("Please fill out all fields.");
+      toast.error("Please fill out all fields.");
       return;
     }
     onGenerate({ type, content, region, department });

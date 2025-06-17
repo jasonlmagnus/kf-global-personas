@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import LogoUploader from "./LogoUploader";
 import ColorSettings from "./ColorSettings";
 import FontSettings from "./FontSettings";
 import LivePreview from "./LivePreview";
-import { BrandConfig } from "@/contexts/ThemeContext";
+import { BrandConfig, brandConfigSchema } from "@/lib/brandSchema";
 import {
   Select,
   SelectContent,
@@ -94,7 +95,7 @@ const BrandSetupWizard = () => {
 
   const handleCreateBrand = async () => {
     if (!newBrandName.trim()) {
-      alert("Please enter a name for the new brand.");
+      toast.error("Please enter a name for the new brand.");
       return;
     }
     const sanitizedBrandName = newBrandName
@@ -102,7 +103,7 @@ const BrandSetupWizard = () => {
       .toLowerCase()
       .replace(/\s+/g, "-");
     if (brands.includes(sanitizedBrandName)) {
-      alert(`Brand "${sanitizedBrandName}" already exists.`);
+      toast.error(`Brand "${sanitizedBrandName}" already exists.`);
       return;
     }
 
@@ -142,6 +143,7 @@ const BrandSetupWizard = () => {
     };
 
     try {
+      brandConfigSchema.parse(defaultConfig);
       const response = await fetch(`/api/brand?name=${sanitizedBrandName}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -149,14 +151,14 @@ const BrandSetupWizard = () => {
       });
 
       if (!response.ok) throw new Error("Failed to create new brand.");
-      alert(`Brand "${sanitizedBrandName}" created successfully!`);
+      toast.success(`Brand "${sanitizedBrandName}" created successfully!`);
 
       setBrands([...brands, sanitizedBrandName].sort());
       setSelectedBrand(sanitizedBrandName);
       setNewBrandName("");
     } catch (error) {
       console.error(error);
-      alert(error.message);
+      toast.error(error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setIsSaving(false);
     }
@@ -172,10 +174,10 @@ const BrandSetupWizard = () => {
       const updated = brands.filter(b => b !== selectedBrand);
       setBrands(updated);
       setSelectedBrand(updated[0] || '');
-      alert(`Brand "${selectedBrand}" deleted.`);
+      toast.success(`Brand "${selectedBrand}" deleted.`);
     } catch (err: any) {
       console.error(err);
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setIsSaving(false);
     }
@@ -187,7 +189,7 @@ const BrandSetupWizard = () => {
     if (!newName) return;
     const sanitized = newName.trim().toLowerCase().replace(/\s+/g, '-');
     if (brands.includes(sanitized)) {
-      alert(`Brand "${sanitized}" already exists.`);
+      toast.error(`Brand "${sanitized}" already exists.`);
       return;
     }
     if (!confirm(`Clone "${selectedBrand}" to "${newName}"?`)) return;
@@ -203,7 +205,7 @@ const BrandSetupWizard = () => {
       setSelectedBrand(sanitized);
     } catch (err: any) {
       console.error(err);
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setIsSaving(false);
     }
@@ -215,7 +217,7 @@ const BrandSetupWizard = () => {
     if (!newName) return;
     const sanitized = newName.trim().toLowerCase().replace(/\s+/g, '-');
     if (brands.includes(sanitized)) {
-      alert(`Brand "${sanitized}" already exists.`);
+      toast.error(`Brand "${sanitized}" already exists.`);
       return;
     }
     if (!confirm(`Rename "${selectedBrand}" to "${newName}"?`)) return;
@@ -232,7 +234,7 @@ const BrandSetupWizard = () => {
       setSelectedBrand(sanitized);
     } catch (err: any) {
       console.error(err);
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setIsSaving(false);
     }
@@ -242,13 +244,15 @@ const BrandSetupWizard = () => {
     if (!settings || !selectedBrand) return;
     setIsSaving(true);
 
-    const formData = new FormData();
-    formData.append("settings", JSON.stringify(settings));
-    if (logoFile) {
-      formData.append("logo", logoFile);
-    }
-
     try {
+      brandConfigSchema.parse(settings);
+
+      const formData = new FormData();
+      formData.append("settings", JSON.stringify(settings));
+      if (logoFile) {
+        formData.append("logo", logoFile);
+      }
+
       const response = await fetch(`/api/brand?name=${selectedBrand}`, {
         method: "POST",
         body: formData,
@@ -258,7 +262,7 @@ const BrandSetupWizard = () => {
         throw new Error("Failed to save brand settings.");
       }
 
-      alert(
+      toast.success(
         `Brand "${selectedBrand}" saved successfully! The page will now reload to apply the changes.`
       );
 
@@ -266,7 +270,7 @@ const BrandSetupWizard = () => {
       window.location.reload();
     } catch (error) {
       console.error(error);
-      alert(error.message);
+      toast.error(error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setIsSaving(false);
     }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import { BrandConfig } from "@/contexts/ThemeContext";
+import { brandConfigSchema, BrandConfig } from "@/lib/brandSchema";
 
 const BRANDS_ROOT_DIR = path.join(process.cwd(), "public", "brands");
 
@@ -109,19 +109,33 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Missing 'settings' data." }, { status: 400 });
         }
 
-        const settings: BrandConfig = JSON.parse(settingsStr);
-        let finalConfig = { ...settings };
+        const parsed = brandConfigSchema.safeParse(JSON.parse(settingsStr));
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Invalid settings data.', details: parsed.error.format() }, { status: 400 });
+        }
+        const settings: BrandConfig = parsed.data;
+        const finalConfig = { ...settings };
 
         // Ensure directories exist
         await fs.mkdir(brandDir, { recursive: true });
         await fs.mkdir(dataDir, { recursive: true });
 
         if (logoFile) {
-            const logoFilename = `logo${path.extname(logoFile.name)}`;
+            const allowedMime = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
+            if (!allowedMime.includes(logoFile.type)) {
+                return NextResponse.json({ error: 'Invalid logo file type.' }, { status: 400 });
+            }
+
+            const ext = path.extname(logoFile.name).toLowerCase();
+            if (!['.png', '.jpg', '.jpeg', '.svg', '.webp'].includes(ext)) {
+                return NextResponse.json({ error: 'Invalid logo file extension.' }, { status: 400 });
+            }
+
+            const logoFilename = `logo${ext}`;
             const logoPath = path.join(brandDir, logoFilename);
             const buffer = Buffer.from(await logoFile.arrayBuffer());
             await fs.writeFile(logoPath, buffer);
-            
+
             // Update the logoUrl in the config to point to the new file path
             finalConfig.logoUrl = `/brands/${brandName}/${logoFilename}?v=${new Date().getTime()}`;
         }

@@ -110,6 +110,11 @@ export async function getAllPersonas(): Promise<Persona[]> {
 export function comparePersonas(personaA: Persona, personaB: Persona) {
   // Common properties to all personas
   const commonKeys = ['title', 'department', 'needs', 'motivations', 'quote'];
+
+  const needsA = (personaA as any).needs ?? [];
+  const needsB = (personaB as any).needs ?? [];
+  const motivationsA = (personaA as any).motivations ?? [];
+  const motivationsB = (personaB as any).motivations ?? [];
   
   // Build comparison result
   return {
@@ -121,12 +126,8 @@ export function comparePersonas(personaA: Persona, personaB: Persona) {
         quote: personaA.quote === personaB.quote,
       },
       // Compare arrays for overlap
-      needs: personaA.needs.filter(need => 
-        personaB.needs.includes(need)
-      ),
-      motivations: personaA.motivations.filter(motivation => 
-        personaB.motivations.includes(motivation)
-      ),
+      needs: needsA.filter((need: any) => needsB.includes(need)),
+      motivations: motivationsA.filter((m: any) => motivationsB.includes(m)),
     },
     differences: {
       // Highlight differences in region and type
@@ -134,20 +135,12 @@ export function comparePersonas(personaA: Persona, personaB: Persona) {
       isGlobal: personaA.isGlobal !== personaB.isGlobal,
       // Unique needs and motivations
       uniqueNeeds: {
-        [personaA.region]: personaA.needs.filter(need => 
-          !personaB.needs.includes(need)
-        ),
-        [personaB.region]: personaB.needs.filter(need => 
-          !personaA.needs.includes(need)
-        ),
+        [personaA.region]: needsA.filter((need: any) => !needsB.includes(need)),
+        [personaB.region]: needsB.filter((need: any) => !needsA.includes(need)),
       },
       uniqueMotivations: {
-        [personaA.region]: personaA.motivations.filter(motivation => 
-          !personaB.motivations.includes(motivation)
-        ),
-        [personaB.region]: personaB.motivations.filter(motivation => 
-          !personaA.motivations.includes(motivation)
-        ),
+        [personaA.region]: motivationsA.filter((m: any) => !motivationsB.includes(m)),
+        [personaB.region]: motivationsB.filter((m: any) => !motivationsA.includes(m)),
       },
     }
   };

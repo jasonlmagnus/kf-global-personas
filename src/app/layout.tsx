@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { useSession } from "next-auth/react";
 import { Inter } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -68,6 +69,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-brand-background`}>
         <AuthProvider>
           <ThemedLayout>{children}</ThemedLayout>
+          <Toaster position="top-right" />
         </AuthProvider>
       </body>
     </html>

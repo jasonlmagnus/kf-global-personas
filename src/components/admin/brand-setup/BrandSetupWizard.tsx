@@ -162,6 +162,82 @@ const BrandSetupWizard = () => {
     }
   };
 
+  const handleDeleteBrand = async () => {
+    if (!selectedBrand) return;
+    if (!confirm(`Delete brand "${selectedBrand}"? A backup will be created.`)) return;
+    setIsSaving(true);
+    try {
+      const res = await fetch(`/api/brand/delete?name=${selectedBrand}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete brand.');
+      const updated = brands.filter(b => b !== selectedBrand);
+      setBrands(updated);
+      setSelectedBrand(updated[0] || '');
+      alert(`Brand "${selectedBrand}" deleted.`);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCloneBrand = async () => {
+    if (!selectedBrand) return;
+    const newName = prompt('Enter name for cloned brand:');
+    if (!newName) return;
+    const sanitized = newName.trim().toLowerCase().replace(/\s+/g, '-');
+    if (brands.includes(sanitized)) {
+      alert(`Brand "${sanitized}" already exists.`);
+      return;
+    }
+    if (!confirm(`Clone "${selectedBrand}" to "${newName}"?`)) return;
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/brand/clone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: selectedBrand, newName }),
+      });
+      if (!res.ok) throw new Error('Failed to clone brand.');
+      setBrands([...brands, sanitized].sort());
+      setSelectedBrand(sanitized);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleRenameBrand = async () => {
+    if (!selectedBrand) return;
+    const newName = prompt('Enter new name for brand:');
+    if (!newName) return;
+    const sanitized = newName.trim().toLowerCase().replace(/\s+/g, '-');
+    if (brands.includes(sanitized)) {
+      alert(`Brand "${sanitized}" already exists.`);
+      return;
+    }
+    if (!confirm(`Rename "${selectedBrand}" to "${newName}"?`)) return;
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/brand/rename', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldName: selectedBrand, newName }),
+      });
+      if (!res.ok) throw new Error('Failed to rename brand.');
+      const updated = brands.map(b => (b === selectedBrand ? sanitized : b)).sort();
+      setBrands(updated);
+      setSelectedBrand(sanitized);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!settings || !selectedBrand) return;
     setIsSaving(true);
@@ -269,7 +345,30 @@ const BrandSetupWizard = () => {
           <div className="lg:col-span-1">
             <LivePreview settings={settings} />
           </div>
-          <div className="lg:col-span-3 flex justify-end mt-4">
+          <div className="lg:col-span-3 flex justify-between mt-4 flex-wrap gap-2">
+            <div className="space-x-2">
+              <button
+                onClick={handleCloneBrand}
+                disabled={isSaving}
+                className="px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 disabled:bg-gray-400 transition-all"
+              >
+                Clone
+              </button>
+              <button
+                onClick={handleRenameBrand}
+                disabled={isSaving}
+                className="px-4 py-2 bg-yellow-600 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-700 disabled:bg-gray-400 transition-all"
+              >
+                Rename
+              </button>
+              <button
+                onClick={handleDeleteBrand}
+                disabled={isSaving}
+                className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 disabled:bg-gray-400 transition-all"
+              >
+                Delete
+              </button>
+            </div>
             <button
               onClick={handleSave}
               disabled={isSaving}

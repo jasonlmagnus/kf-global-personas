@@ -28,7 +28,10 @@ const LivePreview: React.FC<LivePreviewProps> = ({ settings, logoPath }) => {
       <h3 className="text-lg font-medium text-slate-800 mb-4">Live Preview</h3>
 
       {/* Header Preview */}
-      <div className="bg-gray-800 p-4 rounded-t-lg flex items-center justify-between">
+      <div
+        className="p-4 rounded-t-lg flex items-center justify-between"
+        style={{ backgroundColor: colors.primary, color: colors.headerText }}
+      >
         {displayLogo ? (
           <img src={displayLogo} alt="Logo" className="h-8" />
         ) : (
@@ -82,7 +85,7 @@ const LivePreview: React.FC<LivePreviewProps> = ({ settings, logoPath }) => {
         <div className="mt-6">
           <button
             className="w-full text-white font-semibold py-2 px-4 rounded-lg"
-            style={{ backgroundColor: colors.primary }}
+            style={{ backgroundColor: colors.accent }}
           >
             Primary Action Button
           </button>

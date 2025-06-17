@@ -21,28 +21,25 @@ function ThemedLayout({ children }: { children: React.ReactNode }) {
 
   // 1. For Brand Users, use their brand.
   // 2. For Super Admins, default to 'korn-ferry'.
-  // 3. Before session loads or for logged-out users, default to 'korn-ferry'.
-  const brand = session?.user?.brand || "korn-ferry";
-
-  // While the session is loading, we can show a full-page loader.
-  if (status === "loading") {
-    return (
-      <div className="flex items-center justify-center min-h-screen w-full">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-500"></div>
-      </div>
-    );
-  }
+  // 3. Before session loads or for logged-out users, default to 'magnus'.
+  const brand = session?.user?.brand || "magnus";
 
   return (
     <ThemeProvider brand={brand}>
-      <ChatbotProvider>
-        <div className="flex flex-col min-h-screen">
-          <GlobalNav />
-          <main className="flex-grow container mx-auto p-4">{children}</main>
-          <Footer />
+      {status === "loading" ? (
+        <div className="flex items-center justify-center min-h-screen w-full">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-500"></div>
         </div>
-        <ChatbotPanel />
-      </ChatbotProvider>
+      ) : (
+        <ChatbotProvider>
+          <div className="flex flex-col min-h-screen">
+            <GlobalNav />
+            <main className="flex-grow container mx-auto p-4">{children}</main>
+            <Footer />
+          </div>
+          <ChatbotPanel />
+        </ChatbotProvider>
+      )}
     </ThemeProvider>
   );
 }

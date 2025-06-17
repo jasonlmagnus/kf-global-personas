@@ -16,7 +16,7 @@ const inter = Inter({ subsets: ["latin"] });
 // You may want to move this to a separate server component if needed
 
 // This new component wraps the part of the layout that depends on the session
-function ThemedLayout({ children }: { children: React.ReactNode }) {
+export function ThemedLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
 
   // 1. For Brand Users, use their brand.

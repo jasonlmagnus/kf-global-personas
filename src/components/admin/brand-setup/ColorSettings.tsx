@@ -13,11 +13,26 @@ const ColorSettings: React.FC<ColorSettingsProps> = ({
   settings,
   onSettingsChange,
 }) => {
-  const [displayColorPicker, setDisplayColorPicker] = useState<
-    "primary" | "text" | null
-  >(null);
+  type ColorKey =
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "background"
+    | "text"
+    | "headerText";
 
-  const { primary: primaryColor, text: textColor } = settings.colors;
+  const [displayColorPicker, setDisplayColorPicker] = useState<ColorKey | null>(
+    null
+  );
+
+  const {
+    primary: primaryColor,
+    secondary: secondaryColor,
+    accent: accentColor,
+    background: backgroundColor,
+    text: textColor,
+    headerText: headerTextColor,
+  } = settings.colors;
 
   const handleColorChange = (color: ColorResult) => {
     if (displayColorPicker) {
@@ -46,9 +61,10 @@ const ColorSettings: React.FC<ColorSettingsProps> = ({
     <div className="bg-white p-6 rounded-lg shadow">
       <h3 className="text-lg font-medium text-slate-800 mb-4">Color Palette</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Primary Color */}
         <div>
           <label className="block text-sm font-medium text-slate-600 mb-2">
-            Primary / Accent Color
+            Primary Color
           </label>
           <div className="relative">
             <div
@@ -56,22 +72,106 @@ const ColorSettings: React.FC<ColorSettingsProps> = ({
               onClick={() => setDisplayColorPicker("primary")}
             >
               <span>{primaryColor}</span>
-              <div
-                className="w-6 h-6 rounded-sm border"
-                style={{ backgroundColor: primaryColor }}
-              />
+              <div className="w-6 h-6 rounded-sm border" style={{ backgroundColor: primaryColor }} />
             </div>
             {displayColorPicker === "primary" && (
               <div style={popover}>
                 <div style={cover} onClick={handleClose} />
-                <SketchPicker
-                  color={primaryColor}
-                  onChange={handleColorChange}
-                />
+                <SketchPicker color={primaryColor} onChange={handleColorChange} />
               </div>
             )}
           </div>
         </div>
+
+        {/* Secondary Color */}
+        <div>
+          <label className="block text-sm font-medium text-slate-600 mb-2">
+            Secondary Color
+          </label>
+          <div className="relative">
+            <div
+              className="w-full h-10 rounded-md border border-slate-300 flex items-center justify-between px-3 cursor-pointer"
+              onClick={() => setDisplayColorPicker("secondary")}
+            >
+              <span>{secondaryColor}</span>
+              <div className="w-6 h-6 rounded-sm border" style={{ backgroundColor: secondaryColor }} />
+            </div>
+            {displayColorPicker === "secondary" && (
+              <div style={popover}>
+                <div style={cover} onClick={handleClose} />
+                <SketchPicker color={secondaryColor} onChange={handleColorChange} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Accent Color */}
+        <div>
+          <label className="block text-sm font-medium text-slate-600 mb-2">
+            Accent Color
+          </label>
+          <div className="relative">
+            <div
+              className="w-full h-10 rounded-md border border-slate-300 flex items-center justify-between px-3 cursor-pointer"
+              onClick={() => setDisplayColorPicker("accent")}
+            >
+              <span>{accentColor}</span>
+              <div className="w-6 h-6 rounded-sm border" style={{ backgroundColor: accentColor }} />
+            </div>
+            {displayColorPicker === "accent" && (
+              <div style={popover}>
+                <div style={cover} onClick={handleClose} />
+                <SketchPicker color={accentColor} onChange={handleColorChange} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Background Color */}
+        <div>
+          <label className="block text-sm font-medium text-slate-600 mb-2">
+            Background Color
+          </label>
+          <div className="relative">
+            <div
+              className="w-full h-10 rounded-md border border-slate-300 flex items-center justify-between px-3 cursor-pointer"
+              onClick={() => setDisplayColorPicker("background")}
+            >
+              <span>{backgroundColor}</span>
+              <div className="w-6 h-6 rounded-sm border" style={{ backgroundColor: backgroundColor }} />
+            </div>
+            {displayColorPicker === "background" && (
+              <div style={popover}>
+                <div style={cover} onClick={handleClose} />
+                <SketchPicker color={backgroundColor} onChange={handleColorChange} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Header Text Color */}
+        <div>
+          <label className="block text-sm font-medium text-slate-600 mb-2">
+            Header Text Color
+          </label>
+          <div className="relative">
+            <div
+              className="w-full h-10 rounded-md border border-slate-300 flex items-center justify-between px-3 cursor-pointer"
+              onClick={() => setDisplayColorPicker("headerText")}
+            >
+              <span>{headerTextColor}</span>
+              <div className="w-6 h-6 rounded-sm border" style={{ backgroundColor: headerTextColor }} />
+            </div>
+            {displayColorPicker === "headerText" && (
+              <div style={popover}>
+                <div style={cover} onClick={handleClose} />
+                <SketchPicker color={headerTextColor} onChange={handleColorChange} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main Text Color */}
         <div>
           <label className="block text-sm font-medium text-slate-600 mb-2">
             Main Text Color
@@ -82,10 +182,7 @@ const ColorSettings: React.FC<ColorSettingsProps> = ({
               onClick={() => setDisplayColorPicker("text")}
             >
               <span>{textColor}</span>
-              <div
-                className="w-6 h-6 rounded-sm border"
-                style={{ backgroundColor: textColor }}
-              />
+              <div className="w-6 h-6 rounded-sm border" style={{ backgroundColor: textColor }} />
             </div>
             {displayColorPicker === "text" && (
               <div style={popover}>
